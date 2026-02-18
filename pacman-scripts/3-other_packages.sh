@@ -74,6 +74,7 @@ other_packages=(
     fastfetch
     ffmpeg
     # gnome-disk-utility
+    hyprland-guiutils
     partitionmanager
     imagemagick
     jq
@@ -127,7 +128,6 @@ aur_packages=(
     cava
     grimblast-git
     hyprsunset
-    hyprland-qtutils
     tty-clock
     pyprland
     wlogout
