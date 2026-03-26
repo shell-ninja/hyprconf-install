@@ -90,7 +90,7 @@ hypr_package=(
   slurp
   SwayNotificationCenter
   swappy
-  swww
+  awww
   tar
   unzip
   wayland-protocols-devel

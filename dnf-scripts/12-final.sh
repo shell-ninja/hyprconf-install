@@ -118,7 +118,7 @@ checkup=(
     mpv-mpris
     nwg-look
     pamixer
-    swww
+    awww
     ark
     crudini
     dolphin

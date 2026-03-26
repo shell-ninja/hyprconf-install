@@ -109,7 +109,7 @@ checkup=(
     # swappy
     satty
     swaync
-    swww
+    awww
     sddm
     ark
     crudini
