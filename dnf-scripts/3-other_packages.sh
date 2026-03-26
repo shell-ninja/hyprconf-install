@@ -128,7 +128,7 @@ other_packages=(
     mpv-mpris
     nwg-look
     pamixer
-    swww
+    awww
     wlogout
 )
 

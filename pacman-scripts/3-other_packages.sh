@@ -114,7 +114,7 @@ other_packages=(
     satty
     # swappy
     swaync
-    swww
+    awww
     unzip
     waybar
     wget
