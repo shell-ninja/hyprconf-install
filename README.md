@@ -148,6 +148,7 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 > You can now easily install the config directly without cloning the repository. Just copy and paste the command bellow in your terminal and run it. Before that, make sure to install `curl`. Install it using pacman, dnf or zypper.
 
 ```
+sudo pacman -S --needed git base-devel
 bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/main/direct_run.sh)
 ```
 
@@ -158,6 +159,8 @@ bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/ma
 > - Clone this repository:
 
 ```
+
+sudo pacman -S --needed git base-devel
 git clone --depth=1 https://github.com/shell-ninja/hyprconf-install.git
 ```
 
