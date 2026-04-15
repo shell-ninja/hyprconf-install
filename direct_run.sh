@@ -55,6 +55,18 @@ for pkg in "${packages[@]}"; do
 
 done
 
+# install base-devel for arch linux
+if command -v pacman &> /dev/null; then
+    if sudo pacman -Q base-devel &> /dev/null; then
+        printf "${magenta}[ SKIP ]${end} Skipping base-devel, it was already installed..\n"
+    else
+        sudo pacman -S --needed base-devel --noconfirm &> /dev/null
+        if sudo pacman -Q base-devel &> /dev/null; then
+            printf "${cyan}::${end} base-devel was installed successfully!\n"
+        fi
+    fi
+fi
+
 # only for fedora
 if command -v dnf &> /dev/null; then
 
