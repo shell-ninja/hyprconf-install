@@ -60,3 +60,17 @@ install_package() {
         msg err "$1 failed to install. Maybe therer is an issue..."
     fi
 }
+
+
+# package installation function..
+install_package_nocheck() {
+
+    msg act "Installing $1..."
+    "$aur_helper" -S --noconfirm --mflags "--nocheck" "$1" &> /dev/null
+
+    if "$aur_helper" -Q "$1" &> /dev/null; then
+        msg dn "$1 was installed successfully!"
+    else
+        msg err "$1 failed to install. Maybe therer is an issue..."
+    fi
+}

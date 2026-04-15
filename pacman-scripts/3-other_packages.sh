@@ -63,6 +63,8 @@ else
     touch "$log"
 fi
 
+aur_helper=$(command -v yay || command -v paru) # find the aur helper
+
 
 # any other packages will be installed from here
 other_packages=(
@@ -135,10 +137,14 @@ aur_packages=(
 
 dolphin=(
     ark
-    crudini
     dolphin
     gwenview
     okular
+)
+
+crunini_pkg=(
+    crudini
+    python-iniparse
 )
 
 # checking already installed packages 
@@ -160,5 +166,15 @@ for _pkgs in "${installble_pkg[@]}" "${installble_aur_pkg[@]}" "${installble_dol
         echo "[ ERROR ] - Sorry, could not install $_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
+
+for _pkgs in "${crunini_pkg[@]}"; do
+    install_package_nocheck "$_pkgs"
+    if sudo pacman -Q "$_pkgs" &>/dev/null; then
+        echo "[ DONE ] - $_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+    else
+        echo "[ ERROR ] - Sorry, could not install $_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+    fi
+done
+
 
 sleep 1 && clear
