@@ -287,23 +287,8 @@ run_script "$scripts_dir/11-uninstall.sh"
 # ----------------- Themes and dotfiles (hyprconf)
 clear
 
-msg ask "Choose which config you want to setup: " && sleep 1
-msg att "The 'hyprconf' config will change colors according to the current wallpaper using ${cyan}pywal${end}, inspired by JaKooLit's config." && echo
-msg att "The 'hyprconf-v2' config has some pre-configured themes and color palettes, inspired by HyDE."
-
-choice=$(gum choose \
-    --limit=1 \
-    --cursor.foreground "#00FFFF" \
-    --item.foreground "#fff" \
-    --selected.foreground "#00FF00" \
-    "hyprconf" "hyprconf-v2"
-)
-choice="${choice:-hyprconf}"
-echo "$choice" > "$dotfiles_cache"
-sleep 1 && clear
-
 run_script "$common_scripts/themes.sh"
-run_script "$common_scripts/${choice}.sh"
+run_script "$common_scripts/hyprconf.sh"
 
 # ----------------- Setting up keyboard layout
 keyboardLayout=$(localectl status 2>/dev/null | awk -F': ' '/X11 Layout|VC Keymap/ {print $2; exit}' | tr -d ' ')

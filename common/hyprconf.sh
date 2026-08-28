@@ -45,7 +45,7 @@ mkdir -p "$log_dir"
 touch "$log"
 
 # hyprconf repo url
-url="https://github.com/shell-ninja/hyprconf/archive/refs/heads/main.zip"
+url="https://github.com/shell-ninja/hyprconf/archive/refs/heads/noct.zip"
 target_dir="$parent_dir/.cache/hyprconf"
 zip_path="$target_dir.zip"
 
@@ -58,8 +58,8 @@ curl -L "$url" -o "$zip_path"
 # Extract only if download succeeded
 if [[ -f "$zip_path" ]]; then
     mkdir -p "$target_dir"
-    unzip "$zip_path" "hyprconf-main/*" -d "$target_dir" > /dev/null
-    mv "$target_dir/hyprconf-main/"* "$target_dir" && rmdir "$target_dir/hyprconf-main"
+    unzip "$zip_path" "hyprconf-noct/*" -d "$target_dir" > /dev/null
+    mv "$target_dir/hyprconf-noct/"* "$target_dir" && rmdir "$target_dir/hyprconf-noct"
     rm "$zip_path"
 fi
 # ---------------------- new ---------------------- #

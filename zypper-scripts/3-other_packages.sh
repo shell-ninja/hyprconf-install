@@ -92,11 +92,8 @@ hypr_package=(
   libqt5-qtquickcontrols2
   libqt5-qtgraphicaleffects
   nwg-look
-  rofi-wayland
   slurp
-  SwayNotificationCenter
   swappy
-  awww
   tar
   unzip
   wayland-protocols-devel
@@ -113,13 +110,15 @@ other_packages=(
   mpv
   mpv-mpris
   nvtop
+  awww
+  # noctalia: not in official openSUSE repos yet.
+  # Install manually from https://github.com/linkfrg/noctalia
 )
 
 # no recommands
 no_recommands=(
   eog
   NetworkManager-applet
-  waybar
 )
 
 # dolphin
@@ -206,6 +205,3 @@ if command -v go &> /dev/null; then
 fi
 
 sleep 2 && clear
-
-"$dir/pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-

@@ -60,7 +60,6 @@ checkup=(
     cava
     cliphist
     curl
-    # dunst
     fastfetch
     ffmpeg
     grimblast-git
@@ -80,6 +79,7 @@ checkup=(
     lxappearance
     network-manager-applet
     networkmanager
+    noctalia
     nodejs
     npm
     ntfs-3g
@@ -92,7 +92,6 @@ checkup=(
     pciutils
     polkit-kde-agent
     power-profiles-daemon
-    python-pywal
     python-gobject
     pyprland
     qt5ct
@@ -105,10 +104,8 @@ checkup=(
     qt5-graphicaleffects
     qt5-quickcontrols2
     ripgrep
-    rofi-wayland
     # swappy
     satty
-    swaync
     awww
     sddm
     ark
@@ -118,7 +115,6 @@ checkup=(
     okular
     tty-clock
     unzip
-    waybar
     wget
     wl-clipboard
     xorg-xrandr

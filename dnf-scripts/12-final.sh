@@ -62,7 +62,6 @@ checkup=(
     hyprsunset
     pyprland
     curl
-    # dunst
     fastfetch
     ffmpeg-free
     git
@@ -86,12 +85,12 @@ checkup=(
     pipewire-alsa
     pipewire-utils
     pipewire-pulse
-    # polkit-kde-agent
     power-profiles-daemon
     pulseaudio-utils
     python3-requests
     python3-devel
     python3-gobject
+    python3-devel
     python3-pip
     python3-pillow
     python3-pyquery
@@ -99,13 +98,10 @@ checkup=(
     qt6ct-kde
     qt6-qtsvg
     ripgrep
-    rofi-wayland
     slurp
-    SwayNotificationCenter
     satty
     tar
     unzip
-    waybar
     wget2
     wl-clipboard
     xdg-utils
@@ -169,10 +165,5 @@ for _pkgs in "${to_install[@]}"; do
         echo "[ ERROR ] - Sorry, could not install $_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
-
-# checking if pywal is installed
-if ! command -v wal &> /dev/null; then
-    sudo pip install pywal 2>&1 | tee -a "$log" &> /dev/null
-fi
 
 sleep 1 && clear

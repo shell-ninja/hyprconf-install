@@ -103,12 +103,9 @@ main_packages=(
     qt6ct
     libqt6svg6
     ripgrep
-    rofi
     slurp
-    sway-notification-center
     tar
     unzip
-    waybar
     wget
     wl-clipboard
     xdg-utils
@@ -125,7 +122,9 @@ other_packages=(
     mpv-mpris
     nwg-look
     pamixer
-    wlogout
+    awww
+    # noctalia: not in official Debian/Ubuntu repos yet.
+    # Install manually from https://github.com/linkfrg/noctalia
 )
 
 file_utils=(
@@ -184,6 +183,3 @@ else
 fi
 
 sleep 1 && clear
-
-"$dir/pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-"$dir/3.1-swww.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")

@@ -71,16 +71,12 @@ other_packages=(
     btop
     cliphist
     curl
-    # dunst
-    # eog
     fastfetch
     ffmpeg
-    # gnome-disk-utility
     hyprland-guiutils
     partitionmanager
     imagemagick
     jq
-    # konsole
     kitty
     kvantum
     kvantum-qt5
@@ -103,7 +99,6 @@ other_packages=(
     pciutils
     polkit-kde-agent
     power-profiles-daemon
-    python-pywal
     python-gobject
     qt5ct
     qt5-svg
@@ -112,13 +107,9 @@ other_packages=(
     qt5-graphicaleffects
     qt5-quickcontrols2
     ripgrep
-    rofi-wayland
     satty
-    # swappy
-    swaync
     awww
     unzip
-    waybar
     wget
     wl-clipboard
     xorg-xrandr
@@ -130,9 +121,9 @@ aur_packages=(
     cava
     grimblast-git
     hyprsunset
+    noctalia
     tty-clock
     pyprland
-    wlogout
 )
 
 dolphin=(

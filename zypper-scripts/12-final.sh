@@ -84,14 +84,11 @@ checkup=(
     qt5ct
     qt6ct
     ripgrep
-    rofi-wayland
     slurp
-    SwayNotificationCenter
     swappy
-    swww
+    awww
     tar
     unzip
-    waybar
     wget
     wl-clipboard
     xdg-utils
@@ -144,12 +141,5 @@ for _pkgs in "${to_install[@]}"; do
         echo "[ ERROR ] - Sorry, could not install $_pkgs!" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
-
-# checking if pywal is installed
-if ! command -v wal &> /dev/null; then
-    if command -v pipx &> /dev/null; then
-        pipx install pywal 2>&1 | tee -a "$log" &> /dev/null
-    fi
-fi
 
 sleep 1 && clear

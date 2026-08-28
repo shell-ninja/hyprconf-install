@@ -98,10 +98,8 @@ checkup=(
     libqt6svg6
     ripgrep
     slurp
-    sway-notification-center
     tar
     unzip
-    waybar
     wget
     wl-clipboard
     xdg-utils
@@ -113,7 +111,7 @@ checkup=(
     mpv-mpris
     nwg-look
     pamixer
-    wlogout
+    awww
     crudini
     thunar
     thunar-archive-plugin
@@ -162,15 +160,5 @@ for _pkgs in "${to_install[@]}"; do
         echo "[ ERROR ] - Sorry, could not install $_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
-
-# checking if pywal is installed
-if ! command -v wal &> /dev/null; then
-    sudo pip install pywal --break-system-packages 2>&1 | tee -a "$log" &> /dev/null
-fi
-
-# checking if swww is installed
-if ! command -v swww &> /dev/null; then
-    "$dir/3.1-swww.sh"
-fi
 
 sleep 1 && clear

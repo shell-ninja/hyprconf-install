@@ -97,6 +97,7 @@ main_packages=(
     python3-requests
     python3-devel
     python3-gobject
+    python3-devel
     python3-pip
     python3-pillow
     python3-pyquery
@@ -104,13 +105,10 @@ main_packages=(
     qt6ct-kde
     qt6-qtsvg
     ripgrep
-    rofi-wayland
     slurp
-    SwayNotificationCenter
     satty
     tar
     unzip
-    waybar
     wget2
     wl-clipboard
     xdg-utils
@@ -129,7 +127,8 @@ other_packages=(
     nwg-look
     pamixer
     awww
-    wlogout
+    # noctalia: not in official Fedora repos yet.
+    # Install manually from https://github.com/linkfrg/noctalia or via a COPR.
 )
 
 dolphin=(
@@ -185,5 +184,3 @@ if [ -f '/usr/local/bin/grimblast' ]; then
 fi
 
 sleep 1 && clear
-
-"$dir/pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
