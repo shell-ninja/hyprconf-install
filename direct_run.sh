@@ -1,169 +1,138 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
 
-# this script will be a curl of wget link. by running this script, it will clone the repository and execute the main script.
+# ----------------- Color definitions
+red="\e[1;38;2;247;118;142m"
+green="\e[1;38;2;166;227;161m"
+yellow="\e[1;38;2;224;175;104m"
+blue="\e[1;38;2;122;162;247m"
+cyan="\e[1;38;2;125;207;255m"
+purple="\e[1;38;2;189;147;249m"   # Electric neon purple
+lavender="\e[1;38;2;203;166;247m" # Soft lavender
+muted="\e[38;2;108;112;134m"
+bold="\e[1m"
+end="\e[0m"
 
-# color definition
-red="\e[1;31m"
-green="\e[1;32m"
-yellow="\e[1;33m"
-blue="\e[1;34m"
-magenta="\e[1;1;35m"
-cyan="\e[1;36m"
-orange="\e[1;38;5;214m"
-end="\e[1;0m"
+clear
+printf "\n"
+printf "  ${purple}${bold}█░█ █▄█ █▀█ █▀█ █▀▀ █▀█ █▄░█ █▀▀${end}\n"
+printf "  ${lavender}${bold}█▀█ ░█░ █▀▀ █▀▄ █▄▄ █▄█ █░▀█ █▀░${end}\n"
+printf "          ${muted}hyprland rice installer${end}\n\n"
 
-clear && sleep 1
-
-printf "${orange}=>${end} Starting the script...\n" && sleep 2
+printf "  ${cyan}✦${end} ${bold}Bootstrapping installer environment...${end}\n\n"
 
 packages=(
     git
-    gum
+    python3
     unzip
     wget
+    curl
 )
 
 for pkg in "${packages[@]}"; do
-
     if command -v pacman &> /dev/null; then
         if sudo pacman -Q "$pkg" &> /dev/null; then
-            printf "${magenta}[ SKIP ]${end} Skipping $pkg, it was already installed..\n"
+            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
         else
-            printf "${green}=>${end} Installing $pkg...\n"
+            printf "  ${purple}→${end} Installing $pkg...\n"
             sudo pacman -S --noconfirm "$pkg" &> /dev/null
-
             if sudo pacman -Q "$pkg" &> /dev/null; then
-                printf "${cyan}::${end} $pkg was installed successfully!\n"
+                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
             fi
         fi
     elif command -v zypper &> /dev/null; then
-
         if sudo zypper se -i "$pkg" &>/dev/null; then
-            printf "${magenta}[ SKIP ]${end} Skipping $pkg, it was already installed..\n"
+            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
         else
-            printf "${green}=>${end} Installing $pkg...\n"
-            sudo zypper in -y "$pkg";
-
+            printf "  ${purple}→${end} Installing $pkg...\n"
+            sudo zypper in -y "$pkg" &> /dev/null
             if sudo zypper se -i "$pkg" &> /dev/null; then
-                printf "${cyan}::${end} $pkg was installed successfully!\n"
+                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
             fi
         fi
     fi
-
 done
 
-# install base-devel for arch linux
+# Base devel for arch
 if command -v pacman &> /dev/null; then
     if sudo pacman -Q base-devel &> /dev/null; then
-        printf "${magenta}[ SKIP ]${end} Skipping base-devel, it was already installed..\n"
+        printf "  ${muted}· [SKIP] base-devel is already installed${end}\n"
     else
+        printf "  ${purple}→${end} Installing base-devel...\n"
         sudo pacman -S --needed base-devel --noconfirm &> /dev/null
         if sudo pacman -Q base-devel &> /dev/null; then
-            printf "${cyan}::${end} base-devel was installed successfully!\n"
+            printf "  ${green}✓${end} Successfully installed ${green}base-devel${end}\n"
         fi
     fi
 fi
 
-# only for fedora
+# Fedora
 if command -v dnf &> /dev/null; then
-
-    for _pkg in git unzip wget; do
-
-        if rpm -q $_pkg &> /dev/null; then
-            printf "${magenta}[ SKIP ]${end} Skipping $_pkg, it was already installed..\n"
+    for pkg in git python3 unzip wget curl; do
+        if rpm -q "$pkg" &> /dev/null; then
+            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
         else
-            printf "${green}=>${end} Installing $_pkg...\n"
-            sudo dnf install -y $_pkg
-            
-            if rpm -q $_pkg; then
-                printf "${cyan}::${end} $_pkg was installed successfully!\n"
+            printf "  ${purple}→${end} Installing $pkg...\n"
+            sudo dnf install -y "$pkg" &> /dev/null
+            if rpm -q "$pkg" &> /dev/null; then
+                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
             fi
         fi
-        
     done
-
-    sleep 1
-
-    if rpm -q gum &> /dev/null; then
-        printf "${magenta}[ SKIP ]${end} Skipping gum, it was already installed..\n"
-    else
-        printf "${green}=>${end} Installing gum...\n"
-    echo '[charm]
-name=Charm
-baseurl=https://repo.charm.sh/yum/
-enabled=1
-gpgcheck=1
-gpgkey=https://repo.charm.sh/yum/gpg.key' | sudo tee /etc/yum.repos.d/charm.repo &>/dev/null
-
-        sudo yum install --assumeyes gum
-    fi
-
-    if rpm -q gum &> /dev/null; then
-        printf "${cyan}::${end} Gum was installed successfully!\n"
-    fi
 fi
 
-# only for debian/ubuntu
+# Debian/Ubuntu
 if command -v apt-get &> /dev/null; then
-
-    for _pkg in git unzip wget curl; do
-
-        if dpkg -s $_pkg &> /dev/null; then
-            printf "${magenta}[ SKIP ]${end} Skipping $_pkg, it was already installed..\n"
+    for pkg in git python3 unzip wget curl; do
+        if dpkg -s "$pkg" &> /dev/null; then
+            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
         else
-            printf "${green}=>${end} Installing $_pkg...\n"
-            sudo apt-get install -y $_pkg &> /dev/null
-            
-            if dpkg -s $_pkg &> /dev/null; then
-                printf "${cyan}::${end} $_pkg was installed successfully!\n"
+            printf "  ${purple}→${end} Installing $pkg...\n"
+            sudo apt-get install -y "$pkg" &> /dev/null
+            if dpkg -s "$pkg" &> /dev/null; then
+                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
             fi
         fi
-        
     done
-
-    sleep 1
-
-    if dpkg -s gum &> /dev/null; then
-        printf "${magenta}[ SKIP ]${end} Skipping gum, it was already installed..\n"
-    else
-        printf "${green}=>${end} Installing gum...\n"
-        sudo mkdir -p /etc/apt/keyrings
-        curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/charm.gpg &> /dev/null
-        echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list &> /dev/null
-        sudo apt-get update &> /dev/null
-        sudo apt-get install -y gum &> /dev/null
-    fi
-
-    if dpkg -s gum &> /dev/null; then
-        printf "${cyan}::${end} Gum was installed successfully!\n"
-    fi
 fi
 
-sleep 1 && clear
- 
+sleep 1
 [[ ! "$(pwd)" == "$HOME" ]] && cd "$HOME"
 
-printf "${green}=>${end} Preparing the installation scripts...\n" && echo
+# ----------------- Branch selection
+printf "\n  ${purple}✦${end} ${bold}Select the branch to install:${end}\n\n"
+printf "    ${cyan}1)${end} ${bold}main${end}   ${muted}— Old Hyprconf${end}\n"
+printf "    ${cyan}2)${end} ${bold}noct${end}   ${muted}— Noctalia Shell variant${end}\n\n"
 
-curl -L https://github.com/shell-ninja/hyprconf-install/archive/refs/heads/main.zip -o hyprconf-install.zip && sleep 1
+selected_branch=""
+while [[ -z "$selected_branch" ]]; do
+    printf "  ${yellow}→${end} Enter your choice ${muted}[1/2]${end}: "
+    read -r branch_choice
+    case "$branch_choice" in
+        1) selected_branch="main" ;;
+        2) selected_branch="noct" ;;
+        *) printf "  ${red}✗${end} Invalid choice. Please enter ${cyan}1${end} or ${cyan}2${end}.\n" ;;
+    esac
+done
+
+printf "\n  ${green}✓${end} Selected branch: ${bold}${green}${selected_branch}${end}\n"
+
+printf "\n  ${cyan}→${end} Downloading latest Hyprconf installer payload (${bold}${selected_branch}${end})...\n"
+curl -L "https://github.com/shell-ninja/hyprconf-install/archive/refs/heads/${selected_branch}.zip" -o hyprconf-install.zip
 
 if [[ -f "$HOME/hyprconf-install.zip" ]]; then
-    mkdir hyprconf-install &> /dev/null
-    unzip hyprconf-install.zip 'hyprconf-install-main/*' -d hyprconf-install &> /dev/null
-    cd hyprconf-install &> /dev/null
-    mv hyprconf-install-main/* . && rmdir hyprconf-install-main &> /dev/null
+    mkdir -p hyprconf-install
+    unzip -q hyprconf-install.zip "hyprconf-install-${selected_branch}/*" -d hyprconf-install
+    cd hyprconf-install || exit 1
+    mv "hyprconf-install-${selected_branch}/"* . 2>/dev/null || true
+    rmdir "hyprconf-install-${selected_branch}" 2>/dev/null || true
     rm "$HOME/hyprconf-install.zip"
 fi
 
-clear
-
 if [[ -d "$HOME/hyprconf-install" ]]; then
-    printf "${cyan}::${end} Starting the main script..\n" && sleep 1 && clear
-
-    cd "$HOME/hyprconf-install"
+    cd "$HOME/hyprconf-install" || exit 1
     chmod +x start.sh
-    ./start.sh
+    exec ./start.sh
 fi
