@@ -25,6 +25,7 @@ printf "  ${cyan}✦${end} ${bold}Bootstrapping installer environment...${end}\n
 
 packages=(
     git
+    gum
     python3
     unzip
     wget
