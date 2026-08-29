@@ -139,13 +139,14 @@ crunini_pkg=(
 )
 
 # checking already installed packages 
-for skipable in "${other_packages[@]}" "${aur_packages[@]}" "${dolphin[@]}"; do
+for skipable in "${other_packages[@]}" "${aur_packages[@]}" "${dolphin[@]}" "${crunini_pkg[@]}"; do
     skip_installed "$skipable"
 done
 
 installble_pkg=($(printf "%s\n" "${other_packages[@]}" | grep -vxFf "$installed_cache"))
 installble_aur_pkg=($(printf "%s\n" "${aur_packages[@]}" | grep -vxFf "$installed_cache"))
 installble_dolphin_pkg=($(printf "%s\n" "${dolphin[@]}" | grep -vxFf "$installed_cache"))
+installble_crunini_pkg=($(printf "%s\n" "${crunini_pkg[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
@@ -158,7 +159,7 @@ for _pkgs in "${installble_pkg[@]}" "${installble_aur_pkg[@]}" "${installble_dol
     fi
 done
 
-for _pkgs in "${crunini_pkg[@]}"; do
+for _pkgs in "${installble_crunini_pkg[@]}"; do
     install_package_nocheck "$_pkgs"
     if sudo pacman -Q "$_pkgs" &>/dev/null; then
         echo "[ DONE ] - $_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null

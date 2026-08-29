@@ -1,0 +1,46 @@
+# 5. Arch Purist Two-Liner
+format = """
+[╭─](bold blue) $os$directory\
+$fill\
+$git_branch$git_status 
+[╰─](bold blue)$character"""
+
+right_format = """\
+$cmd_duration $time\
+"""
+
+[fill]
+symbol = " "
+
+[os]
+disabled = false
+format = "[$symbol]($style)"
+style = "bold blue"
+
+[os.symbols]
+Arch = "󰣇 "
+
+[directory]
+format = "[$path]($style)"
+style = "bold cyan"
+
+[git_branch]
+format = "[ $symbol$branch]($style) "
+style = "bold purple"
+
+[git_status]
+format = "[$all_status$ahead_behind]($style)"
+style = "bold red"
+
+[cmd_duration]
+format = "[󱎫 $duration]($style)"
+style = "bold yellow"
+
+[time]
+disabled = false
+format = " [󰥔 $time]($style)"
+style = "bold blue"
+
+[character]
+success_symbol = "[](bold green) "
+error_symbol = "[](bold red) "

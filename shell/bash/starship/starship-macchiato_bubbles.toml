@@ -1,0 +1,43 @@
+# 3. Macchiato Bubbles
+format = """
+$os\
+$directory\
+$git_branch\
+$git_status\
+$character"""
+
+right_format = """\
+$cmd_duration\
+$time\
+"""
+
+[os]
+disabled = false
+format = "[]($style)[$symbol](bg:#b4befe fg:#1e1e2e)[ ]($style)"
+style = "fg:#b4befe"
+
+[directory]
+format = "[]($style)[$path](bg:#89dceb fg:#1e1e2e)[ ]($style)"
+style = "fg:#89dceb"
+
+[git_branch]
+format = "[]($style)[$symbol$branch](bg:#f38ba8 fg:#1e1e2e)"
+style = "fg:#f38ba8"
+
+[git_status]
+format = "[$all_status$ahead_behind](bg:#f38ba8 fg:#1e1e2e)[ ]($style)"
+style = "fg:#f38ba8"
+
+[cmd_duration]
+format = "[]($style)[󱎫 $duration](bg:#f9e2af fg:#1e1e2e)[ ]($style)"
+style = "fg:#f9e2af"
+
+[time]
+disabled = false
+format = "[]($style)[󰥔 $time](bg:#a6e3a1 fg:#1e1e2e)[]($style)"
+style = "fg:#a6e3a1"
+time_format = "%R"
+
+[character]
+success_symbol = "[](bold green)"
+error_symbol = "[](bold red)"

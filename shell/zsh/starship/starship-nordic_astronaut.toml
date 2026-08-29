@@ -1,0 +1,49 @@
+# 2. Nordic Astronaut's Dashboard
+format = """
+[](#3B4252)\
+$os\
+$directory\
+[](bg:#434C5E fg:#3B4252)\
+$git_branch\
+$git_status\
+[](fg:#434C5E)\
+$character
+"""
+
+right_format = """\
+[](#434C5E)\
+$cmd_duration\
+[](bg:#434C5E fg:#3B4252)\
+$time\
+[](#3B4252)\
+"""
+
+[os]
+disabled = false
+format = "[$symbol ]($style)"
+style = "bg:#3B4252 fg:#A3BE8C bold"
+
+[directory]
+format = "[$path ]($style)"
+style = "bg:#3B4252 fg:#E5E9F0 bold"
+
+[git_branch]
+format = "[ $symbol$branch ]($style)"
+style = "bg:#434C5E fg:#88C0D0 bold"
+
+[git_status]
+format = "[$all_status$ahead_behind ]($style)"
+style = "bg:#434C5E fg:#BF616A bold"
+
+[cmd_duration]
+format = "[ 󱎫 $duration ]($style)"
+style = "bg:#434C5E fg:#EBCB8B bold"
+
+[time]
+disabled = false
+format = "[ 󰥔 $time ]($style)"
+style = "bg:#3B4252 fg:#E5E9F0 bold"
+
+[character]
+success_symbol = " [❯](bold green)"
+error_symbol = " [❯](bold red)"
