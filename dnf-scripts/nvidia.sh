@@ -12,7 +12,7 @@ yellow="\e[1;33m"
 blue="\e[1;34m"
 magenta="\e[1;1;35m"
 cyan="\e[1;36m"
-orange="\e[1;38;5;214m"
+purple="\e[1;38;2;189;147;249m"  # Electric neon purple
 end="\e[1;0m"
 
 display_text() {

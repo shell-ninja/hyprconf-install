@@ -1,5 +1,13 @@
 # Last Modification 👇
 
+## Modern Interactive Ryoku-Themed Installer:
+
+- Added brand new Ryoku-inspired interactive Plan & Configuration screen with auto hardware detection (OS, GPU, display manager, backups)
+- Added live installation progress dashboard with dynamic status checklist (`✓`, `⠋`, `·`) and real-time scrolling sub-terminal command logger
+- Added interactive upfront selection for Shell (Fish/Zsh/Bash), Browser, AUR Helper, SDDM theme, NVIDIA drivers, and Keyboard layouts
+- Modernized color palettes, typography, and clean non-flickering subprocess streaming
+- Added graceful system reboot handler with countdown timer
+
 ## 8 May, 2025:
 
 - Added Google Chrome in the browser list
