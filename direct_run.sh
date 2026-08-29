@@ -101,15 +101,33 @@ fi
 sleep 1
 [[ ! "$(pwd)" == "$HOME" ]] && cd "$HOME"
 
-printf "\n  ${cyan}→${end} Downloading latest Hyprconf installer payload...\n"
-curl -L https://github.com/shell-ninja/hyprconf-install/archive/refs/heads/main.zip -o hyprconf-install.zip
+# ----------------- Branch selection
+printf "\n  ${purple}✦${end} ${bold}Select the branch to install:${end}\n\n"
+printf "    ${cyan}1)${end} ${bold}main${end}   ${muted}— Old Hyprconf${end}\n"
+printf "    ${cyan}2)${end} ${bold}noct${end}   ${muted}— Noctalia Shell variant${end}\n\n"
+
+selected_branch=""
+while [[ -z "$selected_branch" ]]; do
+    printf "  ${yellow}→${end} Enter your choice ${muted}[1/2]${end}: "
+    read -r branch_choice
+    case "$branch_choice" in
+        1) selected_branch="main" ;;
+        2) selected_branch="noct" ;;
+        *) printf "  ${red}✗${end} Invalid choice. Please enter ${cyan}1${end} or ${cyan}2${end}.\n" ;;
+    esac
+done
+
+printf "\n  ${green}✓${end} Selected branch: ${bold}${green}${selected_branch}${end}\n"
+
+printf "\n  ${cyan}→${end} Downloading latest Hyprconf installer payload (${bold}${selected_branch}${end})...\n"
+curl -L "https://github.com/shell-ninja/hyprconf-install/archive/refs/heads/${selected_branch}.zip" -o hyprconf-install.zip
 
 if [[ -f "$HOME/hyprconf-install.zip" ]]; then
     mkdir -p hyprconf-install
-    unzip -q hyprconf-install.zip 'hyprconf-install-main/*' -d hyprconf-install
+    unzip -q hyprconf-install.zip "hyprconf-install-${selected_branch}/*" -d hyprconf-install
     cd hyprconf-install || exit 1
-    mv hyprconf-install-main/* . 2>/dev/null || true
-    rmdir hyprconf-install-main 2>/dev/null || true
+    mv "hyprconf-install-${selected_branch}/"* . 2>/dev/null || true
+    rmdir "hyprconf-install-${selected_branch}" 2>/dev/null || true
     rm "$HOME/hyprconf-install.zip"
 fi
 
