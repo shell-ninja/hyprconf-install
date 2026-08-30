@@ -130,4 +130,9 @@ else
     msg skp "fish is already the default shell."
 fi
 
+if [[ -d "$HOME/.config/fish" ]]; then
+    chmod +x "$HOME/.config/fish/functions"/* 2>&1 | tee -a "$log"
+fi
+
+
 sleep 1 && clear

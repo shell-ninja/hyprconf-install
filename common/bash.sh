@@ -169,20 +169,6 @@ if [ -d ~/.bash ]; then
     # Link the new .blerc if it exists in .bash
     [[ -f ~/.bash/.blerc ]] && ln -sf ~/.bash/.blerc ~/.blerc 2>&1 | tee -a "$log"
 
-    # Configure starship in bashrc
-    # if [[ "$prmpt" =~ ^[Yy]$ ]]; then
-    #     if [ -f ~/.config/starship.toml ]; then
-    #         msg act "Backing up your old starship.toml..." && sleep 1
-    #         mv ~/.config/starship.toml ~/.config/starship.toml.back
-    #     fi
-
-    #     if [[ -f ~/.bash/.bashrc ]]; then
-    #         # Comment out standard PS1 and uncomment starship init
-    #         sed -i --follow-symlinks 's/^PS1=/# PS1=/' ~/.bash/.bashrc
-    #         sed -i --follow-symlinks 's/^# eval "\(.*starship init bash.*\)"/eval "\1"/' ~/.bash/.bashrc
-    #         msg dn "Updated .bashrc file. Commented out PS1 and enabled Starship prompt."
-    #     fi
-    # fi
 fi
 
 # Make scripts executable
