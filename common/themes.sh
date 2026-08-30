@@ -51,14 +51,14 @@ mkdir -p "$log_dir"
 touch "$log"
 
 assets_dir="$parent_dir/assets"
-icons_dir="$HOME/.local/share/icons"
+icons_dir="$HOME/.icons"
 mkdir -p "$icons_dir"
 
 ###------ Cursor Theme: Bibata-Modern-Ice ------###
 bibata_archive="$assets_dir/Bibata-Modern-Ice.tar.gz"
 if [[ -f "$bibata_archive" ]]; then
     msg act "Installing Bibata-Modern-Ice cursor theme..."
-    tar -xzf "$bibata_archive" -C "$icons_dir" &>/dev/null
+    tar -xzf "$bibata_archive" -C "$icons_dir/" --strip-components=1 &>/dev/null
     if [[ -d "$icons_dir/Bibata-Modern-Ice" ]]; then
         sudo cp -r "$icons_dir/Bibata-Modern-Ice" /usr/share/icons/ &>/dev/null
         msg dn "Bibata-Modern-Ice cursor theme installed."
@@ -92,6 +92,7 @@ fi
 ###------ Icon Theme: Tokyo Night ------###
 tokyo_url="https://github.com/ljmill/tokyo-night-icons/releases/download/v0.2.0/TokyoNight-SE.tar.bz2"
 tokyo_archive="$parent_dir/.cache/TokyoNight-SE.tar.bz2"
+mkdir -p "$parent_dir/.cache"
 if [[ ! -d "$icons_dir/TokyoNight-SE" ]]; then
     msg act "Downloading Tokyo Night icon theme..."
     curl -sL "$tokyo_url" -o "$tokyo_archive" 2>>"$log"
