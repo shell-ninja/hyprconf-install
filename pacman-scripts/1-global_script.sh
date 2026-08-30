@@ -30,13 +30,14 @@ fi
 
 ###------ Startup ------###
 
-aur_helper=$(command -v yay || command -v paru)
+aur_helper=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
 
 # skip already installed packages
 skip_installed() {
     [[ ! -f "$installed_cache" ]] && touch "$installed_cache"
+    [[ -z "$aur_helper" ]] && aur_helper=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
 
-    if "$aur_helper" -Q "$1" &> /dev/null; then
+    if pacman -Q "$1" &> /dev/null || ([[ -n "$aur_helper" ]] && "$aur_helper" -Q "$1" &> /dev/null); then
         msg skp "$1 is already installed."
         if ! grep -qx "$1" "$installed_cache"; then
             echo "$1" >> "$installed_cache"
@@ -47,9 +48,15 @@ skip_installed() {
 # package installation function
 install_package() {
     msg act "Installing $1..."
-    "$aur_helper" -S --noconfirm "$1" &> /dev/null
+    [[ -z "$aur_helper" ]] && aur_helper=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
 
-    if "$aur_helper" -Q "$1" &> /dev/null; then
+    if [[ -n "$aur_helper" ]]; then
+        "$aur_helper" -S --noconfirm "$1" &> /dev/null
+    else
+        sudo pacman -S --needed --noconfirm "$1" &> /dev/null
+    fi
+
+    if pacman -Q "$1" &> /dev/null || ([[ -n "$aur_helper" ]] && "$aur_helper" -Q "$1" &> /dev/null); then
         msg dn "$1 was installed successfully!"
     else
         msg err "$1 failed to install."
@@ -59,9 +66,15 @@ install_package() {
 # package installation function with nocheck
 install_package_nocheck() {
     msg act "Installing $1..."
-    "$aur_helper" -S --noconfirm --mflags "--nocheck" "$1" &> /dev/null
+    [[ -z "$aur_helper" ]] && aur_helper=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
 
-    if "$aur_helper" -Q "$1" &> /dev/null; then
+    if [[ -n "$aur_helper" ]]; then
+        "$aur_helper" -S --noconfirm --mflags "--nocheck" "$1" &> /dev/null
+    else
+        sudo pacman -S --needed --noconfirm "$1" &> /dev/null
+    fi
+
+    if pacman -Q "$1" &> /dev/null || ([[ -n "$aur_helper" ]] && "$aur_helper" -Q "$1" &> /dev/null); then
         msg dn "$1 was installed successfully!"
     else
         msg err "$1 failed to install."

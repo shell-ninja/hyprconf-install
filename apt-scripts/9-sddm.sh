@@ -127,8 +127,4 @@ msg act "Activating sddm service..."
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-# run sddm theme script
-common_scripts="$parent_dir/common"
-"$common_scripts/sddm_theme.sh"
-
 sleep 1 && clear

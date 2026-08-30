@@ -28,7 +28,10 @@ printf "  ${cyan}✦${end} ${bold}Initializing prerequisites...${end}\n\n"
 
 packages=(
     git
+    gum
     python3
+    curl
+    unzip
 )
 
 for pkg in "${packages[@]}"; do

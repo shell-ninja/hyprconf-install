@@ -325,6 +325,7 @@ class PlanConfig:
                 browser_choice = opt_map["browser"]["choices"][opt_map["browser"]["index"]]
             f.write(f"install_browser='{'N' if browser_choice == 'Skip' else 'Y'}'\n")
             f.write(f"have_nvidia='{'Y' if opt_map.get('nvidia', {}).get('enabled') else 'N'}'\n")
+            f.write(f"install_sddm_theme='{'Y' if opt_map.get('sddm_theme', {}).get('enabled', True) else 'N'}'\n")
 
         with open(browser_cache, "w") as f:
             f.write(f"{browser_choice}\n")
@@ -387,6 +388,34 @@ def render_plan_screen(plan, selected_idx, term_w, term_h):
 
     # Card 2: Interactive Options Checklist Box
     lines.append(f"{box_pad}{BORDER_COLOR}╭{'─' * (box_w - 2)}╮{RESET}")
+
+    # Title block centered inside the box
+    title_line1 = f"{BOLD}{COLOR_ACCENT}Hyprconf Installation Script{RESET}"
+    title_line2 = f"{COLOR_MUTED}by{RESET}"
+    title_line3 = f"{BOLD}{COLOR_CYAN}Shell Ninja{RESET}"
+
+    def center_in_box(content_str):
+        """Center content_str within the inner box width."""
+        inner_w = box_w - 2  # subtract left and right border chars
+        vis = visible_len(content_str)
+        total_pad = max(0, inner_w - vis)
+        lpad = total_pad // 2
+        rpad = total_pad - lpad
+        return (
+            f"{box_pad}{BORDER_COLOR}│{RESET}"
+            f"{' ' * lpad}{content_str}{' ' * rpad}"
+            f"{BORDER_COLOR}│{RESET}"
+        )
+
+    lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(center_in_box(title_line1))
+    lines.append(center_in_box(title_line2))
+    lines.append(center_in_box(title_line3))
+    lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
+    # Divider
+    sep = f"{BORDER_COLOR}{'─' * (box_w - 2)}{RESET}"
+    lines.append(f"{box_pad}{BORDER_COLOR}│{RESET}{sep}{BORDER_COLOR}│{RESET}")
+    lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
 
     for idx, opt in enumerate(plan.options):
         is_selected = (idx == selected_idx)
@@ -776,6 +805,14 @@ def run_interactive_installer():
         "script": os.path.join(scripts_dir, "9-sddm.sh"),
         "cmd": f"bash {scripts_dir}/9-sddm.sh"
     })
+
+    # Step 5b: SDDM theme (SilentSDDM) — runs as a dedicated step when enabled
+    if opt_map.get("sddm_theme", {}).get("enabled", True):
+        steps.append({
+            "title": "Installing SilentSDDM greeter theme & fonts",
+            "script": os.path.join(common_dir, "sddm_theme.sh"),
+            "cmd": f"bash {common_dir}/sddm_theme.sh"
+        })
 
     # Step 6: XDG Desktop Portal
     steps.append({

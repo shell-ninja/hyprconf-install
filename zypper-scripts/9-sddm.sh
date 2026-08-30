@@ -107,7 +107,4 @@ sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo update-alternatives --set default-displaymanager /usr/lib/X11/displaymanagers/sddm 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-# run sddm theme script
-"$common_scripts/sddm_theme.sh"
-
 sleep 1 && clear

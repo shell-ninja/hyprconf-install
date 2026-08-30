@@ -167,6 +167,8 @@ if [[ "$pkgman" == "pacman" ]]; then
     aur=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
     if [[ -n "$aur" ]]; then
         msg dn "AUR helper $aur was located... Moving on"
+        # Write to cache so 00-repo.sh can detect it too
+        echo "$(basename "$aur")" > "$aur_cache"
         sleep 1
     else
         is_vm=false
@@ -185,7 +187,7 @@ if [[ "$pkgman" == "pacman" ]]; then
                 --cursor.foreground "#bd93f9" \
                 --item.foreground "#c0caf5" \
                 --selected.foreground "#a6e3a1" \
-                "yay" "paru"
+                "yay" "paru" "Skip"
             )
             echo "${choice:-yay}" > "$aur_cache"
         fi
@@ -239,6 +241,12 @@ else
 fi
 
 run_script "$scripts_dir/9-sddm.sh"
+
+# Run SDDM theme installer (SilentSDDM) unless explicitly disabled
+if [[ ! "$install_sddm_theme" =~ ^[Nn]$ ]]; then
+    run_script "$common_scripts/sddm_theme.sh"
+fi
+
 run_script "$scripts_dir/10-xdg_dp.sh"
 
 if [[ "$install_vs_code" =~ ^[Yy]$ ]]; then

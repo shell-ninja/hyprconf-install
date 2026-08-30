@@ -82,7 +82,6 @@ logins=(
     lxdm-gtk3
 )
 
-
 # checking already installed packages 
 for skipable in "${sddm[@]}"; do
     skip_installed "$skipable"
@@ -92,15 +91,17 @@ to_install=($(printf "%s\n" "${sddm[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# Instlling main packages...
-for sddm_pkgs in "${to_install[@]}"; do
-    install_package "$sddm_pkgs"
-    if sudo pacman -Q "$sddm_pkgs" &>/dev/null; then
-        echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
-    else
-        echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
-    fi
-done
+# Installing main packages...
+if [[ ${#to_install[@]} -gt 0 ]]; then
+    for sddm_pkgs in "${to_install[@]}"; do
+        install_package "$sddm_pkgs"
+        if sudo pacman -Q "$sddm_pkgs" &>/dev/null; then
+            echo "[ DONE ] - $sddm_pkgs was installed successfully!" >> "$log"
+        else
+            echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!" >> "$log"
+        fi
+    done
+fi
 
 # Check if other login managers are installed and disabling their service before enabling sddm
 for login_manager in "${logins[@]}"; do
@@ -113,8 +114,5 @@ done
 
 msg act "Activating sddm service..."
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
-
-# run sddm theme script
-"$common_scripts/sddm_theme.sh"
 
 sleep 1 && clear
