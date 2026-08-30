@@ -166,6 +166,30 @@ def detect_keyboard():
         pass
     return "us"
 
+def detect_timezone():
+    try:
+        out = subprocess.check_output("timedatectl show --property=Timezone --value 2>/dev/null", shell=True).decode().strip()
+        if out:
+            return out
+    except Exception:
+        pass
+    try:
+        if os.path.exists("/etc/timezone"):
+            with open("/etc/timezone", "r") as f:
+                tz = f.read().strip()
+                if tz:
+                    return tz
+    except Exception:
+        pass
+    try:
+        if os.path.exists("/etc/localtime"):
+            target = os.path.realpath("/etc/localtime")
+            if "zoneinfo/" in target:
+                return target.split("zoneinfo/", 1)[1]
+    except Exception:
+        pass
+    return ""
+
 def detect_pkgman():
     for cmd, name in [('pacman', 'pacman'), ('dnf', 'dnf'), ('zypper', 'zypper'), ('apt-get', 'apt')]:
         if shutil.which(cmd):
@@ -353,6 +377,8 @@ class PlanConfig:
         self.has_nvidia = is_nvidia_present()
         self.snapshots = detect_snapshots()
         self.keyboard = detect_keyboard()
+        self.timezone = detect_timezone()
+        self.is_dhaka_tz = (self.timezone == "Asia/Dhaka")
 
         self.options = [
             {
@@ -408,6 +434,15 @@ class PlanConfig:
             }
         ]
 
+        if self.is_dhaka_tz:
+            self.options.append({
+                "id": "openbangla",
+                "name": "Fcitx5 & OpenBangla Keyboard",
+                "desc": "Bangla typing support with OpenBangla Keyboard and Fcitx5 input method",
+                "type": "toggle",
+                "enabled": True,
+            })
+
     def save_cache_files(self):
         cache_dir = os.path.join(self.workspace_dir, ".cache")
         os.makedirs(cache_dir, exist_ok=True)
@@ -431,6 +466,7 @@ class PlanConfig:
             f.write(f"install_browser='{'N' if browser_choice == 'Skip' else 'Y'}'\n")
             f.write(f"have_nvidia='{'Y' if opt_map.get('nvidia', {}).get('enabled') else 'N'}'\n")
             f.write(f"install_sddm_theme='{'Y' if opt_map.get('sddm_theme', {}).get('enabled', True) else 'N'}'\n")
+            f.write(f"install_openbangla='{'Y' if opt_map.get('openbangla', {}).get('enabled') else 'N'}'\n")
 
         with open(browser_cache, "w") as f:
             f.write(f"{browser_choice}\n")
@@ -921,6 +957,16 @@ def run_interactive_installer():
             "script": os.path.join(scripts_dir, "8-vs_code.sh"),
             "cmd": f"bash {scripts_dir}/8-vs_code.sh"
         })
+
+    # Step 7b: Fcitx5 & OpenBangla Keyboard (if enabled)
+    if opt_map.get("openbangla", {}).get("enabled"):
+        openbangla_script = os.path.join(scripts_dir, "openbangla.sh")
+        if os.path.exists(openbangla_script):
+            steps.append({
+                "title": "Installing Fcitx5 & OpenBangla Keyboard",
+                "script": openbangla_script,
+                "cmd": f"bash {openbangla_script}"
+            })
 
     # Step 8: NVIDIA (if enabled)
     if opt_map.get("nvidia", {}).get("enabled"):

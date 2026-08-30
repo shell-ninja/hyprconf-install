@@ -163,6 +163,28 @@ else
     msg att "Choose prompts. Press 'ESC' to skip"
     fn_ask_prompts
 
+    user_tz=""
+    if command -v timedatectl &>/dev/null; then
+        user_tz=$(timedatectl show --property=Timezone --value 2>/dev/null)
+    fi
+    if [[ -z "$user_tz" && -f /etc/timezone ]]; then
+        user_tz=$(cat /etc/timezone 2>/dev/null)
+    fi
+    if [[ -z "$user_tz" && -L /etc/localtime ]]; then
+        user_tz=$(readlink /etc/localtime 2>/dev/null | sed 's#.*/zoneinfo/##')
+    elif [[ -z "$user_tz" && -f /etc/localtime ]]; then
+        user_tz=$(realpath /etc/localtime 2>/dev/null | sed 's#.*/zoneinfo/##')
+    fi
+
+    install_openbangla="N"
+    if [[ "$user_tz" == "Asia/Dhaka" ]]; then
+        msg att "Detected Asia/Dhaka timezone."
+        if fn_ask "Would you like to install Fcitx5 and OpenBangla Keyboard?" "Yes, install" "No, skip"; then
+            install_openbangla="Y"
+        fi
+    fi
+    echo "install_openbangla='$install_openbangla'" >> "$cache_file"
+
     echo
     echo
 
@@ -244,6 +266,12 @@ run_script "$scripts_dir/10-xdg_dp.sh"
 
 if [[ "$install_vs_code" =~ ^[Yy]$ ]]; then
     run_script "$scripts_dir/8-vs_code.sh"
+fi
+
+if [[ "$install_openbangla" =~ ^[Yy]$ ]]; then
+    if [[ -f "$scripts_dir/openbangla.sh" ]]; then
+        run_script "$scripts_dir/openbangla.sh"
+    fi
 fi
 
 if [[ "$have_nvidia" =~ ^[Yy]$ ]]; then
