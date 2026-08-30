@@ -71,6 +71,7 @@ other_packages=(
     btop
     cliphist
     curl
+    gtk-layer-shell
     fastfetch
     ffmpeg
     hyprland-guiutils

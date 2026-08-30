@@ -292,34 +292,12 @@ class PlanConfig:
             }
         ]
 
-        if self.pkgman == "pacman":
-            default_aur_idx = 0
-            aur_cache_path = os.path.join(self.workspace_dir, ".cache", "aur")
-            if os.path.exists(aur_cache_path):
-                try:
-                    with open(aur_cache_path) as f:
-                        cached_aur = f.read().strip()
-                        if cached_aur in ["yay", "paru", "Skip"]:
-                            default_aur_idx = ["yay", "paru", "Skip"].index(cached_aur)
-                except Exception:
-                    pass
-
-            self.options.insert(2, {
-                "id": "aur_helper",
-                "name": "AUR helper",
-                "desc": "builds and manages Arch User Repository packages",
-                "type": "choice",
-                "choices": ["yay", "paru", "Skip"],
-                "index": default_aur_idx,
-            })
-
     def save_cache_files(self):
         cache_dir = os.path.join(self.workspace_dir, ".cache")
         os.makedirs(cache_dir, exist_ok=True)
 
         user_cache = os.path.join(cache_dir, "user-cache")
         shell_cache = os.path.join(cache_dir, "shell")
-        aur_cache = os.path.join(cache_dir, "aur")
         browser_cache = os.path.join(cache_dir, "browser")
         pkgman_cache = os.path.join(cache_dir, "pkgman")
 
@@ -346,11 +324,6 @@ class PlanConfig:
             f.write(f"install_fish='{'Y' if shell_choice == 'Fish' else 'N'}'\n")
             f.write(f"install_zsh='{'Y' if shell_choice == 'Zsh' else 'N'}'\n")
             f.write(f"setup_bash='{'Y' if shell_choice == 'Bash' else 'N'}'\n")
-
-        if self.pkgman == "pacman" and "aur_helper" in opt_map:
-            aur_choice = opt_map["aur_helper"]["choices"][opt_map["aur_helper"]["index"]]
-            with open(aur_cache, "w") as f:
-                f.write(f"{aur_choice}\n")
 
 # ----------------- Plan UI Renderer
 def render_plan_screen(plan, selected_idx, term_w, term_h):

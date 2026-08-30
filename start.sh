@@ -75,14 +75,6 @@ check_pkgman() {
 }
 
 check_pkgman
-clear && fn_welcome && sleep 0.3
-
-if [[ -f /etc/os-release ]]; then
-    . /etc/os-release
-    msg act "Preparing repositories for ${cyan}${NAME:-Linux}${end}..." && sleep 1
-else
-    msg act "Preparing repositories..." && sleep 1
-fi
 
 scripts_dir="$dir/${pkgman}-scripts"
 common_scripts="$dir/common"
@@ -93,7 +85,14 @@ fi
 
 chmod +x "$scripts_dir"/*.sh "$common_scripts"/*.sh 2>/dev/null || true
 
-# ----------------- Execute 00-repo.sh before main TUI ----------------- #
+# ----------------- Execute 00-repo.sh before TUI ----------------- #
+if [[ -f /etc/os-release ]]; then
+    . /etc/os-release
+    msg act "Preparing repositories for ${cyan}${NAME:-Linux}${end}..." && sleep 1
+else
+    msg act "Preparing repositories..." && sleep 1
+fi
+
 if [[ "$pkgman" == "pacman" ]]; then
     aur=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
     if [[ -n "$aur" ]]; then
@@ -101,29 +100,18 @@ if [[ "$pkgman" == "pacman" ]]; then
         echo "$(basename "$aur")" > "$aur_cache"
         sleep 1
     else
-        is_vm=false
-        if command -v systemd-detect-virt &>/dev/null && systemd-detect-virt -q; then
-            is_vm=true
-        elif hostnamectl status 2>/dev/null | grep -qiE 'chassis:\s*vm|virtualization'; then
-            is_vm=true
-        fi
-
-        if [[ "$is_vm" == true ]]; then
-            msg att "Virtual machine was detected, 'yay' will be installed."
-            echo "yay" > "$aur_cache"
-        else
-            msg ask "Which AUR helper would you like to install?"
-            choice=$(gum choose \
-                --cursor.foreground "#bd93f9" \
-                --item.foreground "#c0caf5" \
-                --selected.foreground "#a6e3a1" \
-                "yay" "paru" "Skip"
-            )
-            echo "${choice:-yay}" > "$aur_cache"
-        fi
+        msg ask "Which AUR helper would you like to install?"
+        choice=$(gum choose \
+            --cursor.foreground "#bd93f9" \
+            --item.foreground "#c0caf5" \
+            --selected.foreground "#a6e3a1" \
+            "yay-bin" "yay" "paru-bin" "paru" "Skip"
+        )
+        echo "${choice:-yay-bin}" > "$aur_cache"
     fi
-    run_script "$scripts_dir/00-repo.sh"
-else
+fi
+
+if [[ -f "$scripts_dir/00-repo.sh" ]]; then
     run_script "$scripts_dir/00-repo.sh"
 fi
 
@@ -137,6 +125,7 @@ if command -v python3 &>/dev/null && [[ "$1" != "--legacy" ]]; then
 fi
 
 # ----------------- Fallback CLI Mode ----------------- #
+clear && fn_welcome && sleep 0.3
 clear
 if [[ -f "$cache_file" ]]; then
     source "$cache_file"

@@ -30,12 +30,35 @@ fi
 
 ###------ Startup ------###
 
-aur_helper=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
+get_aur_helper() {
+    local pref=""
+    if [[ -f "$aur_cache" ]]; then
+        pref=$(tr -d '[:space:]' < "$aur_cache" 2>/dev/null)
+    elif [[ -f "$cache_dir/aur" ]]; then
+        pref=$(tr -d '[:space:]' < "$cache_dir/aur" 2>/dev/null)
+    fi
+
+    if [[ "$pref" == "paru" ]] && command -v paru &>/dev/null; then
+        echo "paru"
+    elif [[ "$pref" == "yay" ]] && command -v yay &>/dev/null; then
+        echo "yay"
+    elif [[ "$pref" == "Skip" ]]; then
+        echo ""
+    elif command -v paru &>/dev/null; then
+        echo "paru"
+    elif command -v yay &>/dev/null; then
+        echo "yay"
+    else
+        echo ""
+    fi
+}
+
+aur_helper=$(get_aur_helper)
 
 # skip already installed packages
 skip_installed() {
     [[ ! -f "$installed_cache" ]] && touch "$installed_cache"
-    [[ -z "$aur_helper" ]] && aur_helper=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
+    [[ -z "$aur_helper" ]] && aur_helper=$(get_aur_helper)
 
     if pacman -Q "$1" &> /dev/null || ([[ -n "$aur_helper" ]] && "$aur_helper" -Q "$1" &> /dev/null); then
         msg skp "$1 is already installed."
@@ -48,7 +71,7 @@ skip_installed() {
 # package installation function
 install_package() {
     msg act "Installing $1..."
-    [[ -z "$aur_helper" ]] && aur_helper=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
+    [[ -z "$aur_helper" ]] && aur_helper=$(get_aur_helper)
 
     if [[ -n "$aur_helper" ]]; then
         "$aur_helper" -S --noconfirm "$1" &> /dev/null
@@ -66,7 +89,7 @@ install_package() {
 # package installation function with nocheck
 install_package_nocheck() {
     msg act "Installing $1..."
-    [[ -z "$aur_helper" ]] && aur_helper=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
+    [[ -z "$aur_helper" ]] && aur_helper=$(get_aur_helper)
 
     if [[ -n "$aur_helper" ]]; then
         "$aur_helper" -S --noconfirm --mflags "--nocheck" "$1" &> /dev/null

@@ -19,13 +19,15 @@ dim="\e[2m"
 end="\e[0m"
 
 # Base & Cache directory
-dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-cache_dir="$dir/.cache"
+parent_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+cache_dir="$parent_dir/.cache"
 cache_file="$cache_dir/user-cache"
 shell_cache="$cache_dir/shell"
 pkgman_cache="$cache_dir/pkgman"
 aur_cache="$cache_dir/aur"
 browser_cache="$cache_dir/browser"
+dotfiles_cache="$cache_dir/dotfiles"
+log_dir="$parent_dir/Logs"
 
 mkdir -p "$cache_dir"
 

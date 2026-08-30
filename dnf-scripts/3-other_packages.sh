@@ -69,6 +69,7 @@ main_packages=(
     ffmpeg-free
     git
     grim
+    gtk-layer-shell
     ImageMagick
     jq
     kitty
