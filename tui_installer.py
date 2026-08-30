@@ -53,11 +53,13 @@ ACCENT_BORDER = rgb_fg(189, 147, 249)      # Progress box border (#bd93f9)
 
 # ----------------- Terminal Screen Management
 def enter_alt_screen():
-    sys.stdout.write("\033[?1049h\033[2J\033[H\033[?25l")
+    # Alternate screen buffer + clear + hide cursor + enable SGR mouse tracking (1000, 1006) + alt-scroll (1007)
+    sys.stdout.write("\033[?1049h\033[2J\033[H\033[?25l\033[?1000h\033[?1006h\033[?1007h")
     sys.stdout.flush()
 
 def exit_alt_screen():
-    sys.stdout.write("\033[?1049l\033[?25h")
+    # Disable mouse tracking + restore normal screen + show cursor
+    sys.stdout.write("\033[?1000l\033[?1006l\033[?1007l\033[?1049l\033[?25h")
     sys.stdout.flush()
 
 def hide_cursor():
@@ -170,7 +172,7 @@ def detect_pkgman():
             return name
     return "pacman"
 
-# ----------------- Keyboard Reader with cbreak
+# ----------------- Keyboard & Mouse Reader with cbreak
 class InputManager:
     def __init__(self):
         self.fd = sys.stdin.fileno()
@@ -198,28 +200,102 @@ class InputManager:
             return None
         ch1 = sys.stdin.read(1)
         if ch1 == '\x1b':
+            # Check if this is a standalone ESC keypress or the beginning of an escape sequence
             r2, _, _ = select.select([sys.stdin], [], [], 0.05)
             if not r2:
                 return 'ESC'
             ch2 = sys.stdin.read(1)
-            if ch2 == '[':
-                ch3 = sys.stdin.read(1)
-                if ch3 == 'A': return 'UP'
-                elif ch3 == 'B': return 'DOWN'
-                elif ch3 == 'C': return 'RIGHT'
-                elif ch3 == 'D': return 'LEFT'
-                elif ch3 in ('5', '6'):
-                    sys.stdin.read(1)
-                    return 'PAGE'
-            return 'ESC'
+            if ch2 == 'O':  # SS3 sequence (keypad / application cursor mode)
+                r3, _, _ = select.select([sys.stdin], [], [], 0.05)
+                if r3:
+                    ch3 = sys.stdin.read(1)
+                    if ch3 == 'A': return 'UP'
+                    elif ch3 == 'B': return 'DOWN'
+                    elif ch3 == 'C': return 'RIGHT'
+                    elif ch3 == 'D': return 'LEFT'
+                    elif ch3 == 'H': return 'HOME'
+                    elif ch3 == 'F': return 'END'
+                    elif ch3 == 'M': return 'ENTER'
+                return None  # Unhandled SS3 sequence, never trigger ESC
+
+            elif ch2 == '[':  # CSI sequence
+                seq = ""
+                while True:
+                    r_c, _, _ = select.select([sys.stdin], [], [], 0.05)
+                    if not r_c:
+                        break
+                    c = sys.stdin.read(1)
+                    seq += c
+                    if ord(c) >= 0x40 and ord(c) <= 0x7E:
+                        break
+                    if len(seq) > 64:
+                        break
+
+                if not seq:
+                    return None
+
+                # Cursor keys (ANSI standard or modified, e.g. \x1b[1;2A)
+                if seq.endswith('A'): return 'UP'
+                elif seq.endswith('B'): return 'DOWN'
+                elif seq.endswith('C'): return 'RIGHT'
+                elif seq.endswith('D'): return 'LEFT'
+                elif seq.endswith('H'): return 'HOME'
+                elif seq.endswith('F'): return 'END'
+                elif seq.endswith('Z'): return 'LEFT'  # Shift+Tab (backtab)
+
+                # Page keys
+                if seq.startswith('5') and seq.endswith('~'): return 'UP'
+                elif seq.startswith('6') and seq.endswith('~'): return 'DOWN'
+                elif seq.startswith('1~') or seq.startswith('7~'): return 'HOME'
+                elif seq.startswith('4~') or seq.startswith('8~'): return 'END'
+
+                # SGR Mouse mode: \x1b[<button;col;rowM or m
+                if seq.startswith('<'):
+                    m = re.match(r'^<(\d+);(\d+);(\d+)([Mm])$', seq)
+                    if m:
+                        btn = int(m.group(1))
+                        # 64: wheel up, 65: wheel down
+                        if btn == 64: return 'UP'
+                        elif btn == 65: return 'DOWN'
+                    return None
+
+                # X10 / Normal Mouse mode: \x1b[M cb cx cy
+                if seq.startswith('M'):
+                    while len(seq) < 4:
+                        r_m, _, _ = select.select([sys.stdin], [], [], 0.05)
+                        if not r_m:
+                            break
+                        seq += sys.stdin.read(1)
+                    if len(seq) >= 4:
+                        cb = ord(seq[1])
+                        if cb in (96, 64 + 32): return 'UP'
+                        elif cb in (97, 65 + 32): return 'DOWN'
+                    return None
+
+                return None  # Unhandled CSI sequence, never trigger ESC
+
+            # Drain any other unhandled escape sequences
+            while True:
+                r_rest, _, _ = select.select([sys.stdin], [], [], 0.02)
+                if not r_rest:
+                    break
+                sys.stdin.read(1)
+            return None
+
         elif ch1 in ('\r', '\n'):
             return 'ENTER'
         elif ch1 == ' ':
             return 'SPACE'
+        elif ch1 == '\t':
+            return 'DOWN'
         elif ch1 in ('k', 'K'):
             return 'UP'
         elif ch1 in ('j', 'J'):
             return 'DOWN'
+        elif ch1 in ('h', 'H'):
+            return 'LEFT'
+        elif ch1 in ('l', 'L'):
+            return 'RIGHT'
         elif ch1 in ('q', 'Q'):
             return 'QUIT'
         elif ch1 == '\x03':
