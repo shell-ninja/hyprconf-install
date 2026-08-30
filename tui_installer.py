@@ -172,135 +172,175 @@ def detect_pkgman():
             return name
     return "pacman"
 
-# ----------------- Keyboard & Mouse Reader with cbreak
+# ----------------- Keyboard & Mouse Reader with cbreak (Unbuffered OS-level)
 class InputManager:
     def __init__(self):
-        self.fd = sys.stdin.fileno()
+        self.fd = sys.stdin.fileno() if sys.stdin.isatty() else None
         self.old_settings = None
+        self.buf = ""
 
     def enable(self):
-        if not sys.stdin.isatty():
+        if self.fd is None:
             return
         self.old_settings = termios.tcgetattr(self.fd)
         tty.setcbreak(self.fd)
         hide_cursor()
 
     def disable(self):
-        if self.old_settings is not None:
+        if self.old_settings is not None and self.fd is not None:
             termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
             self.old_settings = None
         show_cursor()
 
     def get_key(self, timeout=None):
-        if not sys.stdin.isatty():
+        if self.fd is None:
             time.sleep(timeout or 0.1)
             return None
-        r, _, _ = select.select([sys.stdin], [], [], timeout)
-        if not r:
+
+        # If internal buffer is empty, wait for input via select on fd
+        if not self.buf:
+            r, _, _ = select.select([self.fd], [], [], timeout)
+            if not r:
+                return None
+            try:
+                raw = os.read(self.fd, 1024)
+                if not raw:
+                    return None
+                self.buf += raw.decode('utf-8', errors='ignore')
+            except Exception:
+                return None
+
+        if not self.buf:
             return None
-        ch1 = sys.stdin.read(1)
-        if ch1 == '\x1b':
-            # Check if this is a standalone ESC keypress or the beginning of an escape sequence
-            r2, _, _ = select.select([sys.stdin], [], [], 0.05)
-            if not r2:
+
+        # Handle escape sequences
+        if self.buf[0] == '\x1b':
+            # If only ESC is in buffer, give it a tiny moment (0.05s) to see if sequence bytes follow
+            if len(self.buf) == 1:
+                r, _, _ = select.select([self.fd], [], [], 0.05)
+                if r:
+                    try:
+                        raw = os.read(self.fd, 1024)
+                        self.buf += raw.decode('utf-8', errors='ignore')
+                    except Exception:
+                        pass
+
+            # If still only ESC after wait, it is a genuine standalone ESC keypress
+            if len(self.buf) == 1:
+                self.buf = ""
                 return 'ESC'
-            ch2 = sys.stdin.read(1)
-            if ch2 == 'O':  # SS3 sequence (keypad / application cursor mode)
-                r3, _, _ = select.select([sys.stdin], [], [], 0.05)
-                if r3:
-                    ch3 = sys.stdin.read(1)
-                    if ch3 == 'A': return 'UP'
-                    elif ch3 == 'B': return 'DOWN'
-                    elif ch3 == 'C': return 'RIGHT'
-                    elif ch3 == 'D': return 'LEFT'
-                    elif ch3 == 'H': return 'HOME'
-                    elif ch3 == 'F': return 'END'
-                    elif ch3 == 'M': return 'ENTER'
-                return None  # Unhandled SS3 sequence, never trigger ESC
 
-            elif ch2 == '[':  # CSI sequence
-                seq = ""
-                while True:
-                    r_c, _, _ = select.select([sys.stdin], [], [], 0.05)
-                    if not r_c:
-                        break
-                    c = sys.stdin.read(1)
-                    seq += c
-                    if ord(c) >= 0x40 and ord(c) <= 0x7E:
-                        break
-                    if len(seq) > 64:
-                        break
-
-                if not seq:
+            # SS3 sequence (keypad / application cursor mode: \x1bOA, \x1bOB, etc.)
+            if self.buf[1] == 'O':
+                if len(self.buf) < 3:
+                    r, _, _ = select.select([self.fd], [], [], 0.05)
+                    if r:
+                        try:
+                            self.buf += os.read(self.fd, 1024).decode('utf-8', errors='ignore')
+                        except Exception:
+                            pass
+                if len(self.buf) >= 3:
+                    ch = self.buf[2]
+                    self.buf = self.buf[3:]
+                    if ch == 'A': return 'UP'
+                    elif ch == 'B': return 'DOWN'
+                    elif ch == 'C': return 'RIGHT'
+                    elif ch == 'D': return 'LEFT'
+                    elif ch == 'H': return 'HOME'
+                    elif ch == 'F': return 'END'
+                    elif ch == 'M': return 'ENTER'
+                    return None
+                else:
+                    self.buf = ""
                     return None
 
-                # Cursor keys (ANSI standard or modified, e.g. \x1b[1;2A)
-                if seq.endswith('A'): return 'UP'
-                elif seq.endswith('B'): return 'DOWN'
-                elif seq.endswith('C'): return 'RIGHT'
-                elif seq.endswith('D'): return 'LEFT'
-                elif seq.endswith('H'): return 'HOME'
-                elif seq.endswith('F'): return 'END'
-                elif seq.endswith('Z'): return 'LEFT'  # Shift+Tab (backtab)
+            # CSI sequence (\x1b[...)
+            elif self.buf[1] == '[':
+                term_idx = -1
+                for idx in range(2, len(self.buf)):
+                    if 0x40 <= ord(self.buf[idx]) <= 0x7E:
+                        term_idx = idx
+                        break
 
-                # Page keys
-                if seq.startswith('5') and seq.endswith('~'): return 'UP'
-                elif seq.startswith('6') and seq.endswith('~'): return 'DOWN'
-                elif seq.startswith('1~') or seq.startswith('7~'): return 'HOME'
-                elif seq.startswith('4~') or seq.startswith('8~'): return 'END'
-
-                # SGR Mouse mode: \x1b[<button;col;rowM or m
-                if seq.startswith('<'):
-                    m = re.match(r'^<(\d+);(\d+);(\d+)([Mm])$', seq)
-                    if m:
-                        btn = int(m.group(1))
-                        # 64: wheel up, 65: wheel down
-                        if btn == 64: return 'UP'
-                        elif btn == 65: return 'DOWN'
-                    return None
-
-                # X10 / Normal Mouse mode: \x1b[M cb cx cy
-                if seq.startswith('M'):
-                    while len(seq) < 4:
-                        r_m, _, _ = select.select([sys.stdin], [], [], 0.05)
-                        if not r_m:
+                if term_idx == -1:
+                    r, _, _ = select.select([self.fd], [], [], 0.05)
+                    if r:
+                        try:
+                            self.buf += os.read(self.fd, 1024).decode('utf-8', errors='ignore')
+                        except Exception:
+                            pass
+                    for idx in range(2, len(self.buf)):
+                        if 0x40 <= ord(self.buf[idx]) <= 0x7E:
+                            term_idx = idx
                             break
-                        seq += sys.stdin.read(1)
-                    if len(seq) >= 4:
+
+                if term_idx != -1:
+                    seq = self.buf[2:term_idx + 1]
+                    self.buf = self.buf[term_idx + 1:]
+
+                    # Cursor keys (standard ANSI or modified e.g. \x1b[1;2A)
+                    if seq.endswith('A'): return 'UP'
+                    elif seq.endswith('B'): return 'DOWN'
+                    elif seq.endswith('C'): return 'RIGHT'
+                    elif seq.endswith('D'): return 'LEFT'
+                    elif seq.endswith('H'): return 'HOME'
+                    elif seq.endswith('F'): return 'END'
+                    elif seq.endswith('Z'): return 'LEFT'  # Shift+Tab (backtab)
+
+                    # Page keys
+                    if seq.startswith('5') and seq.endswith('~'): return 'UP'
+                    elif seq.startswith('6') and seq.endswith('~'): return 'DOWN'
+                    elif seq.startswith('1~') or seq.startswith('7~'): return 'HOME'
+                    elif seq.startswith('4~') or seq.startswith('8~'): return 'END'
+
+                    # SGR Mouse mode: \x1b[<button;col;rowM or m
+                    if seq.startswith('<'):
+                        m = re.match(r'^<(\d+);(\d+);(\d+)([Mm])$', seq)
+                        if m:
+                            btn = int(m.group(1))
+                            if btn == 64: return 'UP'
+                            elif btn == 65: return 'DOWN'
+                        return None
+
+                    # X10 / Normal Mouse mode: \x1b[M cb cx cy
+                    if seq.startswith('M') and len(seq) >= 4:
                         cb = ord(seq[1])
                         if cb in (96, 64 + 32): return 'UP'
                         elif cb in (97, 65 + 32): return 'DOWN'
+                        return None
+
+                    return None
+                else:
+                    self.buf = ""
                     return None
 
-                return None  # Unhandled CSI sequence, never trigger ESC
-
-            # Drain any other unhandled escape sequences
-            while True:
-                r_rest, _, _ = select.select([sys.stdin], [], [], 0.02)
-                if not r_rest:
-                    break
-                sys.stdin.read(1)
+            # Discard any other unhandled escape prefix
+            self.buf = ""
             return None
 
-        elif ch1 in ('\r', '\n'):
+        # Single keypress
+        ch = self.buf[0]
+        self.buf = self.buf[1:]
+
+        if ch in ('\r', '\n'):
             return 'ENTER'
-        elif ch1 == ' ':
+        elif ch == ' ':
             return 'SPACE'
-        elif ch1 == '\t':
+        elif ch == '\t':
             return 'DOWN'
-        elif ch1 in ('k', 'K'):
+        elif ch in ('k', 'K'):
             return 'UP'
-        elif ch1 in ('j', 'J'):
+        elif ch in ('j', 'J'):
             return 'DOWN'
-        elif ch1 in ('h', 'H'):
+        elif ch in ('h', 'H'):
             return 'LEFT'
-        elif ch1 in ('l', 'L'):
+        elif ch in ('l', 'L'):
             return 'RIGHT'
-        elif ch1 in ('q', 'Q'):
+        elif ch in ('q', 'Q'):
             return 'QUIT'
-        elif ch1 == '\x03':
+        elif ch == '\x03':
             return 'CTRL_C'
-        return ch1
+        return ch
 
 # ----------------- Plan State & Options
 class PlanConfig:

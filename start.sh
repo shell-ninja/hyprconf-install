@@ -108,11 +108,13 @@ if [[ "$pkgman" == "pacman" ]]; then
             "yay-bin" "yay" "paru-bin" "paru" "Skip"
         )
         echo "${choice:-yay-bin}" > "$aur_cache"
-    fi
-fi
 
-if [[ -f "$scripts_dir/00-repo.sh" ]]; then
-    run_script "$scripts_dir/00-repo.sh"
+        sleep 2
+        
+        if [[ -f "$scripts_dir/00-repo.sh" ]]; then
+            run_script "$scripts_dir/00-repo.sh"
+        fi
+    fi
 fi
 
 # ----------------- Modern TUI Launcher ----------------- #
