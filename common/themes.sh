@@ -89,29 +89,6 @@ else
     msg skp "Kora archive not found in assets, skipping..."
 fi
 
-###------ Icon Theme: Tela Circle ------###
-tela_cache="$parent_dir/.cache/tela-circle"
-tela_url="https://api.github.com/repos/vinceliuice/Tela-circle-icon-theme/tarball/2026-07-07"
-if [[ ! -d "$icons_dir/Tela-circle" ]]; then
-    msg act "Downloading Tela Circle icon theme..."
-    mkdir -p "$tela_cache"
-    curl -sL "$tela_url" | tar -xz -C "$tela_cache" --strip-components=1 2>>"$log"
-    if [[ -f "$tela_cache/install.sh" ]]; then
-        chmod +x "$tela_cache/install.sh"
-        # Install all color variants for current user
-        bash "$tela_cache/install.sh" -a 2>>"$log"
-        sudo cp -r "$icons_dir"/Tela-circle* /usr/share/icons/ &>/dev/null
-        msg dn "Tela Circle icon theme installed."
-        echo "[ DONE ] - Tela Circle icon theme installed." >>"$log"
-    else
-        msg err "Tela Circle install.sh not found after download."
-        echo "[ ERROR ] - Tela Circle install.sh missing." >>"$log"
-    fi
-    rm -rf "$tela_cache"
-else
-    msg skp "Tela Circle already installed, skipping..."
-fi
-
 ###------ Icon Theme: Tokyo Night ------###
 tokyo_url="https://github.com/ljmill/tokyo-night-icons/releases/download/v0.2.0/TokyoNight-SE.tar.bz2"
 tokyo_archive="$parent_dir/.cache/TokyoNight-SE.tar.bz2"

@@ -35,15 +35,7 @@ mkdir -p "$log_dir" "$cache_dir"
 log="$log_dir/1-install-$(date +%d-%m-%y).log"
 touch "$log"
 
-# ----------------- Modern TUI Launcher
-# If python3 is available and not in legacy mode, launch the Ryoku-style interactive TUI
-if command -v python3 &>/dev/null && [[ "$1" != "--legacy" ]]; then
-    if [[ -f "$dir/tui_installer.py" ]]; then
-        exec python3 "$dir/tui_installer.py" "$@"
-    fi
-fi
-
-# ----------------- Fallback CLI Mode ----------------- #
+# ----------------- Fallback CLI & Helper Functions ----------------- #
 if [[ -f "$dir/interaction_fn.sh" ]]; then
     source "$dir/interaction_fn.sh"
 else
@@ -87,12 +79,65 @@ clear && fn_welcome && sleep 0.3
 
 if [[ -f /etc/os-release ]]; then
     . /etc/os-release
-    msg act "Starting the main scripts for ${cyan}${NAME:-Linux}${end}..." && sleep 1
+    msg act "Preparing repositories for ${cyan}${NAME:-Linux}${end}..." && sleep 1
 else
-    msg act "Starting the main scripts..." && sleep 1
+    msg act "Preparing repositories..." && sleep 1
 fi
-clear
 
+scripts_dir="$dir/${pkgman}-scripts"
+common_scripts="$dir/common"
+
+if [[ ! -d "$scripts_dir" ]]; then
+    fn_exit "Scripts directory for $pkgman ($scripts_dir) does not exist."
+fi
+
+chmod +x "$scripts_dir"/*.sh "$common_scripts"/*.sh 2>/dev/null || true
+
+# ----------------- Execute 00-repo.sh before main TUI ----------------- #
+if [[ "$pkgman" == "pacman" ]]; then
+    aur=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
+    if [[ -n "$aur" ]]; then
+        msg dn "AUR helper $aur was located... Moving on"
+        echo "$(basename "$aur")" > "$aur_cache"
+        sleep 1
+    else
+        is_vm=false
+        if command -v systemd-detect-virt &>/dev/null && systemd-detect-virt -q; then
+            is_vm=true
+        elif hostnamectl status 2>/dev/null | grep -qiE 'chassis:\s*vm|virtualization'; then
+            is_vm=true
+        fi
+
+        if [[ "$is_vm" == true ]]; then
+            msg att "Virtual machine was detected, 'yay' will be installed."
+            echo "yay" > "$aur_cache"
+        else
+            msg ask "Which AUR helper would you like to install?"
+            choice=$(gum choose \
+                --cursor.foreground "#bd93f9" \
+                --item.foreground "#c0caf5" \
+                --selected.foreground "#a6e3a1" \
+                "yay" "paru" "Skip"
+            )
+            echo "${choice:-yay}" > "$aur_cache"
+        fi
+    fi
+    run_script "$scripts_dir/00-repo.sh"
+else
+    run_script "$scripts_dir/00-repo.sh"
+fi
+
+# ----------------- Modern TUI Launcher ----------------- #
+# If python3 is available and not in legacy mode, launch the interactive TUI
+if command -v python3 &>/dev/null && [[ "$1" != "--legacy" ]]; then
+    if [[ -f "$dir/tui_installer.py" ]]; then
+        clear
+        exec python3 "$dir/tui_installer.py" "$@"
+    fi
+fi
+
+# ----------------- Fallback CLI Mode ----------------- #
+clear
 if [[ -f "$cache_file" ]]; then
     source "$cache_file"
     if [[ -z "$have_nvidia" ]]; then
@@ -152,50 +197,7 @@ fi
 [[ -f "$cache_file" ]] && source "$cache_file"
 [[ -f "$shell_cache" ]] && source "$shell_cache"
 
-scripts_dir="$dir/${pkgman}-scripts"
-common_scripts="$dir/common"
-
-if [[ ! -d "$scripts_dir" ]]; then
-    fn_exit "Scripts directory for $pkgman ($scripts_dir) does not exist."
-fi
-
-chmod +x "$scripts_dir"/*.sh "$common_scripts"/*.sh 2>/dev/null || true
 clear
-
-# Execute Repo setup
-if [[ "$pkgman" == "pacman" ]]; then
-    aur=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
-    if [[ -n "$aur" ]]; then
-        msg dn "AUR helper $aur was located... Moving on"
-        # Write to cache so 00-repo.sh can detect it too
-        echo "$(basename "$aur")" > "$aur_cache"
-        sleep 1
-    else
-        is_vm=false
-        if command -v systemd-detect-virt &>/dev/null && systemd-detect-virt -q; then
-            is_vm=true
-        elif hostnamectl status 2>/dev/null | grep -qiE 'chassis:\s*vm|virtualization'; then
-            is_vm=true
-        fi
-
-        if [[ "$is_vm" == true ]]; then
-            msg att "Virtual machine was detected, 'yay' will be installed."
-            echo "yay" > "$aur_cache"
-        else
-            msg ask "Which AUR helper would you like to install?"
-            choice=$(gum choose \
-                --cursor.foreground "#bd93f9" \
-                --item.foreground "#c0caf5" \
-                --selected.foreground "#a6e3a1" \
-                "yay" "paru" "Skip"
-            )
-            echo "${choice:-yay}" > "$aur_cache"
-        fi
-        run_script "$scripts_dir/00-repo.sh"
-    fi
-else
-    run_script "$scripts_dir/00-repo.sh"
-fi
 
 # Hyprland and tools
 run_script "$scripts_dir/2-hyprland.sh"

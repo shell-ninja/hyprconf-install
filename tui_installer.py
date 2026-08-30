@@ -293,13 +293,24 @@ class PlanConfig:
         ]
 
         if self.pkgman == "pacman":
+            default_aur_idx = 0
+            aur_cache_path = os.path.join(self.workspace_dir, ".cache", "aur")
+            if os.path.exists(aur_cache_path):
+                try:
+                    with open(aur_cache_path) as f:
+                        cached_aur = f.read().strip()
+                        if cached_aur in ["yay", "paru", "Skip"]:
+                            default_aur_idx = ["yay", "paru", "Skip"].index(cached_aur)
+                except Exception:
+                    pass
+
             self.options.insert(2, {
                 "id": "aur_helper",
                 "name": "AUR helper",
                 "desc": "builds and manages Arch User Repository packages",
                 "type": "choice",
                 "choices": ["yay", "paru", "Skip"],
-                "index": 0,
+                "index": default_aur_idx,
             })
 
     def save_cache_files(self):
@@ -739,13 +750,6 @@ def run_interactive_installer():
     opt_map = {opt["id"]: opt for opt in plan.options}
 
     steps = []
-    # Step 0: Repositories
-    steps.append({
-        "title": "Updating package repositories & toolchain",
-        "script": os.path.join(scripts_dir, "00-repo.sh"),
-        "cmd": f"bash {scripts_dir}/00-repo.sh"
-    })
-
     # Step 1: Core Hyprland
     steps.append({
         "title": "Installing core Hyprland compositor & tools",
