@@ -65,7 +65,6 @@ fi
 copr_repos=(
     solopasha/hyprland
     tofik/nwg-shell
-    lihaohong/yazi
     erikreider/SwayNotificationCenter  
     alternateved/eza
     jkinred/satty

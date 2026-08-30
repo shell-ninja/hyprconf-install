@@ -101,7 +101,6 @@ hypr_package=(
   wl-clipboard
   xdg-utils
   xwayland
-  yazi
 )
 
 other_packages=(

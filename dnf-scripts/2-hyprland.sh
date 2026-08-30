@@ -64,11 +64,8 @@ fi
 
 _hypr=(
     hyprland
-    hyprlock
     hypridle
     hyprcursor
-    hyprsunset
-    # hyprpolkitagent
     pyprland
 )
 

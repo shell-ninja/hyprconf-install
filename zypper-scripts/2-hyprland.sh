@@ -51,7 +51,7 @@ installed_cache="$cache_dir/installed_packages"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "hyprpolkitagent" "$log" | awk {'print $2'})
+    last_installed=$(grep "hypridle" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         msg skp "Skipping this script. No need to run it again..."
         sleep 1
@@ -64,16 +64,12 @@ fi
 
 hypr_pkgs=(
     hyprland
-    # hyprpaper
     hyprcursor
     hyprland-protocols-devel
     wayland-protocols-devel
     hyprutils-devel
     hyprwayland-scanner
-    hyprlock
     hypridle
-    hyprpolkitagent
-    hyprsunset
 )
 
 hypr_python=(

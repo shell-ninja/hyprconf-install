@@ -65,12 +65,8 @@ checkup=(
     grimblast-git
     partitionmanager
     hyprland
-    hyprlock
-    # hyprpaper
     hypridle
     hyprcursor
-    hyprsunset
-    hyprland-qtutils
     imagemagick
     jq
     kitty
@@ -90,7 +86,6 @@ checkup=(
     pamixer
     pavucontrol
     pciutils
-    polkit-kde-agent
     power-profiles-daemon
     python-gobject
     pyprland
@@ -118,7 +113,6 @@ checkup=(
     wget
     wl-clipboard
     xorg-xrandr
-    yazi
     zip
 )
 

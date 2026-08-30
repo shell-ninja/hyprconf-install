@@ -66,10 +66,8 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
 _hypr=(
     hyprland
-    hyprlock
     hypridle
     hyprcursor
-    # hyprpolkitagent
 )
 
 # checking already installed packages 

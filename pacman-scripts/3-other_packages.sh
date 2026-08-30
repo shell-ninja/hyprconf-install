@@ -98,7 +98,6 @@ other_packages=(
     pavucontrol
     parallel
     pciutils
-    polkit-kde-agent
     power-profiles-daemon
     python-gobject
     qt5ct
@@ -114,14 +113,12 @@ other_packages=(
     wget
     wl-clipboard
     xorg-xrandr
-    yazi
     zip
 )
 
 aur_packages=(
     cava
     grimblast-git
-    hyprsunset
     noctalia
     tty-clock
     pyprland

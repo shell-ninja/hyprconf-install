@@ -105,7 +105,6 @@ checkup=(
     wget2
     wl-clipboard
     xdg-utils
-    yazi
     btop
     cava
     cliphist
@@ -131,7 +130,6 @@ checkup=(
     qt6-qt5compat 
     qt6-qtdeclarative 
     qt6-qtsvg
-    xfce-polkit
     xdg-desktop-portal-hyprland
     xdg-desktop-portal-kde
 )

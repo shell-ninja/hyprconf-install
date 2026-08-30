@@ -56,10 +56,8 @@ fi
 
 checkup=(
     hyprland
-    hyprlock
     hypridle
     hyprcursor
-    hyprpolkitagent
     curl
     fastfetch
     ffmpeg
@@ -92,7 +90,6 @@ checkup=(
     wget
     wl-clipboard
     xdg-utils
-    yazi
     btop
     cava
     mpv

@@ -113,8 +113,6 @@ main_packages=(
     wget2
     wl-clipboard
     xdg-utils
-    xfce-polkit
-    yazi
 )
 
 # other necessary packages
