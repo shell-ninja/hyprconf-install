@@ -1090,8 +1090,8 @@ def run_interactive_installer():
             print()
             print(f"  {COLOR_TEXT}The TUI installer is handing control to the Hyprconf setup\n"
                   f"  script. You can now interact with all prompts directly:\n")
-            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Choose your bar layout (Noctalia){RESET}")
-            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Choose your launcher & lockscreen style{RESET}")
+            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Choose your bar layout (Waybar){RESET}")
+            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Choose your lockscreen style (Hyprlock){RESET}")
             print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Opt in/out of extra wallpaper download{RESET}")
             print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Backup existing configs as you prefer{RESET}")
             print()
