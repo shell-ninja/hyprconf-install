@@ -1,0 +1,6 @@
+ble-face -s auto_complete fg=8,bg=none
+ble-face -s syntax_default fg=99,bold
+ble-face -s syntax_error fg=red,bg=none
+ble-face -s syntax_command fg=33
+ble-face -s filename_warning fg=red,underline
+ble-face -s command_alias fg=green

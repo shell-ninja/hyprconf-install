@@ -1,133 +1,102 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
 
-# color definition
-red="\e[1;31m"
-green="\e[1;32m"
-yellow="\e[1;33m"
-blue="\e[1;34m"
-magenta="\e[1;1;35m"
-cyan="\e[1;36m"
-orange="\e[1;38;5;214m"
-end="\e[1;0m"
+# ----------------- Color definitions
+red="\e[1;38;2;247;118;142m"
+green="\e[1;38;2;166;227;161m"
+yellow="\e[1;38;2;224;175;104m"
+blue="\e[1;38;2;122;162;247m"
+cyan="\e[1;38;2;125;207;255m"
+purple="\e[1;38;2;189;147;249m"   # Electric neon purple
+lavender="\e[1;38;2;203;166;247m" # Soft lavender
+muted="\e[38;2;108;112;134m"
+bold="\e[1m"
+end="\e[0m"
 
-dir="$(dirname "$(realpath "$0")")"
+dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 start="$dir/start.sh"
 
-clear && sleep 1
+clear
+printf "\n"
+printf "  ${purple}${bold}█░█ █▄█ █▀█ █▀█ █▀▀ █▀█ █▄░█ █▀▀${end}\n"
+printf "  ${lavender}${bold}█▀█ ░█░ █▀▀ █▀▄ █▄▄ █▄█ █░▀█ █▀░${end}\n"
+printf "          ${muted}hyprland rice installer${end}\n\n"
 
-printf "${cyan}**${end} Pre install script...\n   Need to install some packages first, installing those...\n" && sleep 2
+printf "  ${cyan}✦${end} ${bold}Initializing prerequisites...${end}\n\n"
 
 packages=(
     git
     gum
+    python3
+    curl
+    unzip
 )
 
 for pkg in "${packages[@]}"; do
-
     if command -v pacman &> /dev/null; then
         if sudo pacman -Q "$pkg" &> /dev/null; then
-            printf "${magenta}[ Skip ] ${end} Skipping $pkg, it's already installed...\n"
+            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
         else
-            printf "${green}=>${end} Installing $pkg...\n"
+            printf "  ${purple}→${end} Installing $pkg...\n"
             if sudo pacman -S --noconfirm "$pkg" &> /dev/null; then
-                printf "${cyan}::${end} Successfully installed ${cyan}$pkg${end}...\n"
+                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
             fi
         fi
     elif command -v zypper &> /dev/null; then
-
         if sudo zypper se -i "$pkg" &> /dev/null; then
-            printf "${magenta}[ Skip ]${end} Skipping $pkg, it's already installed...\n"
+            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
         else
-            printf "${green}=>${end} Installing $pkg...\n"
+            printf "  ${purple}→${end} Installing $pkg...\n"
             if sudo zypper in -y "$pkg" &> /dev/null; then
-                printf "${cyan}::${end} Successfully installed ${cyan}$pkg${end}...\n"
+                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
             fi
         fi
     fi
-
 done
 
-
-# installing base devel for arch linux
+# Base devel for arch
 if command -v pacman &> /dev/null; then
     if sudo pacman -Q base-devel &> /dev/null; then
-        printf "${magenta}[ Skip ] ${end} Skipping base-devel, it's already installed...\n"
+        printf "  ${muted}· [SKIP] base-devel is already installed${end}\n"
     else
-        printf "${green}=>${end} Installing base-devel...\n"
+        printf "  ${purple}→${end} Installing base-devel...\n"
         if sudo pacman -S --noconfirm base-devel &> /dev/null; then
-            printf "${cyan}::${end} Successfully installed ${cyan}base-devel${end}...\n"
+            printf "  ${green}✓${end} Successfully installed ${green}base-devel${end}\n"
         fi
     fi
 fi
 
-# only for fedora
+# Fedora
 if command -v dnf &> /dev/null; then
-
-    if rpm -q git &> /dev/null; then
-        printf "${magenta}[ Skip ]${end} Skipping git, it's already installed...\n"
-    else
-        printf "${green}=>${end} Installing git...\n"
-        if sudo dnf install -y git; then
-            printf "${cyan}::${end} Successfully installed ${cyan}git${end}...\n"
-        fi
-    fi
-
-    sleep 1
-
-    printf "${green}=>${end} Installing gum...\n"
-    echo '[charm]
-name=Charm
-baseurl=https://repo.charm.sh/yum/
-enabled=1
-gpgcheck=1
-gpgkey=https://repo.charm.sh/yum/gpg.key' | sudo tee /etc/yum.repos.d/charm.repo &> /dev/null
-
-    sudo yum install --assumeyes gum &> /dev/null
-
-    if command -v gum &> /dev/null; then
-        printf "${cyan}::${end} Successfully installed ${cyan}gum${end}...\n"
-    fi
-fi
-
-# only for debian/ubuntu
-if command -v apt-get &> /dev/null; then
-
-    pkgs=(git curl)
-
-    for pkg in "${pkgs[@]}"; do
-
-        if dpkg -s "$pkg" &> /dev/null; then
-            printf "${magenta}[ Skip ]${end} Skipping $pkg, it's already installed...\n"
+    for pkg in git python3; do
+        if rpm -q "$pkg" &> /dev/null; then
+            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
         else
-            printf "${green}=>${end} Installing $pkg...\n"
-            if sudo apt-get install -y $pkg; then
-                printf "${cyan}::${end} Successfully installed ${cyan}$pkg${end}...\n"
+            printf "  ${purple}→${end} Installing $pkg...\n"
+            if sudo dnf install -y "$pkg" &> /dev/null; then
+                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
             fi
         fi
     done
+fi
 
-    sleep 1
-
-    if dpkg -s gum &> /dev/null; then
-        printf "${magenta}[ SKIP ]${end} Skipping gum, it was already installed..\n"
-    else
-        printf "${green}=>${end} Installing gum...\n"
-        sudo mkdir -p /etc/apt/keyrings
-        curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/charm.gpg &> /dev/null
-        echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list &> /dev/null
-        sudo apt-get update &> /dev/null
-        sudo apt-get install -y gum &> /dev/null
-    fi
-
-    if dpkg -s gum &> /dev/null; then
-        printf "${cyan}::${end} Gum was installed successfully!\n"
-    fi
+# Debian/Ubuntu
+if command -v apt-get &> /dev/null; then
+    pkgs=(git python3 curl)
+    for pkg in "${pkgs[@]}"; do
+        if dpkg -s "$pkg" &> /dev/null; then
+            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
+        else
+            printf "  ${purple}→${end} Installing $pkg...\n"
+            if sudo apt-get install -y "$pkg" &> /dev/null; then
+                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
+            fi
+        fi
+    done
 fi
 
 sleep 1
-
 chmod +x "$start"
-"$start"
+exec "$start"

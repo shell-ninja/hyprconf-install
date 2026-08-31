@@ -1,0 +1,38 @@
+# 5. MacOS Frame
+format = """
+[╭─](bold #6e738d)[●](#ff5f56)[●](#ffbd2e)[●](#27c93f)[─](bold #6e738d) $os$directory
+[╰─](bold #6e738d)$character"""
+
+right_format = """\
+$git_branch$git_status $cmd_duration $time\
+"""
+
+[os]
+disabled = false
+format = "[$symbol]($style) "
+style = "bold #cad3f5"
+
+[directory]
+format = "[$path]($style)"
+style = "bold #8aadf4"
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+style = "bold #c6a0f6"
+
+[git_status]
+format = "[$all_status$ahead_behind]($style)"
+style = "bold #ed8796"
+
+[cmd_duration]
+format = "[󱎫 $duration]($style) "
+style = "bold #eed49f"
+
+[time]
+disabled = false
+format = "[󰥔 $time]($style)"
+style = "bold #a6da95"
+
+[character]
+success_symbol = "[ ❯](bold #a6da95) "
+error_symbol = "[ ❯](bold #ed8796) "

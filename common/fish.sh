@@ -10,7 +10,7 @@ yellow="\e[1;33m"
 blue="\e[1;34m"
 magenta="\e[1;1;35m"
 cyan="\e[1;36m"
-orange="\e[1;38;5;214m"
+purple="\e[1;38;2;189;147;249m"  # Electric neon purple
 end="\e[1;0m"
 
 display_text() {
@@ -35,8 +35,8 @@ printf " \n \n"
 
 ###------ Startup ------###
 
+# install script dir
 dir="$(dirname "$(realpath "$0")")"
-
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
@@ -47,92 +47,92 @@ source "$pkgman_cache"
 # install script dir
 source "$parent_dir/${pkgman}-scripts/1-global_script.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/fish-$(date +%d-%m-%y).log"
 
 # skip installed cache
-installed_cache="$parent_dir/.cache/installed_packages"
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "thefuck" "$log" | awk {'print $2'})
+    last_installed=$(grep "fish" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         msg skp "Skipping this script. No need to run it again..."
         sleep 1
         exit 0
     fi
+
 else
     mkdir -p "$log_dir"
     touch "$log"
 fi
 
-# required packages
+# --- Packages Lists ---
 common_packages=(
-    bat
-    curl
-    eza
-    fastfetch
-    figlet
+    bat 
+    curl 
+    eza 
+    fastfetch 
+    figlet 
     fish
-    fzf
-    git
-    rsync
-    starship
-    zoxide
+    fzf 
+    git 
+    rsync 
+    starship 
+    zoxide 
 )
 
 for_opensuse=(
-    python311
-    python311-pip
-    python311-pipx
+    python311 
+    python311-pip 
+    python311-pipx 
     xclip
 )
-
 
 # checking already installed packages 
 for skipable in "${common_packages[@]}"; do
     skip_installed "$skipable"
 done
 
-to_install=($(printf "%s\n" "${common_packages[@]}" | grep -vxFf "$installed_cache"))
+installble_pkg=($(printf "%s\n" "${common_packages[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# Instlling main packages...
-for shell in "${to_install[@]}"; do
-    install_package "$shell"
+for _pkgs in "${installble_pkg[@]}"; do
+    install_package "$_pkgs"
+    if command -v "$_pkgs" &>/dev/null; then
+        echo -e "[ DONE ] - $_pkgs was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+    else
+        echo -e "[ ERROR ] - Sorry, could not install $_pkgs!" 2>&1 | tee -a "$log" &>/dev/null
+    fi
 done
 
-if [[ "$pkgman" == "pacman" || "$pkgman" == "dnf" || "$pkgman" == "apt" ]]; then
-    install_package thefuck 2>&1 | tee -a "$log"
-elif [[ "$pkgman" == "zypper" ]]; then
-    msg att "Some necessary packages will be installed using ${pkgman}..." && sleep 1
-
-    for pkgs in "${for_opensuse[@]}"; do
-        install_package "$pkgs" 2>&1 | tee -a "$log"
-    done
-
-    # installing thefu*k
-    if command -v pipx &> /dev/null; then
-        pipx runpip thefuck install setuptools &> /dev/null
-        sleep 0.5
-        pipx install --python python3.11 thefuck &> /dev/null 2>&1 | tee -a "$log"
-
-        if command -v thefuck &> /dev/null; then
-            msg dn "thef*ck was installed successfully!" && sleep 1
+# for opensuse only
+if [[ "$pkgman" == "zypper" ]]; then
+    for _pkgs in "${for_opensuse[@]}"; do
+        install_package "$_pkgs"
+        if sudo zypper se -i "$_pkgs" &>/dev/null; then
+            echo -e "[ DONE ] - $_pkgs was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+        else
+            echo -e "[ ERROR ] - Sorry, could not install $_pkgs!" 2>&1 | tee -a "$log" &>/dev/null
         fi
-    fi
+    done
 fi
 
-if command -v thefuck &> /dev/null; then
-    echo "[ DONE ] - thefuck was installed successfully!" 2>&1 | tee -a "$log"
+# --- Change Default Shell ---
+if [[ "$SHELL" != *"fish"* ]]; then
+    msg act "Changing default shell to fish..."
+    chsh -s "$(command -v fish)"
+    msg dn "Shell changed. (You may need to log out and back in for this to take effect)."
 else
-    echo "[ ERROR ] - Could not install thefuck" 2>&1 | tee -a "$log"
+    msg skp "fish is already the default shell."
 fi
 
-if [[ ! "$SHELL" == "$(which fish)" ]]; then
-    msg act "Changing shell to fish.."
-    chsh -s "$(which fish)"
+if [[ -d "$HOME/.config/fish" ]]; then
+    chmod +x "$HOME/.config/fish/functions"/* 2>&1 | tee -a "$log"
 fi
+
 
 sleep 1 && clear
