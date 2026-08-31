@@ -52,19 +52,16 @@ other_packages=(
     btop
     cliphist
     curl
-    # dunst
-    # eog
     fastfetch
     ffmpeg
-    # gnome-disk-utility
     hyprland-guiutils
     partitionmanager
     imagemagick
     jq
-    # konsole
     kitty
     kvantum
     kvantum-qt5
+    layer-gtk-shell
     less
     lxappearance
     mpv-mpris
