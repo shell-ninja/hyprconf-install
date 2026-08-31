@@ -13,25 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-display_text() {
-    gum style \
-        --border rounded \
-        --align center \
-        --width 60 \
-        --margin "1" \
-        --padding "1" \
-        '
-   ____ _             __
-  / __/(_)___  ___ _ / /
- / _/ / // _ \/ _ `// / 
-/_/  /_//_//_/\_,_//_/  
-                        
-'
-}
-
-clear && display_text
-printf " \n \n"
-
 ###------ Startup ------###
 
 # install script dir
@@ -60,18 +41,15 @@ checkup=(
     cava
     cliphist
     curl
-    # dunst
     fastfetch
     ffmpeg
     grimblast-git
     partitionmanager
     hyprland
     hyprlock
-    # hyprpaper
     hypridle
     hyprcursor
     hyprsunset
-    hyprland-qtutils
     imagemagick
     jq
     kitty
@@ -105,8 +83,7 @@ checkup=(
     qt5-graphicaleffects
     qt5-quickcontrols2
     ripgrep
-    rofi-wayland
-    # swappy
+    rofi
     satty
     swaync
     awww
@@ -116,7 +93,6 @@ checkup=(
     dolphin
     gwenview
     okular
-    tty-clock
     unzip
     waybar
     wget

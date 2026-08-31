@@ -134,6 +134,6 @@ fi
 
 if [[ -d "$HOME/hyprconf-install" ]]; then
     cd "$HOME/hyprconf-install" || exit 1
-    chmod +x start.sh
-    exec ./start.sh
+    chmod +x install.sh
+    exec ./install.sh
 fi

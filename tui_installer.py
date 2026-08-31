@@ -400,7 +400,7 @@ class PlanConfig:
                 "name": "Login shell",
                 "desc": "modern friendly interactive shell with hyprconf presets",
                 "type": "choice",
-                "choices": ["Fish", "Zsh", "Bash", "Skip"],
+                "choices": ["Bash", "Fish", "Zsh", "Skip"],
                 "index": 0,
             },
             {
@@ -410,13 +410,6 @@ class PlanConfig:
                 "type": "choice",
                 "choices": ["Brave", "Google_Chrome", "Zen Browser", "Firefox", "Chromium", "Vivaldi", "Skip"],
                 "index": 0,
-            },
-            {
-                "id": "vscode",
-                "name": "Visual Studio Code",
-                "desc": "VS Code editor bundled with tailored extensions & rice theme",
-                "type": "toggle",
-                "enabled": True,
             },
             {
                 "id": "nvidia",
@@ -459,7 +452,7 @@ class PlanConfig:
 
         with open(user_cache, "w") as f:
             f.write(f"setup_for_bluetooth='{'Y' if opt_map.get('bluetooth', {}).get('enabled') else 'N'}'\n")
-            f.write(f"install_vs_code='{'Y' if opt_map.get('vscode', {}).get('enabled') else 'N'}'\n")
+            f.write("install_vs_code='N'\n")
             browser_choice = "Skip"
             if "browser" in opt_map:
                 browser_choice = opt_map["browser"]["choices"][opt_map["browser"]["index"]]
@@ -471,7 +464,17 @@ class PlanConfig:
         with open(browser_cache, "w") as f:
             f.write(f"{browser_choice}\n")
 
-        shell_choice = opt_map.get("shell", {}).get("choices", ["Fish"])[opt_map.get("shell", {}).get("index", 0)]
+        if self.pkgman == "pacman":
+            aur_cache = os.path.join(cache_dir, "aur")
+            aur_helper = shutil.which("yay") or shutil.which("paru")
+            if aur_helper:
+                with open(aur_cache, "w") as f:
+                    f.write(f"{os.path.basename(aur_helper)}\n")
+            elif not os.path.exists(aur_cache):
+                with open(aur_cache, "w") as f:
+                    f.write("yay-bin\n")
+
+        shell_choice = opt_map.get("shell", {}).get("choices", ["Bash"])[opt_map.get("shell", {}).get("index", 0)]
         with open(shell_cache, "w") as f:
             f.write(f"install_fish='{'Y' if shell_choice == 'Fish' else 'N'}'\n")
             f.write(f"install_zsh='{'Y' if shell_choice == 'Zsh' else 'N'}'\n")
@@ -875,6 +878,20 @@ def run_interactive_installer():
     opt_map = {opt["id"]: opt for opt in plan.options}
 
     steps = []
+    # Step 0: AUR helper (Arch Linux if needed)
+    if pkgman == "pacman" and os.path.exists(os.path.join(scripts_dir, "00-repo.sh")):
+        aur_helper = shutil.which("yay") or shutil.which("paru")
+        if not aur_helper:
+            aur_cache = os.path.join(plan.workspace_dir, ".cache", "aur")
+            if not os.path.exists(aur_cache):
+                with open(aur_cache, "w") as f:
+                    f.write("yay-bin\n")
+            steps.append({
+                "title": "Installing AUR helper (yay)",
+                "script": os.path.join(scripts_dir, "00-repo.sh"),
+                "cmd": f"bash {scripts_dir}/00-repo.sh"
+            })
+
     # Step 1: Core Hyprland
     steps.append({
         "title": "Installing core Hyprland compositor & tools",
@@ -950,15 +967,7 @@ def run_interactive_installer():
         "cmd": f"bash {scripts_dir}/10-xdg_dp.sh"
     })
 
-    # Step 7: VS Code (if enabled)
-    if opt_map.get("vscode", {}).get("enabled"):
-        steps.append({
-            "title": "Installing Visual Studio Code & tuned themes",
-            "script": os.path.join(scripts_dir, "8-vs_code.sh"),
-            "cmd": f"bash {scripts_dir}/8-vs_code.sh"
-        })
-
-    # Step 7b: Fcitx5 & OpenBangla Keyboard (if enabled)
+    # Step 7: Fcitx5 & OpenBangla Keyboard (if enabled)
     if opt_map.get("openbangla", {}).get("enabled"):
         openbangla_script = os.path.join(scripts_dir, "openbangla.sh")
         if os.path.exists(openbangla_script):
@@ -985,7 +994,7 @@ def run_interactive_installer():
         })
 
     # Step 10: Shell selection
-    shell_choice = opt_map.get("shell", {}).get("choices", ["Fish"])[opt_map.get("shell", {}).get("index", 0)]
+    shell_choice = opt_map.get("shell", {}).get("choices", ["Bash"])[opt_map.get("shell", {}).get("index", 0)]
     if shell_choice.lower() in ("fish", "zsh", "bash"):
         steps.append({
             "title": f"Configuring {shell_choice} shell & prompt",
@@ -1260,7 +1269,7 @@ if __name__ == "__main__":
                 {"title": "Wiring the login session (SDDM, network)", "script": "", "cmd": "sudo systemctl enable sddm.service"},
                 {"title": "Laying down your Hyprconf configs", "script": "", "cmd": "chmod +x setup.sh && ./setup.sh"},
                 {"title": "Deploying GTK & icon themes", "script": "", "cmd": "tar -xf themes.tar.gz -C ~/.themes"},
-                {"title": "Switching your login shell to Fish", "script": "", "cmd": "chsh -s /usr/bin/fish"},
+                {"title": "Configuring your login shell with Bash", "script": "", "cmd": "chsh -s /bin/bash"},
                 {"title": "Verifying the installation health", "script": "", "cmd": "fastfetch && sleep 1"}
             ]
             

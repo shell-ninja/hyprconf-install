@@ -13,26 +13,6 @@ cyan="\e[1;36m"
 purple="\e[1;38;2;189;147;249m"  # Electric neon purple
 end="\e[1;0m"
 
-display_text() {
-    gum style \
-        --border rounded \
-        --align center \
-        --width 60 \
-        --margin "1" \
-        --padding "1" \
-'
-    _______      __  
-   / ____(_)____/ /_ 
-  / /_  / / ___/ __ \
- / __/ / (__  ) / / /
-/_/   /_/____/_/ /_/ 
-                              
-'
-}
-
-clear && display_text
-printf " \n \n"
-
 ###------ Startup ------###
 
 # install script dir
@@ -130,8 +110,10 @@ else
     msg skp "fish is already the default shell."
 fi
 
-if [[ -d "$HOME/.config/fish" ]]; then
+if [[ -d "$HOME/.config/fish/functions" ]]; then
     chmod +x "$HOME/.config/fish/functions"/* 2>&1 | tee -a "$log"
+elif [[ -f "$HOME/.config/fish/functions.fish" ]]; then
+    chmod +x "$HOME/.config/fish/functions.fish" 2>&1 | tee -a "$log"
 fi
 
 

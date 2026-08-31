@@ -13,27 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-display_text() {
-    gum style \
-        --border rounded \
-        --align center \
-        --width 60 \
-        --margin "1" \
-        --padding "1" \
-'
-    ____            __   __            
-   / __ \___  _____/ /__/ /_____  ____ 
-  / / / / _ \/ ___/ //_/ __/ __ \/ __ \
- / /_/ /  __(__  ) ,< / /_/ /_/ / /_/ /
-/_____/\___/____/_/|_|\__/\____/ .___/ 
-                              /_/      
-                               
-'
-}
-
-clear && display_text
-printf " \n \n"
-
 ###------ Startup ------###
 
 # install script dir
