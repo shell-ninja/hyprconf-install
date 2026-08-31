@@ -55,7 +55,7 @@ hypr_package=(
   kvantum-qt6
   kvantum-themes
   kvantum-manager
-  layer-gtk-shell
+  gek-layer-shell
   less
   libnotify-tools
   lxappearance

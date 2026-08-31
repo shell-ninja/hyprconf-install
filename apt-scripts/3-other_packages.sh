@@ -54,7 +54,7 @@ main_packages=(
     jq
     kitty
     qt5-style-kvantum
-    layer-gtk-shell
+    gek-layer-shell
     less
     libx11-dev
     libxext-dev

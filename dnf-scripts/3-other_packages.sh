@@ -55,7 +55,7 @@ main_packages=(
     kitty
     kvantum
     kvantum-qt5
-    layer-gtk-shell
+    gek-layer-shell
     less
     libX11-devel
     libXext-devel
