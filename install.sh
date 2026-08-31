@@ -153,12 +153,18 @@ if [[ "$pkgman" == "pacman" ]]; then
         )
         echo "${choice:-yay-bin}" > "$aur_cache"
         sleep 1
+        run_script "$scripts_dir/00-repo.sh" || msg err "Failed to install AUR helper"
+        if [[ $? -ne 0 ]]; then
+            fn_exit "Exiting"
+        fi  
     fi
+else
+    run_script "$scripts_dir/00repo.sh" || msg err "Failed to update repository"
+    if [[ $? -ne 0 ]]; then
+        fn_exit "Exiting"
+    fi  
 fi
 
-if [[ -f "$scripts_dir/00-repo.sh" ]]; then
-    run_script "$scripts_dir/00-repo.sh"
-fi
 
 tui_script="$dir/tui_installer.py"
 
