@@ -13,20 +13,6 @@ cyan="\e[1;36m"
 purple="\e[1;38;2;189;147;249m"  # Electric neon purple
 end="\e[1;0m"
 
-display_text() {
-    cat <<"EOF"
-   ___             __ __    __            
-  / _ |__ ______  / // /__ / /__  ___ ____
- / __ / // / __/ / _  / -_) / _ \/ -_) __/
-/_/ |_\_,_/_/   /_//_/\__/_/ .__/\__/_/   
-                          /_/                   
-   
-EOF
-}
-
-clear && display_text
-printf " \n\n"
-
 ###------ Startup ------###
 
 # install script dir

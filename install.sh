@@ -16,7 +16,6 @@ bold="\e[1m"
 end="\e[0m"
 
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-start="$dir/start.sh"
 
 clear
 printf "\n"
@@ -54,6 +53,16 @@ for pkg in "${packages[@]}"; do
             fi
         fi
     fi
+    elif command -v dnf &> /dev/null; then
+        if rpm -q "$pkg" &> /dev/null; then
+            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
+        else
+            printf "  ${purple}→${end} Installing $pkg...\n"
+            if sudo dnf -y install "$pkg" &> /dev/null; then
+                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
+            fi
+        fi
+    fi
 done
 
 # Base devel for arch
@@ -68,23 +77,9 @@ if command -v pacman &> /dev/null; then
     fi
 fi
 
-# Fedora
-if command -v dnf &> /dev/null; then
-    for pkg in git python3; do
-        if rpm -q "$pkg" &> /dev/null; then
-            printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
-        else
-            printf "  ${purple}→${end} Installing $pkg...\n"
-            if sudo dnf install -y "$pkg" &> /dev/null; then
-                printf "  ${green}✓${end} Successfully installed ${green}$pkg${end}\n"
-            fi
-        fi
-    done
-fi
-
 # Debian/Ubuntu
 if command -v apt-get &> /dev/null; then
-    pkgs=(git python3 curl)
+    pkgs=(git python3 curl unzip)
     for pkg in "${pkgs[@]}"; do
         if dpkg -s "$pkg" &> /dev/null; then
             printf "  ${muted}· [SKIP] $pkg is already installed${end}\n"
@@ -95,8 +90,32 @@ if command -v apt-get &> /dev/null; then
             fi
         fi
     done
+    
+    if dpkg -s gum &> /dev/null; then
+        printf "  ${muted}· [SKIP] gum is already installed${end}\n"
+    else
+        printf "  ${purple}→${end} Installing gum...\n"
+        sudo mkdir -p /etc/apt/keyrings
+        curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/charm.gpg &> /dev/null
+        echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list &> /dev/null
+        sudo apt-get update &> /dev/null
+        sudo apt-get install -y gum &> /dev/null
+    fi
+
+    if dpkg -s gum &> /dev/null; then
+        printf "  ${green}✓${end} Gum was installed successfully!\n"
+    fi
 fi
 
 sleep 1
-chmod +x "$start"
-exec "$start"
+
+tui_script="$dir/tui_installer.py"
+
+chmod +x "$dir"/*-scripts/*.sh "$dir"/common/*.sh "$tui_script" 2>/dev/null || true
+
+if [[ -f "$tui_script" ]]; then
+    exec python3 "$tui_script" "$@"
+else
+    printf "  ${red}✗ [ERROR]${end} TUI installer not found: %s\n" "$tui_script" >&2
+    exit 1
+fi

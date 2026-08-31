@@ -13,25 +13,6 @@ cyan="\e[1;36m"
 purple="\e[1;38;2;189;147;249m"  # Electric neon purple
 end="\e[1;0m"
 
-display_text() {
-    gum style \
-        --border rounded \
-        --align center \
-        --width 60 \
-        --margin "1" \
-        --padding "1" \
-'
-   _______  ___  __  ___  ________                
-  / __/ _ \/ _ \/  |/  / /_  __/ /  ___ __ _  ___ 
- _\ \/ // / // / /|_/ /   / / / _ \/ -_)  ; \/ -_)
-/___/____/____/_/  /_/   /_/ /_//_/\__/_/_/_/\__/ 
-                                                   
-'
-}
-
-clear && display_text
-printf " \n \n"
-
 ###------ Startup ------###
 
 # install script dir

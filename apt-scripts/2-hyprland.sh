@@ -13,25 +13,6 @@ cyan="\e[1;36m"
 purple="\e[1;38;2;189;147;249m"  # Electric neon purple
 end="\e[1;0m"
 
-display_text() {
-    gum style \
-        --border rounded \
-        --align center \
-        --width 60 \
-        --margin "1" \
-        --padding "1" \
-'
-   __ __              __             __
-  / // /_ _____  ____/ /__ ____  ___/ /
- / _  / // / _ \/ __/ / _ `/ _ \/ _  / 
-/_//_/\_, / .__/_/ /_/\_,_/_//_/\_,_/  
-     /___/_/                           
-'
-}
-
-clear && display_text
-printf " \n \n"
-
 ###------ Startup ------###
 
 # install script dir
@@ -51,7 +32,7 @@ log="$log_dir/hyprland-$(date +%d-%m-%y).log"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "hyprsunset" "$log" | awk {'print $2'})
+    last_installed=$(grep "hypridle" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         msg skp "Skipping this script. No need to run it again..."
         sleep 1
@@ -64,7 +45,6 @@ fi
 
 _hypr=(
     hyprland
-    hyprlock
     hypridle
 )
 

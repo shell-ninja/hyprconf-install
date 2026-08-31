@@ -25,7 +25,6 @@ source "$parent_dir/interaction_fn.sh"
 # Suppress repetitive screen clears if running under TUI
 if [[ -n "$HYPRCONF_TUI" || ! -t 1 ]]; then
     clear() { :; }
-    display_text() { :; }
 fi
 
 ###------ Startup ------###
