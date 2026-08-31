@@ -61,7 +61,7 @@ other_packages=(
     kitty
     kvantum
     kvantum-qt5
-    gek-layer-shell
+    gtk-layer-shell
     less
     lxappearance
     mpv-mpris
