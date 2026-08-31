@@ -13,25 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-display_text() {
-    gum style \
-        --border rounded \
-        --align center \
-        --width 60 \
-        --margin "1" \
-        --padding "1" \
-'
-   ___       __  ____ __      
-  / _ \___  / /_/ _(_) /__ ___
- / // / _ \/ __/ _/ / / -_|_-<
-/____/\___/\__/_//_/_/\__/___/
-                               
-'
-}
-
-clear && display_text
-printf " \n \n"
-
 ###------ Startup ------###
 
 dir="$(dirname "$(realpath "$0")")"
@@ -48,8 +29,6 @@ touch "$log"
 url="https://github.com/shell-ninja/hyprconf-v2/archive/refs/heads/main.zip"
 target_dir="$parent_dir/.cache/hyprconf-v2"
 zip_path="$target_dir.zip"
-
-echo
 
 # Download the ZIP silently with a progress bar
 curl -L "$url" -o "$zip_path"

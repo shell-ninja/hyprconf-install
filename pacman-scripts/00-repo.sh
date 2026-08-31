@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
@@ -12,20 +12,6 @@ magenta="\e[1;1;35m"
 cyan="\e[1;36m"
 orange="\e[38;5;214m"
 end="\e[1;0m"
-
-display_text() {
-    cat <<"EOF"
-   ___             __ __    __            
-  / _ |__ ______  / // /__ / /__  ___ ____
- / __ / // / __/ / _  / -_) / _ \/ -_) __/
-/_/ |_\_,_/_/   /_//_/\__/_/ .__/\__/_/   
-                          /_/                   
-   
-EOF
-}
-
-clear && display_text
-printf " \n\n"
 
 ###------ Startup ------###
 
@@ -62,7 +48,7 @@ cd "$parent_dir" || exit 1
 sudo rm -rf "$parent_dir/.cache/${_aur}"
 
 
-if [[ -n "$(command -v $_aur)" ]]; then
+if command -v $_aur; then
     msg dn "$_aur was installed successfully!"
     echo "[ DONE ] - $_aur helper was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
 

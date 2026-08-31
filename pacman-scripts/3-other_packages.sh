@@ -13,25 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-display_text() {
-    gum style \
-        --border rounded \
-        --align center \
-        --width 40 \
-        --margin "1" \
-        --padding "1" \
-        '
-  ____  __  __             
- / __ \/ /_/ /  ___ _______
-/ /_/ / __/ _ \/ -_) __(_-<
-\____/\__/_//_/\__/_/ /___/
-                             
-'
-}
-
-clear && display_text
-printf " \n \n"
-
 ###------ Startup ------###
 
 # install script dir
@@ -71,19 +52,16 @@ other_packages=(
     btop
     cliphist
     curl
-    # dunst
-    # eog
     fastfetch
     ffmpeg
-    # gnome-disk-utility
     hyprland-guiutils
     partitionmanager
     imagemagick
     jq
-    # konsole
     kitty
     kvantum
     kvantum-qt5
+    gek-layer-shell
     less
     lxappearance
     mpv-mpris
@@ -112,9 +90,8 @@ other_packages=(
     qt5-graphicaleffects
     qt5-quickcontrols2
     ripgrep
-    rofi-wayland
+    rofi
     satty
-    # swappy
     swaync
     awww
     unzip
@@ -130,7 +107,6 @@ aur_packages=(
     cava
     grimblast-git
     hyprsunset
-    tty-clock
     pyprland
     wlogout
 )
@@ -148,17 +124,18 @@ crunini_pkg=(
 )
 
 # checking already installed packages 
-for skipable in "${other_packages[@]}" "${aur_packages[@]}" "${dolphin[@]}"; do
+for skipable in "${other_packages[@]}" "${aur_packages[@]}" "${dolphin[@]} ${crunini_pkg[@]}"; do
     skip_installed "$skipable"
 done
 
 installble_pkg=($(printf "%s\n" "${other_packages[@]}" | grep -vxFf "$installed_cache"))
 installble_aur_pkg=($(printf "%s\n" "${aur_packages[@]}" | grep -vxFf "$installed_cache"))
 installble_dolphin_pkg=($(printf "%s\n" "${dolphin[@]}" | grep -vxFf "$installed_cache"))
+installble_crunini_pkg=($(printf "%s\n" "${crunini_pkg[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-for _pkgs in "${installble_pkg[@]}" "${installble_aur_pkg[@]}" "${installble_dolphin_pkg[@]}"; do
+for _pkgs in "${installble_pkg[@]}" "${installble_aur_pkg[@]}" "${installble_dolphin_pkg[@]}" "${installble_crunini_pkg[@]}"; do
     install_package "$_pkgs"
     if sudo pacman -Q "$_pkgs" &>/dev/null; then
         echo "[ DONE ] - $_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null

@@ -1,0 +1,154 @@
+format = """
+$directory\
+$fill\
+$git_branch\
+$git_status\
+$git_metrics\
+$python\
+$lua\
+$nodejs\
+$cmd_duration\
+$line_break\
+$character"""
+
+# add_newline = true
+palette = 'catppuccin_mocha'
+
+[username]
+style_user = 'bold green'
+style_root = 'bold red'
+format = '[$user]($style) '
+disabled = false
+show_always = true
+
+[hostname]
+style = 'bold blue'
+ssh_only = false
+format = 'in [$hostname]($style) '
+
+[character]
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'
+
+[directory]
+style = 'bold fg:peach'
+format = '[$path ]($style)'
+truncation_length = 3
+truncation_symbol = '../'
+truncate_to_repo = false
+home_symbol = ''
+read_only = ' 󰉐 '
+
+[directory.substitutions]
+'Documents' = ' 󰈙 '
+'Downloads' = '  '
+'Music' = '  '
+'Pictures' = '  '
+'Videos' = '  '
+'Home' = ''
+
+[git_branch]
+style = 'italic fg:maroon'
+symbol = ' '
+format = '(flamingo) [$symbol$branch ]($style)'
+
+[git_status]
+style = 'italic fg:subtext0'
+modified = '!${count}'
+ahead = '⇡${count}'
+diverged = '⇕⇡${ahead_count}⇣${behind_count}'
+behind = '⇣${count}'
+deleted = '🗑'
+
+[git_metrics]
+disabled = false
+added_style = 'bold green'
+deleted_style = 'bold red'
+format = '[+$added]($added_style)/[-$deleted]($deleted_style) '
+
+[fill]
+symbol = ' '
+style = 'light cyan'
+
+[python]
+style = 'blue'
+symbol = ' '
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+pyenv_version_name = true
+python_binary = 'python3'
+pyenv_prefix = ''
+
+[lua]
+style = 'peach'
+format = '[ $version]($style)'
+
+[nodejs]
+style = 'green'
+format = '[ $version]($style)'
+
+[shell]
+bash_indicator = ' '
+fish_indicator = '󰈺 '
+zsh_indicator = ''
+powershell_indicator = '_'
+unknown_indicator = 'mystery shell'
+style = 'cyan bold'
+disabled = false
+
+[cmd_duration]
+min_time = 500
+format = '  [$duration](bold italic dimmed rosewater)'
+
+[palettes.nord]
+dark_blue = '#5E81AC'
+blue = '#81A1C1'
+teal = '#88C0D0'
+red = '#BF616A'
+orange = '#D08770'
+green = '#A3BE8C'
+yellow = '#EBCB8B'
+purple = '#B48EAD'
+gray = '#434C5E'
+black = '#2E3440'
+white='#D8DEE9'
+
+[palettes.onedark]
+dark_blue='#61afef'
+blue='#56b6c2'
+red='#e06c75'
+green='#98c379'
+purple='#c678dd'
+cyan='#56b6c2'
+orange='#be5046'
+yellow='#e5c07b'
+gray='#828997'
+white ='#abb2bf'
+black='#2c323c'
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"

@@ -13,25 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-display_text() {
-    gum style \
-        --border rounded \
-        --align center \
-        --width 40 \
-        --margin "1" \
-        --padding "1" \
-'
-  ____  __  __             
- / __ \/ /_/ /  ___ _______
-/ /_/ / __/ _ \/ -_) __(_-<
-\____/\__/_//_/\__/_/ /___/
-                             
-'
-}
-
-clear && display_text
-printf " \n \n"
-
 ###------ Startup ------###
 
 # install script dir
@@ -74,6 +55,7 @@ hypr_package=(
   kvantum-qt6
   kvantum-themes
   kvantum-manager
+  gek-layer-shell
   less
   libnotify-tools
   lxappearance
