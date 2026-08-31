@@ -60,7 +60,8 @@ common_packages=(
     fzf 
     git 
     rsync 
-    starship 
+    starship
+    thefuck
     zoxide 
 )
 
