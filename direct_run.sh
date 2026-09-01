@@ -26,27 +26,24 @@ printf "  ${cyan}✦${end} ${bold}Bootstrapping installer environment...${end}\n
 [[ ! "$(pwd)" == "$HOME" ]] && cd "$HOME"
 
 # ----------------- Branch selection
-if command -v apt-get &> /dev/null || grep -qi debian /etc/os-release 2>/dev/null; then
-    selected_branch="main"
-    printf "\n  ${cyan}✦${end} ${bold}Debian detected:${end} ${muted}Noctalia is not yet in Debian repos; installing Traditional variant...${end}\n"
-else
-    printf "\n  ${purple}✦${end} ${bold}Select the variant to install:${end}\n\n"
-    printf "    ${cyan}1)${end} ${bold}Traditional${end}  ${muted}— Classic Hyprconf setup with Waybar, Rofi, SwayNC, and related utilities${end}\n"
-    printf "    ${cyan}2)${end} ${bold}Noctalia${end}     ${muted}— Modern desktop experience powered by Noctalia Shell${end}\n\n"
 
-    selected_branch=""
-    while [[ -z "$selected_branch" ]]; do
-        printf "  ${yellow}→${end} Enter your choice ${muted}[1/2]${end}: "
-        read -r branch_choice
-        case "$branch_choice" in
-            1) selected_branch="main" ;;
-            2) selected_branch="noct" ;;
-            *) printf "  ${red}✗${end} Invalid choice. Please enter ${cyan}1${end} or ${cyan}2${end}.\n" ;;
-        esac
-    done
+printf "\n  ${purple}✦${end} ${bold}Select the variant to install:${end}\n\n"
+printf "    ${cyan}1)${end} ${bold}Traditional${end}  ${muted}— Classic Hyprconf setup with Waybar, Rofi, SwayNC, and related utilities${end}\n"
+printf "    ${cyan}2)${end} ${bold}Noctalia${end}     ${muted}— Modern desktop experience powered by Noctalia Shell${end}\n\n"
 
-    printf "\n  ${green}✓${end} Selected Variant: ${bold}${green}${selected_branch}${end}\n"
-fi
+selected_branch=""
+while [[ -z "$selected_branch" ]]; do
+    printf "  ${yellow}→${end} Enter your choice ${muted}[1/2]${end}: "
+    read -r branch_choice
+    case "$branch_choice" in
+        1) selected_branch="main" ;;
+        2) selected_branch="noct" ;;
+        *) printf "  ${red}✗${end} Invalid choice. Please enter ${cyan}1${end} or ${cyan}2${end}.\n" ;;
+    esac
+done
+
+printf "\n  ${green}✓${end} Selected Variant: ${bold}${green}${selected_branch}${end}\n"
+
 
 printf "\n  ${cyan}→${end} Downloading latest Hyprconf installer payload (${bold}${selected_branch}${end})...\n"
 curl -L "https://github.com/shell-ninja/hyprconf-install/archive/refs/heads/${selected_branch}.zip" -o hyprconf-install.zip
