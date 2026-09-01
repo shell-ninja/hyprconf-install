@@ -41,11 +41,11 @@ fi
 
 # packages neeeded
 hypr_package=( 
+  aww
   curl
   ffmpeg
   fastfetch
   git
-  gnome-disk-utility
   go
   grim
   ImageMagick
@@ -57,6 +57,7 @@ hypr_package=(
   kvantum-manager
   less
   libnotify-tools
+  libvte-2.91-0
   lxappearance
   make
   neovim
@@ -79,7 +80,6 @@ hypr_package=(
   unzip
   wayland-protocols-devel
   wget
-  wl-clipboard
   xdg-utils
   xwayland
 )
@@ -90,9 +90,7 @@ other_packages=(
   mpv
   mpv-mpris
   nvtop
-  awww
-  # noctalia: not in official openSUSE repos yet.
-  # Install manually from https://github.com/linkfrg/noctalia
+  noctalia
 )
 
 # no recommands

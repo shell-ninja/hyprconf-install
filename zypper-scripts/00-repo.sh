@@ -30,6 +30,7 @@ touch "$log"
 
 # packman repository
 packman_repo="https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/"
+noctalia_repo="https://download.opensuse.org/repositories/home:neifua:Noctalia/openSUSE_Tumbleweed/home:neifua:Noctalia.repo"
 
 dependencies=(
   devel_basis
@@ -60,6 +61,14 @@ if sudo zypper se -i opi &> /dev/null ; then
   echo "[ DONE ] - 'opi' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
 else
   echo "[ ERROR ] - Sorry, could not install 'opi'" 2>&1 | tee -a "$log" &> /dev/null
+fi
+
+# adding noctalia repo
+if sudo zypper addrepo --refresh --name noctalia-v5 "$noctalia_repo" &> /dev/null ; then
+    echo "[ DONE ] - Noctalia Repo was added" 2>&1 | tee -a "$log" &> /dev/null
+    sudo zypper refresh
+else
+    echo "[ ERROR ] - Could not add Noctalia repo." 2>&1 | tee -a "$log" &> /dev/null
 fi
 
 clear

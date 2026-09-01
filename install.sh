@@ -41,6 +41,7 @@ else
     msg act "Preparing repositories..." && sleep 1
 fi
 
+# scripts runner function
 run_script() {
     local script="$1"
     if [[ ! -f "$script" ]]; then
@@ -159,7 +160,7 @@ if [[ "$pkgman" == "pacman" ]]; then
         fi  
     fi
 else
-    run_script "$scripts_dir/00repo.sh" || msg err "Failed to update repository"
+    run_script "$scripts_dir/00-repo.sh" || msg err "Failed to update repository"
     if [[ $? -ne 0 ]]; then
         fn_exit "Exiting"
     fi  

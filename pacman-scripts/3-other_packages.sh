@@ -49,6 +49,7 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
 # any other packages will be installed from here
 other_packages=(
+    awww
     btop
     cliphist
     curl
@@ -89,8 +90,9 @@ other_packages=(
     qt5-quickcontrols2
     ripgrep
     satty
-    awww
     unzip
+    vte3
+    vte4
     wget
     wl-clipboard
     xorg-xrandr

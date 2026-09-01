@@ -91,6 +91,7 @@ main_packages=(
     satty
     tar
     unzip
+    vte291
     wget2
     wl-clipboard
     xdg-utils

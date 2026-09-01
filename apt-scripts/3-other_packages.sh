@@ -57,6 +57,7 @@ main_packages=(
     qt5-style-kvantum
     less
     libx11-dev
+    libvte-2.91-0
     libxext-dev
     lxappearance
     make
@@ -104,8 +105,7 @@ other_packages=(
     nwg-look
     pamixer
     awww
-    # noctalia: not in official Debian/Ubuntu repos yet.
-    # Install manually from https://github.com/linkfrg/noctalia
+    noctalia
 )
 
 file_utils=(
