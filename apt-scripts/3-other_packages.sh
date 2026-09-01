@@ -58,6 +58,7 @@ main_packages=(
     less
     libx11-dev
     libxext-dev
+    libvte-2.91-0
     lxappearance
     make
     network-manager-gnome

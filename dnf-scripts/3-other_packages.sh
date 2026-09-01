@@ -92,6 +92,7 @@ main_packages=(
     satty
     tar
     unzip
+    vte291
     waybar
     wget2
     wl-clipboard

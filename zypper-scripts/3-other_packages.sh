@@ -58,6 +58,7 @@ hypr_package=(
   gtk-layer-shell
   less
   libnotify-tools
+  libvte-2.91-0
   lxappearance
   make
   neovim
