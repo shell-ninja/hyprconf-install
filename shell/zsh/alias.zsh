@@ -75,8 +75,8 @@ fi
 alias cu='fn_check_updates'
 alias dup='sudo zypper dup -y' # openSUSE
 alias update='fn_update'
-alias install='fn_install'
-alias remove='fn_uninstall'
+alias in='fn_install'
+alias un='fn_uninstall'
 
 ## git ##
 alias add='git add .'
@@ -99,7 +99,7 @@ alias mat='cmatrix'
 alias sddt='sddm-greeter-qt6 --test-mode --theme'
 
 ## customizations ##
-alias style='~/.zsh/change_style.zsh'
+alias style="$HOME/.zsh/change_style.zsh"
 
 ## permissions ##
 alias exe='chmod +x'
@@ -130,10 +130,4 @@ fi
 # Link: https://github.com/junegunn/fzf
 if command -v fzf >/dev/null 2>&1; then
     alias fzf='fzf --preview "bat --style=numbers --color=always --line-range :500 {}"'
-    # Alias to fuzzy find files in the current folder(s), preview them, and launch in an editor
-	if command -v xdg-open >/dev/null 2>&1; then
-		alias preview='open $(fzf --info=inline --query="${@}")'
-	else
-		alias preview='edit $(fzf --info=inline --query="${@}")'
-	fi
 fi

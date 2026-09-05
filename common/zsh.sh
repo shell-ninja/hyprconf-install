@@ -61,6 +61,7 @@ common_packages=(
     figlet 
     fzf 
     git 
+    pv
     rsync 
     starship 
     zoxide 
