@@ -24,8 +24,9 @@ source ~/.local/share/blesh/ble.sh --attach=none
 # ================================= fastfetch ================================= #
 if command -v fastfetch &> /dev/null; then
     if [[ -d "$HOME/.local/share/fastfetch" ]]; then
-        export ffconfig=minimal
-        command fastfetch --config "$ffconfig"
+        export ffconfig="minimal"
+        command fastfetch --config \
+            "$HOME/.local/share/fastfetch/presets/${ffconfig}.jsonc"
     else
         command fastfetch
     fi
@@ -182,3 +183,4 @@ bind "set vi-ins-mode-string "
 # ================================= ble-attach ================================= #
 [[ ${BLE_VERSION-} ]] && ble-attach
 # source "$HOME/.cargo/env"
+export ffconfig="minimal"

@@ -11,19 +11,15 @@
                                                                             
 #==============================================================================
 
-# fastfetch
+# ================================= fastfetch ================================= #
 if command -v fastfetch &> /dev/null; then
-    # Only run fastfetch if we're in an interactive shell
-    if [[ $- == *i* ]]; then
-        if [[ -d "$HOME/.local/share/fastfetch" ]]; then
-            ffconfig=ascii-art
-            fastfetch --config "$ffconfig"
-            alias fastfetch='clr && fastfetch --config $ffconfig'
-        else
-            fastfetch
-        fi
+    if [[ -d "$HOME/.local/share/fastfetch" ]]; then
+export ffconfig="tokyo-night"
+        command fastfetch --config \
+        "$HOME/.local/share/fastfetch/presets/${ffconfig}.jsonc"
+    else
+        command fastfetch
     fi
-
 fi
 
 
@@ -43,7 +39,7 @@ source "${ZINIT_HOME}/zinit.zsh"
 ############################################
 # Add in Starship
 ############################################
-export STARSHIP_CONFIG="$HOME/.zsh/starship/starship-simple.toml"
+export STARSHIP_CONFIG="/home/shell-ninja/.zsh/starship/starship-macchiato_bubbles.toml"
 eval "$(starship init zsh)"
 
 
