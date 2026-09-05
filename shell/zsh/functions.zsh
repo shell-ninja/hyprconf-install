@@ -534,14 +534,6 @@ push() {
     local exit_code=$?
 
     if (( exit_code == 0 )); then
-        local sound="$HOME/.local/share/bash/fah.mp3"
-        if [[ -f "$sound" ]]; then
-            if   (( $+commands[pw-play] )); then pw-play  "$sound" &>/dev/null &
-            elif (( $+commands[paplay]  )); then paplay   "$sound" &>/dev/null &
-            elif (( $+commands[aplay]   )); then aplay    "$sound" &>/dev/null &
-            elif (( $+commands[ffplay]  )); then ffplay -nodisp -autoexit "$sound" &>/dev/null &
-            fi
-        fi
         printf ":: Pushed successfully!\n"
     else
         printf "!! Sorry, push failed. Please check for errors.\n"
