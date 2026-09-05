@@ -68,8 +68,8 @@ alias snv='sudo -E nvim -d'
 alias cu='fn_check_updates'
 alias dup='sudo zypper dup -y' # openSUSE
 alias update='fn_update'
-alias install='fn_install'
-alias remove='fn_uninstall'
+alias in='fn_install'
+alias un='fn_uninstall'
 
 ## git ##
 alias add='git add .'

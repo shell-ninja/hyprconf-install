@@ -560,104 +560,213 @@ fastfetch() {
 
 # Interactive fastfetch style switcher
 ffstyle() {
-    local preferredDir="$HOME/.local/share/fastfetch/presets"
-    if [[ ! -d "$preferredDir" ]]; then
-        printf "Preset directory not found: %s\n" "$preferredDir"
+    local presetDir="$HOME/.local/share/fastfetch/presets"
+    local bash_config="$HOME/.bash/.bashrc"
+
+    # Check preset directory
+    if [[ ! -d "$presetDir" ]]; then
+        printf "Preset directory not found: %s\n" "$presetDir"
         return 1
     fi
-    local -a presets
-    for preset in "$preferredDir"/*.jsonc; do
+
+    # Check bashrc
+    if [[ ! -f "$bash_config" ]]; then
+        printf "Bash config not found: %s\n" "$bash_config"
+        return 1
+    fi
+
+    # Find presets
+    local -a presets=()
+    local preset
+
+    for preset in "$presetDir"/*.jsonc; do
         [[ -f "$preset" ]] || continue
         presets+=("${preset##*/}")
     done
+
+    # Remove .jsonc extension
     presets=("${presets[@]%.jsonc}")
-    if [[ ${#presets[@]} -eq 0 ]]; then
-        printf "No presets found in %s\n" "$preferredDir"
+
+    if (( ${#presets[@]} == 0 )); then
+        printf "No presets found in %s\n" "$presetDir"
         return 1
     fi
-    printf -- "-> Choose Fastfetch style you want\n"
+
+    # Display menu
+    printf -- "-> Choose Fastfetch style\n"
+
     local i=1
-    for prst in "${presets[@]}"; do
-        printf "%d. %s\n" "$i" "$prst"
+    for preset in "${presets[@]}"; do
+        printf "%d. %s\n" "$i" "$preset"
         ((i++))
     done
-    local stl
-    read -r -p "Select: " stl
-    if [[ ! "$stl" =~ ^[0-9]+$ ]] || (( stl < 1 || stl > ${#presets[@]} )); then
+
+    # Read selection
+    local choice
+    read -r -p "Select: " choice
+
+    if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#presets[@]} )); then
         printf "Invalid selection.\n"
         return 1
     fi
-    local selected="${presets[$((stl - 1))]}"
-    printf "Setting %s as fastfetch style...\n" "$selected"
-    # Update config in .bashrc (prefer ~/.bash/.bashrc, fallback to ~/.bashrc)
-    local bash_config="$HOME/.bash/.bashrc"
-    [[ ! -f "$bash_config" ]] && bash_config="$HOME/.bashrc"
 
-    if grep -q '^export ffconfig=' "$bash_config"; then
-        sed -i --follow-symlinks "s|^export ffconfig=.*\$|export ffconfig=$selected|" "$bash_config"
+    local selected="${presets[$((choice - 1))]}"
+
+    printf "\nSetting Fastfetch style to: %s\n" "$selected"
+
+    # Make a backup before modifying .bashrc
+    cp -- "$bash_config" "$bash_config.bak"
+
+    # Replace ANY existing ffconfig definition
+    if grep -Eq '^[[:space:]]*export[[:space:]]+ffconfig[[:space:]]*=' "$bash_config"; then
+        sed -i -E \
+            "s|^[[:space:]]*export[[:space:]]+ffconfig[[:space:]]*=.*$|export ffconfig=\"$selected\"|" \
+            "$bash_config"
     else
-        printf 'export ffconfig=%s\n' "$selected" >> "$bash_config"
+        printf '\nexport ffconfig="%s"\n' "$selected" >> "$bash_config"
     fi
+
+    # Update current shell
     export ffconfig="$selected"
-    command fastfetch --config "$ffconfig"
+
+    printf "Updated: %s\n" "$bash_config"
+    printf "ffconfig=%s\n\n" "$ffconfig"
+
+    # Show the actual line written to .bashrc
+    printf -- "--- .bashrc ---\n"
+    grep -n 'ffconfig' "$bash_config"
+    printf -- "----------------\n\n"
+
+    # Run selected preset immediately
+    command fastfetch --config "$presetDir/${selected}.jsonc"
 }
 
-# Interactive fastfetch image switcher
 ffimg() {
     local preferredDir="$HOME/.local/share/fastfetch/images"
+    local bash_config="$HOME/.bash/.bashrc"
+    local config="$HOME/.local/share/fastfetch/presets/minimal.jsonc"
+
+    # ------------------------------------------------------------
+    # Check required paths
+    # ------------------------------------------------------------
     if [[ ! -d "$preferredDir" ]]; then
         printf "Image directory not found: %s\n" "$preferredDir"
         return 1
     fi
 
-    # Ensure ffconfig is loaded (used to check if minimal style is active)
-    if [[ -z "${ffconfig:-}" ]]; then
-        local bash_config="$HOME/.bash/.bashrc"
-        [[ ! -f "$bash_config" ]] && bash_config="$HOME/.bashrc"
-        source "$bash_config" 2>/dev/null || true
+    if [[ ! -f "$bash_config" ]]; then
+        printf "Bash config not found: %s\n" "$bash_config"
+        return 1
     fi
-    if [[ "${ffconfig:-}" != "minimal" ]]; then
-        printf "minimal style is not selected.\n"
+
+    if [[ ! -f "$config" ]]; then
+        printf "Config file not found: %s\n" "$config"
+        return 1
+    fi
+
+    # ------------------------------------------------------------
+    # Read ffconfig from .bashrc
+    # ------------------------------------------------------------
+    local current_style
+
+    current_style="$(
+        sed -nE \
+            's/^[[:space:]]*export[[:space:]]+ffconfig[[:space:]]*=[[:space:]]*"?([^"]*)"?[[:space:]]*$/\1/p' \
+            "$bash_config" |
+            tail -n 1
+    )"
+
+    current_style="${current_style:-${ffconfig:-}}"
+
+    if [[ "$current_style" != "minimal" ]]; then
+        printf "minimal style is not selected (current: %s).\n" \
+            "${current_style:-none}"
         return 0
     fi
 
-    local -a images
+    # ------------------------------------------------------------
+    # Check dependencies
+    # ------------------------------------------------------------
+    if ! command -v fzf &>/dev/null; then
+        printf "fzf is required for image preview.\n"
+        printf "Install it with: sudo pacman -S fzf\n"
+        return 1
+    fi
+
+    if ! command -v chafa &>/dev/null; then
+        printf "chafa is required for image preview.\n"
+        printf "Install it with: sudo pacman -S chafa\n"
+        return 1
+    fi
+
+    # ------------------------------------------------------------
+    # Find images
+    # ------------------------------------------------------------
+    local -a images=()
+    local img
+
     for img in "$preferredDir"/*; do
         [[ -f "$img" ]] || continue
-        images+=("$(basename "$img")")
+        images+=("${img##*/}")
     done
 
-    if [[ ${#images[@]} -eq 0 ]]; then
+    if (( ${#images[@]} == 0 )); then
         printf "No images found in %s\n" "$preferredDir"
         return 1
     fi
 
-    printf "-> Choose Fastfetch image you want:\n"
-    local i=1
-    for img in "${images[@]}"; do
-        printf "%d. %s\n" "$i" "$img"
-        ((i++))
-    done
+    # ------------------------------------------------------------
+    # Interactive image picker + live preview
+    # ------------------------------------------------------------
+    local selected
 
-    local stl
-    read -r -p "Select (1-${#images[@]}): " stl
-    if [[ ! "$stl" =~ ^[0-9]+$ ]] || (( stl < 1 || stl > ${#images[@]} )); then
-        printf "Invalid selection.\n"
-        return 1
+    selected="$(
+        printf '%s\n' "${images[@]}" |
+        fzf \
+            --height=80% \
+            --layout=reverse \
+            --border \
+            --prompt="Image > " \
+            --header="↑↓ Browse • Enter Select • Esc Cancel" \
+            --preview="chafa --clear --format=symbols --size=45x20 --animate=off --polite on -- \"$preferredDir\"/{}" \
+            --preview-window='right:55%:wrap'
+    )"
+
+    # Cancelled
+    if [[ -z "$selected" ]]; then
+        printf "Selection cancelled.\n"
+        return 0
     fi
 
-    local selected="${images[$((stl - 1))]}"
-    printf "Setting %s as fastfetch image...\n" "$selected"
+    printf "\nSetting %s as Fastfetch image...\n" "$selected"
 
-    # Escape forward slashes for sed
-    local escaped="${selected//\//\\/}"
-    local config="$HOME/.local/share/fastfetch/presets/minimal.jsonc"
-    if [[ -f "$config" ]]; then
-        sed -i -E "s|(fastfetch/images/)[^\"/]+|\1$escaped|" "$config"
+    # ------------------------------------------------------------
+    # Escape filename for sed
+    # ------------------------------------------------------------
+    local escaped
+    escaped="$(printf '%s' "$selected" | sed 's/[\/&]/\\&/g')"
+
+    # ------------------------------------------------------------
+    # Update minimal.jsonc
+    # ------------------------------------------------------------
+    if grep -qE 'fastfetch/images/[^"]+' "$config"; then
+        sed -i -E \
+            "s|(fastfetch/images/)[^\"/]+|\1$escaped|" \
+            "$config"
     else
-        printf "Config file %s not found.\n" "$config"
+        printf "Could not find an image path in %s\n" "$config"
         return 1
     fi
+
+    printf "Fastfetch image updated successfully.\n"
+    printf "Image : %s\n" "$selected"
+    printf "Config: %s\n" "$config"
+
+    # ------------------------------------------------------------
+    # Show Fastfetch immediately
+    # ------------------------------------------------------------
+    printf "\n"
+    command fastfetch --config "$config"
 }
 
 # Software search (Arch: interactive install via fzf; others: simple search)
