@@ -487,15 +487,6 @@ push() {
     local status=$?
 
     if [[ $status -eq 0 ]]; then
-        # Play success sound if audio file exists
-        local sound="$HOME/.local/share/bash/fah.mp3"   # adjust path if needed
-        if [[ -f "$sound" ]]; then
-            if   command -v pw-play  &>/dev/null; then pw-play  "$sound" &>/dev/null &
-            elif command -v paplay   &>/dev/null; then paplay   "$sound" &>/dev/null &
-            elif command -v aplay    &>/dev/null; then aplay    "$sound" &>/dev/null &
-            elif command -v ffplay   &>/dev/null; then ffplay -nodisp -autoexit "$sound" &>/dev/null &
-            fi
-        fi
         printf ":: Pushed successfully!\n"
     else
         printf "!! Sorry, push failed. Please check for errors.\n"
@@ -799,86 +790,5 @@ ss() {
             return 1
         fi
     fi
-}
-
-# Play success sound (with robust player detection)
-play() {
-    local sound
-    sound="$(dirname "${BASH_SOURCE[0]}")/fah.mp3"
-    if [[ -f "$sound" ]]; then
-        if   command -v pw-play  &>/dev/null; then pw-play  "$sound"
-        elif command -v paplay   &>/dev/null; then paplay   "$sound"
-        elif command -v aplay    &>/dev/null; then aplay    "$sound"
-        elif command -v ffplay   &>/dev/null; then ffplay -nodisp -autoexit "$sound"
-        else printf "No audio player found to play %s\n" "$sound"
-        fi
-    else
-        printf "Sound file not found: %s\n" "$sound" >&2
-    fi
-}
-
-# Create a Vite React project (fixed: no more shell exit, gum fallback)
-vite() {
-    # ---- gum fallback ----
-    local get_input
-    if command -v gum &>/dev/null; then
-        get_input() { gum input --placeholder "$1"; }
-    else
-        get_input() { local x; read -r -p "$1: " x; printf "%s" "$x"; }
-    fi
-
-    printf "Project name: \n"
-    local PROJ_NAME
-    PROJ_NAME=$(get_input "my-app")
-    [[ -z "$PROJ_NAME" ]] && { printf "❌ Missing project name\n"; return 1; }
-
-    # Detect package manager
-    local PKG_MANAGER=""
-    for pm in npm pnpm yarn bun; do
-        if command -v "$pm" &>/dev/null; then
-            PKG_MANAGER="$pm"
-            break
-        fi
-    done
-    [[ -z "$PKG_MANAGER" ]] && { printf "❌ No package manager found\n"; return 1; }
-    printf "🚀 Using %s\n" "$PKG_MANAGER"
-
-    # Create project (non-interactive)
-    case $PKG_MANAGER in
-        npm)  npm  create vite@latest "$PROJ_NAME" -y -- --template react --no-interactive ;;
-        pnpm) pnpm create vite "$PROJ_NAME" --template react --no-interactive ;;
-        yarn) yarn create vite "$PROJ_NAME" --template react --no-interactive ;;
-        bun)  bun  create vite "$PROJ_NAME" --template react --no-interactive ;;
-    esac || { printf "❌ Project creation failed\n"; return 1; }
-
-    cd "$PROJ_NAME" || return 1
-    printf "📦 Installing dependencies...\n"
-    $PKG_MANAGER install || { printf "❌ Install failed\n"; return 1; }
-
-    # Setup VS Code auto‑run task
-    mkdir -p .vscode
-    cat > .vscode/tasks.json << 'EOF'
-{
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "dev",
-      "type": "shell",
-      "command": "npm run dev",
-      "isBackground": true,
-      "runOptions": {
-        "runOn": "folderOpen"
-      },
-      "problemMatcher": []
-    }
-  ]
-}
-EOF
-
-    printf "🧠 Opening in VS Code...\n"
-    command -v code &>/dev/null && code .
-
-    printf "🌐 Dev server will auto-start inside VS Code terminal\n"
-    printf "✅ Done!\n"
 }
 
