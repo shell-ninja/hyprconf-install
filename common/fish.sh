@@ -59,9 +59,9 @@ common_packages=(
     fish
     fzf 
     git 
+    pv
     rsync 
     starship
-    thefuck
     zoxide 
 )
 
@@ -111,10 +111,8 @@ else
     msg skp "fish is already the default shell."
 fi
 
-if [[ -d "$HOME/.config/fish/functions" ]]; then
-    chmod +x "$HOME/.config/fish/functions"/* 2>&1 | tee -a "$log"
-elif [[ -f "$HOME/.config/fish/functions.fish" ]]; then
-    chmod +x "$HOME/.config/fish/functions.fish" 2>&1 | tee -a "$log"
+if [[ -d "$HOME/.config/fish" ]]; then
+    chmod +x "$HOME/.config/fish"/* 2>&1 | tee -a "$log"
 fi
 
 
