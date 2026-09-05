@@ -59,6 +59,7 @@ common_packages=(
     fish
     fzf 
     git 
+    pv
     rsync 
     starship 
     zoxide 
@@ -111,7 +112,7 @@ else
 fi
 
 if [[ -d "$HOME/.config/fish" ]]; then
-    chmod +x "$HOME/.config/fish/functions"/* 2>&1 | tee -a "$log"
+    chmod +x "$HOME/.config/fish"/* 2>&1 | tee -a "$log"
 fi
 
 
