@@ -95,6 +95,7 @@ main_packages=(
     wget
     wl-clipboard
     xdg-utils
+    yazi
     polkit-kde-agent
 )
 
