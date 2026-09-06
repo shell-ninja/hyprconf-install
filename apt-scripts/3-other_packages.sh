@@ -92,6 +92,7 @@ main_packages=(
     wget
     wl-clipboard
     xdg-utils
+    yazi
 )
 
 # other necessary packages

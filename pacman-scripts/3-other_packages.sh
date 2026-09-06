@@ -96,6 +96,7 @@ other_packages=(
     wget
     wl-clipboard
     xorg-xrandr
+    yazi
     zip
 )
 

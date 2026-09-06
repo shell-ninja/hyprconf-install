@@ -82,6 +82,7 @@ hypr_package=(
   wget
   xdg-utils
   xwayland
+  yazi
 )
 
 other_packages=(
