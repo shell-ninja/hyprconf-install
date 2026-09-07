@@ -37,13 +37,6 @@ source "${ZINIT_HOME}/zinit.zsh"
 
 
 ############################################
-# Add in Starship
-############################################
-export STARSHIP_CONFIG="/home/shell-ninja/.zsh/starship/starship-macchiato_bubbles.toml"
-eval "$(starship init zsh)"
-
-
-############################################
 # Add in zsh plugins
 ############################################
 zinit light zsh-users/zsh-syntax-highlighting
@@ -65,10 +58,23 @@ ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BEAM
 ZVM_NORMAL_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 ZVM_OPPEND_MODE_CURSOR=$ZVM_CURSOR_BLINKING_UNDERLINE
 
-# Load completions
-autoload -Uz compinit && compinit
+# Load completions (cached for speed)
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.m+1) ]]; then
+    compinit
+else
+    compinit -C
+fi
 
 zinit cdreplay -q
+
+
+############################################
+# Add in Starship
+############################################
+export STARSHIP_CONFIG="/home/shell-ninja/.zsh/starship/starship-simple.toml"
+eval "$(starship init zsh)"
+
 
 
 
@@ -78,6 +84,7 @@ zinit cdreplay -q
 #######################################################
 setopt autocd              # change directory just by typing its name
 setopt correct             # auto correct mistakes
+setopt correct_all             # auto correct mistakes
 setopt interactivecomments # allow comments in interactive mode
 setopt magicequalsubst     # enable filename expansion for arguments of the form ‘anything=expression’
 setopt nonomatch           # hide error message if there is no match for the pattern
@@ -179,9 +186,35 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 if command -v thefuck >/dev/null 2>&1; then
-    eval "$(thefuck --alias)" # thefu*k
-    eval "$(thefuck --alias hell)" # thefu*k "hell"
-    eval "$(thefuck --alias damn)" # thefu*k "damn"
+    fuck() {
+        TF_PYTHONIOENCODING=$PYTHONIOENCODING
+        export TF_SHELL=zsh
+        export TF_ALIAS=fuck
+        TF_SHELL_ALIASES=$(alias)
+        export TF_SHELL_ALIASES
+        TF_HISTORY="$(fc -ln -10)"
+        export TF_HISTORY
+        export PYTHONIOENCODING=utf-8
+        TF_CMD=$(thefuck THEFUCK_ARGUMENT_PLACEHOLDER "$@") && eval "$TF_CMD"
+        unset TF_HISTORY
+        export PYTHONIOENCODING=$TF_PYTHONIOENCODING
+        test -n "$TF_CMD" && print -s "$TF_CMD"
+    }
+    hell() {
+        TF_PYTHONIOENCODING=$PYTHONIOENCODING
+        export TF_SHELL=zsh
+        export TF_ALIAS=hell
+        TF_SHELL_ALIASES=$(alias)
+        export TF_SHELL_ALIASES
+        TF_HISTORY="$(fc -ln -10)"
+        export TF_HISTORY
+        export PYTHONIOENCODING=utf-8
+        TF_CMD=$(thefuck THEFUCK_ARGUMENT_PLACEHOLDER "$@") && eval "$TF_CMD"
+        unset TF_HISTORY
+        export PYTHONIOENCODING=$TF_PYTHONIOENCODING
+        test -n "$TF_CMD" && print -s "$TF_CMD"
+    }
+    alias damn='eval "$(TF_ALIAS=damn PYTHONIOENCODING=utf-8 thefuck "$(fc -ln -1)")"'
 fi
 
 if command -v zoxide >/dev/null 2>&1; then

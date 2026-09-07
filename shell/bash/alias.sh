@@ -95,5 +95,9 @@ alias sddt='sddm-greeter-qt6 --test-mode --theme'
 alias prompt="~/.bash/change_prompt.sh"
 alias style="~/.bash/change_style.sh"
 
+## change shell ##
+alias cf='chsh -s /usr/bin/fish && clear && exec fish'
+alias cz='chsh -s /usr/bin/zsh && clear && exec zsh'
+
 ## permissions ##
 alias exe='chmod +x'
