@@ -98,6 +98,10 @@ alias clock='tty-clock -c -t -D -s'
 alias mat='cmatrix'
 alias sddt='sddm-greeter-qt6 --test-mode --theme'
 
+## cchange shell ##
+alias cb='chsh -s /usr/bin/bash && clr && exec bash'
+alias cf='chsh -s /usr/bin/fish && clr && exec fish'
+
 ## customizations ##
 alias style="$HOME/.zsh/change_style.zsh"
 

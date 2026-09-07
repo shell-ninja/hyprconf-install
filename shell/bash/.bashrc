@@ -24,7 +24,7 @@ source ~/.local/share/blesh/ble.sh --attach=none
 # ================================= fastfetch ================================= #
 if command -v fastfetch &> /dev/null; then
     if [[ -d "$HOME/.local/share/fastfetch" ]]; then
-        export ffconfig="minimal"
+export ffconfig="minimal"
         command fastfetch --config \
             "$HOME/.local/share/fastfetch/presets/${ffconfig}.jsonc"
     else
@@ -38,7 +38,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # ================================= prompt ================================= #
-PS1='\n\e[1;36m╭─ \e[1;37m\u\e[1;34m@\e[1;37m\h\e[1;0m in $(if [[ "$PWD" = "$HOME" ]]; then echo "\e[1;36m󰜥"; elif [[ "$PWD" = "/" ]]; then echo "\e[1;36m\e[1;0m"; else echo "\e[1;33m\w"; fi)\n\e[1;36m╰──\e[1;32m󰘧\e[1;0m '
+PS1='\n\[\e[38;5;238m\][ \[\e[1;36m\]$(if [[ "$PWD" == "$HOME" ]]; then echo -n ""; elif [[ "$PWD" == "/" ]]; then echo -n ""; else echo -n "󰉋"; fi) \[\e[38;5;253m\]\w \[\e[38;5;238m\]] \[\e[1;33m\]➜\[\e[0m\] '
 
 # set prompt starship
 # export STARSHIP_CONFIG="$HOME/.bash/starship/starship-macos_frame.toml"
@@ -50,6 +50,7 @@ if [[ ! -s "$STARSHIP_CACHE" || "$(command -v starship)" -nt "$STARSHIP_CACHE" ]
     starship init bash > "$STARSHIP_CACHE"
 fi
 # source "$STARSHIP_CACHE"
+# [[ -n "${STARSHIP_SHELL-}" ]] && starship_precmd 2>/dev/null
 
 
 # User specific environment
@@ -184,3 +185,4 @@ bind "set vi-ins-mode-string "
 [[ ${BLE_VERSION-} ]] && ble-attach
 # source "$HOME/.cargo/env"
 export ffconfig="minimal"
+export LIBVIRT_DEFAULT_URI="qemu:///system"
