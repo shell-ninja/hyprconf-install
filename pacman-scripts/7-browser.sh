@@ -164,16 +164,16 @@ case $browser in
         fi
         ;;
     "Zen Browser")
-        if command -v zen-browser &> /dev/null; then
+        if command -v zen-browser-bin &> /dev/null; then
             msg skp "Zen Browser is already installe. Skipping"
             exit 0
         else
-            install_package zen-browser
+            install_package zen-browser-bin
         fi
 
         sleep 1
 
-        if [[ -n "$(command -v zen-browser)" ]]; then
+        if [[ -n "$(command -v zen-browser-bin)" ]]; then
             echo "[ DONE ] - Zen Browser was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
         else 
             echo "[ ERROR ] - Could not install zen" 2>&1 | tee -a "$log" &> /dev/null

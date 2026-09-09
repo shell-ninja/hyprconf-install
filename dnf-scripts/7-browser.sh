@@ -148,10 +148,9 @@ case $browser in
         else
             msg act "Installing the zen-browser..." && sleep 0.5
             msg att "Enabling the copr repo for it..."
-            sudo dnf copr enable sneexy/zen-browser -y
-            sudo wget "https://copr.fedorainfracloud.org/coprs/sneexy/zen-browser/repo/fedora-$(rpm -E %fedora)/sneexy-zen-browsder-fedora-$(rpm -E %fedora).repo" -O "/etc/yum.repos.d/_copr_sneexy-zen-browser.repo"
+            sudo dnf copr enable myriad-sun/zen-browser -y
             sleep 1
-            sudo dnf install zen-browser-avx2 -y
+            sudo dnf install zen-browser -y
         fi
 
         sleep 1
