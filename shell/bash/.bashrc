@@ -38,7 +38,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # ================================= prompt ================================= #
-PS1='\n\[\e[38;5;238m\][ \[\e[1;36m\]$(if [[ "$PWD" == "$HOME" ]]; then echo -n ""; elif [[ "$PWD" == "/" ]]; then echo -n ""; else echo -n "󰉋"; fi) \[\e[38;5;253m\]\w \[\e[38;5;238m\]] \[\e[1;33m\]➜\[\e[0m\] '
+PS1='$(if [[ "$PWD" = "$HOME" ]]; then echo "\e[1;36m\e[1;0m"; elif [[ "$PWD" = "/" ]]; then echo " \e[1;0m"; elif [[ ! "$PWD" == "$HOME" ]]; then echo "\n\w"; fi)\n\e[1;32m❯\e[1;0m '
 
 # set prompt starship
 # export STARSHIP_CONFIG="$HOME/.bash/starship/starship-macos_frame.toml"
@@ -123,6 +123,8 @@ fi
 # ================================= completion and autocd ================================= #
 bind "set completion-ignore-case on"
 shopt -s autocd
+shopt -s cdspell
+shopt -s dirspell
 unset rc
 
 
@@ -136,8 +138,7 @@ alias hell='_thefuck_init && hell'
 
 # For zoxide integration with FZF (if zoxide is installed)
 if command -v zoxide &> /dev/null; then
-    eval "$(zoxide init bash --cmd cd)"
-    alias zi='zoxide query -i | xargs -r eza --color=always --icons=always'
+    eval "$(zoxide init bash)"
     _ZO_DOCTOR=0
 fi
 
@@ -161,7 +162,11 @@ shopt -s checkwinsize
 
 # Causes bash to append to history instead of overwriting it so if you start a new terminal, you have old session history
 shopt -s histappend
-PROMPT_COMMAND="history -a"
+if [[ -z "$PROMPT_COMMAND" ]]; then
+    PROMPT_COMMAND="history -a"
+elif [[ "$PROMPT_COMMAND" != *"history -a"* ]]; then
+    PROMPT_COMMAND+=("history -a")
+fi
 alias hist="history | grep"
 
 
