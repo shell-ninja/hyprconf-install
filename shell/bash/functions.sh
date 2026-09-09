@@ -859,62 +859,158 @@ EOF
 
 
 # auto cd
+export _autocd_target_file="${XDG_RUNTIME_DIR:-/tmp}/.autocd_target_$$"
+
+# Case-insensitively resolves path components
+_autocd_resolve_path() {
+    local raw_path="$1"
+    local cur=""
+
+    if [[ "$raw_path" == /* ]]; then
+        cur="/"
+        raw_path="${raw_path#/}"
+    elif [[ "$raw_path" == \~* ]]; then
+        cur="$HOME"
+        raw_path="${raw_path#\~/}"
+        raw_path="${raw_path#\~}"
+    else
+        cur="."
+    fi
+
+    local IFS='/'
+    local -a parts
+    read -ra parts <<< "$raw_path"
+    for part in "${parts[@]}"; do
+        [[ -z "$part" || "$part" == "." ]] && continue
+        if [ "$part" == ".." ]; then
+            cur="$cur/.."
+            continue
+        fi
+
+        if [ -d "$cur/$part" ]; then
+            cur="$cur/$part"
+            continue
+        fi
+
+        local lower_part
+        lower_part="$(echo "$part" | tr '[:upper:]' '[:lower:]')"
+        local found=""
+        local restore_nullglob=0
+        shopt -q nullglob || restore_nullglob=1
+        shopt -s nullglob
+        for entry in "$cur"/*; do
+            if [ -d "$entry" ]; then
+                local entry_name lower_entry
+                entry_name="$(basename -- "$entry")"
+                lower_entry="$(echo "$entry_name" | tr '[:upper:]' '[:lower:]')"
+                if [ "$lower_entry" = "$lower_part" ]; then
+                    found="$entry"
+                    break
+                fi
+            fi
+        done
+        [ "$restore_nullglob" -eq 1 ] && shopt -u nullglob
+
+        if [ -n "$found" ]; then
+            cur="$found"
+        else
+            return 1
+        fi
+    done
+
+    [ -d "$cur" ] && printf '%s\n' "$cur"
+}
+
 command_not_found_handle() {
     local cmd="$1"
     local target=""
 
-    # 1. Exact directory match
+    # 1. Exact directory match (current directory / relative / absolute)
     if [ -d "$cmd" ]; then
         target="$cmd"
     else
-        # 2. Case-insensitive directory lookup (matches basename only;
-        #    parent path components still need to exist with exact case)
-        local parent_dir base_name
-        parent_dir="$(dirname -- "$cmd")"
-        base_name="$(basename -- "$cmd")"
+        # 2. Path with slashes: attempt case-insensitive resolution
+        if [[ "$cmd" == *"/"* ]]; then
+            local resolved_path
+            resolved_path="$(_autocd_resolve_path "$cmd")"
+            [ -n "$resolved_path" ] && [ -d "$resolved_path" ] && target="$resolved_path"
+        fi
 
-        if [ -d "$parent_dir" ]; then
-            local lower_base
-            lower_base="$(echo "$base_name" | tr '[:upper:]' '[:lower:]')"
-            local matches=()
-            local restore_nullglob=0
-            shopt -q nullglob || restore_nullglob=1
-            shopt -s nullglob
-            for entry in "$parent_dir"/*; do
-                if [ -d "$entry" ]; then
-                    local entry_name lower_entry
-                    entry_name="$(basename -- "$entry")"
-                    lower_entry="$(echo "$entry_name" | tr '[:upper:]' '[:lower:]')"
-                    [ "$lower_entry" = "$lower_base" ] && matches+=("$entry")
-                fi
-            done
-            [ "$restore_nullglob" -eq 1 ] && shopt -u nullglob
+        # 3. Use zoxide to jump to directories from anywhere
+        if [ -z "$target" ] && command -v zoxide >/dev/null 2>&1; then
+            local z_match
+            z_match="$(zoxide query --exclude "$PWD" -- "$@" 2>/dev/null || zoxide query -- "$@" 2>/dev/null)"
+            if [ -n "$z_match" ] && [ -d "$z_match" ]; then
+                target="$z_match"
+            fi
+        fi
 
-            if [ "${#matches[@]}" -eq 1 ]; then
-                target="${matches[0]}"
-            elif [ "${#matches[@]}" -gt 1 ]; then
-                echo -e "\033[1;33mMultiple matches found for '$cmd':\033[0m" >&2
-                if command -v fzf >/dev/null 2>&1; then
-                    target="$(printf "%s\n" "${matches[@]}" | fzf --prompt="Select Directory > " --height=40% --layout=reverse --border)"
-                else
-                    local i=1
-                    for m in "${matches[@]}"; do
-                        echo -e "  \033[1;36m$i.\033[0m $m" >&2
-                        i=$((i + 1))
-                    done
-                    local choice
-                    read -r -p "Select number (1-${#matches[@]}): " choice
-                    if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#matches[@]}" ]; then
-                        target="${matches[$((choice - 1))]}"
+        # 4. Case-insensitive local directory lookup
+        if [ -z "$target" ]; then
+            local parent_dir base_name
+            parent_dir="$(dirname -- "$cmd")"
+            base_name="$(basename -- "$cmd")"
+
+            if [ ! -d "$parent_dir" ]; then
+                local resolved_parent
+                resolved_parent="$(_autocd_resolve_path "$parent_dir")"
+                [ -n "$resolved_parent" ] && parent_dir="$resolved_parent"
+            fi
+
+            if [ -d "$parent_dir" ]; then
+                local lower_base
+                lower_base="$(echo "$base_name" | tr '[:upper:]' '[:lower:]')"
+                local matches=()
+                local restore_nullglob=0
+                shopt -q nullglob || restore_nullglob=1
+                shopt -s nullglob
+                for entry in "$parent_dir"/*; do
+                    if [ -d "$entry" ]; then
+                        local entry_name lower_entry
+                        entry_name="$(basename -- "$entry")"
+                        lower_entry="$(echo "$entry_name" | tr '[:upper:]' '[:lower:]')"
+                        [ "$lower_entry" = "$lower_base" ] && matches+=("$entry")
+                    fi
+                done
+                [ "$restore_nullglob" -eq 1 ] && shopt -u nullglob
+
+                if [ "${#matches[@]}" -eq 1 ]; then
+                    target="${matches[0]}"
+                elif [ "${#matches[@]}" -gt 1 ]; then
+                    echo -e "\033[1;33mMultiple matches found for '$cmd':\033[0m" >&2
+                    if command -v fzf >/dev/null 2>&1; then
+                        target="$(printf "%s\n" "${matches[@]}" | fzf --prompt="Select Directory > " --height=40% --layout=reverse --border)"
+                    else
+                        local i=1
+                        for m in "${matches[@]}"; do
+                            echo -e "  \033[1;36m$i.\033[0m $m" >&2
+                            i=$((i + 1))
+                        done
+                        local choice
+                        read -r -p "Select number (1-${#matches[@]}): " choice
+                        if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#matches[@]}" ]; then
+                            target="${matches[$((choice - 1))]}"
+                        fi
                     fi
                 fi
+            fi
+        fi
+
+        # 5. Check in $HOME (if not yet recorded in zoxide)
+        if [ -z "$target" ] && [ -n "$HOME" ]; then
+            if [ -d "$HOME/$cmd" ]; then
+                target="$HOME/$cmd"
+            else
+                local home_match
+                home_match="$(_autocd_resolve_path "$HOME/$cmd")"
+                [ -n "$home_match" ] && [ -d "$home_match" ] && target="$home_match"
             fi
         fi
     fi
 
     if [ -n "$target" ]; then
         # Can't cd here — this is a forked subshell. Leave a note for the
-        # real shell to pick up via PROMPT_COMMAND.
+        # real shell to pick up via PROMPT_COMMAND / ble hook.
         printf '%s\n' "$target" > "$_autocd_target_file"
         return 0
     fi
@@ -929,14 +1025,15 @@ _autocd_apply() {
     if [ -f "$_autocd_target_file" ]; then
         local target
         target="$(<"$_autocd_target_file")"
-        rm -f "$_autocd_target_file"
+        command rm -f "$_autocd_target_file"
         [ -n "$target" ] && [ -d "$target" ] && cd -- "$target"
     fi
 }
-PROMPT_COMMAND+=("_autocd_apply")
-# NOTE: place this whole block at the very end of .bashrc — after starship
-# init / ble.sh / zoxide hooks / anything else that touches PROMPT_COMMAND —
-# so nothing sourced later overwrites our entry.
+if [[ " ${PROMPT_COMMAND[*]} " != *" _autocd_apply "* ]]; then
+    PROMPT_COMMAND+=("_autocd_apply")
+fi
+[[ ${BLE_VERSION-} ]] && blehook PRECMD+=_autocd_apply
+trap 'command rm -f "$_autocd_target_file" 2>/dev/null' EXIT
 
 # Auto-ls (2-level tree view) on directory change (skips HOME)
 cd() {
