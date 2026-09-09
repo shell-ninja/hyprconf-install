@@ -24,7 +24,7 @@ source ~/.local/share/blesh/ble.sh --attach=none
 # ================================= fastfetch ================================= #
 if command -v fastfetch &> /dev/null; then
     if [[ -d "$HOME/.local/share/fastfetch" ]]; then
-export ffconfig="ninja-card"
+export ffconfig="minimal"
         command fastfetch --config \
             "$HOME/.local/share/fastfetch/presets/${ffconfig}.jsonc"
     else
@@ -50,8 +50,7 @@ if [[ ! -s "$STARSHIP_CACHE" || "$(command -v starship)" -nt "$STARSHIP_CACHE" ]
     starship init bash > "$STARSHIP_CACHE"
 fi
 # source "$STARSHIP_CACHE"
-[[ -n "${STARSHIP_SHELL-}" ]] && starship_precmd 2>/dev/null
-
+# [[ -n "${STARSHIP_SHELL-}" ]] && starship_precmd 2>/dev/null
 
 
 # User specific environment
@@ -190,5 +189,5 @@ bind "set vi-ins-mode-string "
 # ================================= ble-attach ================================= #
 [[ ${BLE_VERSION-} ]] && ble-attach
 # source "$HOME/.cargo/env"
-export ffconfig="ninja-card"
+export ffconfig="minimal"
 export LIBVIRT_DEFAULT_URI="qemu:///system"
