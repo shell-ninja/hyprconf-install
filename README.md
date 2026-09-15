@@ -45,7 +45,7 @@
 <summary>Screenshots</summary>
 <p align="center">
    <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/overall.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/bar-leyout.png?raw=true" />
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/bar-layout.png?raw=true" />
 
    <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/controlcenter.png?raw=true" />
    <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/hyprconf-apps.png?raw=true" />
@@ -56,7 +56,7 @@
    <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/powermenu.png?raw=true" />
    <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/lockscreen.png?raw=true" />
 
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm.png?raw=true" />
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm.png?raw=true" />
 
 </p> <br>
 </details>
