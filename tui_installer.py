@@ -7,19 +7,20 @@ Inspired by Ryoku Shell installer design aesthetics.
 Pair programmed for Shell Ninja (https://github.com/shell-ninja)
 """
 
-import sys
+import atexit
 import os
-import time
+import re
+import select
 import shutil
 import signal
-import termios
-import tty
-import select
 import subprocess
+import sys
+import termios
 import threading
-import re
-import atexit
+import time
+import tty
 from datetime import datetime
+
 
 # ----------------- ANSI Color Palette (Shell Ninja Cyber-Purple & Neon Cyan)
 def rgb_fg(r, g, b):
@@ -1091,7 +1092,6 @@ def run_interactive_installer():
             print(f"  {COLOR_TEXT}The TUI installer is handing control to the Hyprconf setup\n"
                   f"  script. You can now interact with all prompts directly:\n")
             print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Choose your bar layout (Noctalia){RESET}")
-            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Choose your launcher & lockscreen style{RESET}")
             print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Opt in/out of extra wallpaper download{RESET}")
             print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Backup existing configs as you prefer{RESET}")
             print()
