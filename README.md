@@ -1,6 +1,6 @@
 <a id="top"></a>
 
-<h1 align="center">Minimal Hyprland Install Script</h1>
+<h1 align="center">Hyprland TUI Installation Script</h1>
 <h3 align="center">By</h3>
 <h2 align="center">Shell Ninja</h2>
 <br>
@@ -16,8 +16,6 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 <a href="#keyboards"><kbd> <br> keyboard Shortcuts <br> </kbd></a>&ensp;&ensp;
 <a href="#updates"><kbd> <br> Updates <br> </kbd></a>&ensp;&ensp;
 <a href="#contrib"><kbd> <br> Contrubution <br> </kbd></a>&ensp;&ensp;
-
-<!-- <a href="https://t.me/+OxKQy7Y6XWxjOTQ9"><kbd> <br> Telegram <br> </kbd></a> -->
 
 </div><br><br>
 
@@ -103,8 +101,7 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 <details close>
 <summary>Login Screen (sddm)</summary>
 <p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm1.jpg?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm2.jpg?raw=true" />
+   <img aligh="center" width="99%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm.png?raw=true" />
 </p>
 </details>
 
@@ -175,63 +172,27 @@ chmod +x install.sh
 ### Prompts
 
 <details close>
-<summary>Installation Prompts</summary>
+<summary>Select variants</summary>
 
-When you run the script, it will ask you some prompts. You can choose according to your need. You can choose multiple options using the space bar.
+Select from this 2 variants: </br> 1. Traditional </br> 2. Noctalia.
 
 <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/1.png?raw=true" /> <br>
 
 </details>
 
 <details close>
-<summary>Install Shell</summary>
+<summary>Select options</summary>
+ Press <kbd>Space</kbd> to toggle, <kbd>j</kbd> or <kbd>k</kbd> for navigation.
 
 <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/2.png?raw=true" /> <br>
 
 </details>
 
 <details close>
-<summary>Install Browser</summary>
-
-You have the freedom to choose a web browser. I you don't want to install any, you can simply skip it.
+<summary>Installation Progress</summary>
 
 <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/3.png?raw=true" />
 <br>
-</details>
-
-<details close>
-<summary>Install From 2 versions</summary>
-
-You can choose between the [Hyprconf](https://github.com/shell-ninja/hyprconf) and [Hyprconf-V2](https://github.com/shell-ninja/hyprconf-v2) configuration.
-<br>
-
-- Hyprconf is a dynamic color changing configuration which use pywal to change colors.
-- Hyprconf-V2 is a theme based configuration. I has pre-configured themes.
-
-<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/version.png?raw=true" />
-<br>
-</details>
-
-<details close>
-<summary>keyboard layout and variant</summary>
-<br>
-
-The default keyboard layout will be `us`. If it's not your preferred keyboard layout, you can pick your one. <br>
-Also, you can choose the keyboard variant, or keep it empty.
-
-- Keyboard Layout
-<p align="center">
-<br>
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/kb_layout.png?raw=true" />
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/kb_layout_select.png?raw=true" />
-</p>
-
-- Keyboar Variant
-<p align="center">
-<br>
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/kb_variant.png?raw=true" />
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/kb_variant_select.png?raw=true" />
-</p>
 </details>
 
 <br>
