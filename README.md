@@ -46,15 +46,15 @@
 
 | Screenshot | Name | Description |
 | :---: | :--- | :--- |
-| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/overall.png?raw=true" width="340" alt="Desktop Overview" /> | **Desktop Overview** | Complete Hyprland desktop environment featuring the Noctalia shell, customized Waybar, and dynamic wallpaper theming. |
-| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/bar-layout.png?raw=true" width="340" alt="Status Bar Layout" /> | **Status Bar Layout** | Customized Waybar showing active workspaces, media player controls, network, battery, and system tray widgets. |
+| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/overall.png?raw=true" width="340" alt="Desktop Overview" /> | **Desktop Overview** | Complete Hyprland desktop environment featuring the Noctalia shell and dynamic wallpaper theming. |
+| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/bar-layout.png?raw=true" width="340" alt="Status Bar Layout" /> | **Status Bar Layout** | Customized Noctalia Bar showing active workspaces, media player controls, network, battery, and system tray widgets. |
 | <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/controlcenter.png?raw=true" width="340" alt="Control Center" /> | **Control Center** | Quick-access control center panel for toggling Wi-Fi, Bluetooth, volume, display brightness, and notifications. |
-| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/hyprconf-apps.png?raw=true" width="340" alt="Application Launcher" /> | **Application Launcher** | Modern Rofi application launcher with smooth animations and instant fuzzy search for installed apps. |
+| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/hyprconf-apps.png?raw=true" width="340" alt="Application Launcher" /> | **Application Launcher** | Python GUI apps for change settings and update packages. |
 | <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/wallpaper-select1.png?raw=true" width="340" alt="Wallpaper Selector Grid" /> | **Wallpaper Selector (Grid)** | Interactive thumbnail gallery view allowing you to easily browse and choose from available wallpapers. |
-| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/wallpaper-select2.png?raw=true" width="340" alt="Wallpaper Selector Preview" /> | **Wallpaper Selector (Preview)** | Wallpaper switcher menu with live preview and automatic color scheme generation using Pywal. |
-| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/powermenu.png?raw=true" width="340" alt="Power Menu" /> | **Power Menu** | Styled Wlogout session menu with options to lock, logout, suspend, reboot, or shut down the system. |
-| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/lockscreen.png?raw=true" width="340" alt="Hyprlock Screen" /> | **Hyprlock Screen** | Minimalist lock screen featuring custom user avatar support, digital clock, date, and battery indicator. |
-| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm.png?raw=true" width="340" alt="SDDM Login Theme" /> | **SDDM Login Theme** | Sleek SDDM display manager theme that unifies the visual aesthetic right from boot. |
+| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/wallpaper-select2.png?raw=true" width="340" alt="Wallpaper Selector Preview" /> | **Wallpaper Selector (Preview)** | Wallpaper switcher menu with live preview and automatic color scheme generation. |
+| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/powermenu.png?raw=true" width="340" alt="Power Menu" /> | **Power Menu** | Minimal system power menu. |
+| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/lockscreen.png?raw=true" width="340" alt="Lock Screen" /> | **Lock Screen** | Minimalist lock screen. |
+| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm.png?raw=true" width="340" alt="SDDM Login Theme" /> | **SDDM Login Theme** | Sleek SDDM display manager theme. |
 
 </details>
 
