@@ -61,7 +61,7 @@ common_packages=(
     git 
     pv
     rsync 
-    starship
+    starship 
     zoxide 
 )
 
@@ -102,17 +102,18 @@ if [[ "$pkgman" == "zypper" ]]; then
     done
 fi
 
-# --- Change Default Shell ---
-if [[ "$SHELL" != *"fish"* ]]; then
-    msg act "Changing default shell to fish..."
-    chsh -s "$(command -v fish)"
-    msg dn "Shell changed. (You may need to log out and back in for this to take effect)."
-else
-    msg skp "fish is already the default shell."
-fi
 
 if [[ -d "$HOME/.config/fish" ]]; then
     chmod +x "$HOME/.config/fish"/* 2>&1 | tee -a "$log"
+
+    shell="$(echo $SHELL)"
+    fish="$(which fish)"
+
+    if [[ ! "$shell" == "$fish" ]]; then
+        msg att "Your current shell is: '$shell'"
+        msg act "Chanfing default shell to: '$fish'"
+        chsh -s "$fish"
+    fi
 fi
 
 
