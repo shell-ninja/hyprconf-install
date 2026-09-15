@@ -14,7 +14,6 @@
 <a href="#screenshots"><kbd> <br> Screenshots <br> </kbd></a>&ensp;&ensp;
 <a href="#install"><kbd> <br> Install <br> </kbd></a>&ensp;&ensp;
 <a href="#keyboards"><kbd> <br> keyboard Shortcuts <br> </kbd></a>&ensp;&ensp;
-<a href="#updates"><kbd> <br> Updates <br> </kbd></a>&ensp;&ensp;
 <a href="#contrib"><kbd> <br> Contrubution <br> </kbd></a>&ensp;&ensp;
 
 </div><br><br>
@@ -49,7 +48,7 @@
 | <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/overall.png?raw=true" width="340" alt="Desktop Overview" /> | **Desktop Overview** | Complete Hyprland desktop environment featuring the Noctalia shell and dynamic wallpaper theming. |
 | <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/bar-layout.png?raw=true" width="340" alt="Status Bar Layout" /> | **Status Bar Layout** | Customized Noctalia Bar showing active workspaces, media player controls, network, battery, and system tray widgets. |
 | <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/controlcenter.png?raw=true" width="340" alt="Control Center" /> | **Control Center** | Quick-access control center panel for toggling Wi-Fi, Bluetooth, volume, display brightness, and notifications. |
-| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/hyprconf-apps.png?raw=true" width="340" alt="Application Launcher" /> | **Application Launcher** | Python GUI apps for change settings and update packages. |
+| <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/hyprconf-apps.png?raw=true" width="340" alt="Hyprconf Apps" /> | **Application Launcher** | Python GUI apps for changing hyprland settings and updating packages. |
 | <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/wallpaper-select1.png?raw=true" width="340" alt="Wallpaper Selector Grid" /> | **Wallpaper Selector (Grid)** | Interactive thumbnail gallery view allowing you to easily browse and choose from available wallpapers. |
 | <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/wallpaper-select2.png?raw=true" width="340" alt="Wallpaper Selector Preview" /> | **Wallpaper Selector (Preview)** | Wallpaper switcher menu with live preview and automatic color scheme generation. |
 | <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/powermenu.png?raw=true" width="340" alt="Power Menu" /> | **Power Menu** | Minimal system power menu. |
@@ -108,7 +107,7 @@ bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/ma
 > - Clone this repository:
 
 ```bash
-git clone --depth=1 https://github.com/shell-ninja/hyprconf-install.git
+git clone --depth=1 --branch=noct https://github.com/shell-ninja/hyprconf-install.git
 ```
 
 > - Now cd into hyprconf-install directory and run this command.:
@@ -169,10 +168,6 @@ Select from this 2 variants: </br> 1. Traditional </br> 2. Noctalia.
   <a href="#top"><kbd> <br> 🡅 <br> </kbd></a>
 </div>
 
-<a id="updates"></a>
-
-### See last changes (updates) [here](https://github.com/shell-ninja/hyprconf-install/blob/main/UPDATES.md)
-
 <br>
 
 <a id="contrib"></a>
@@ -192,7 +187,7 @@ If you want to add your ideas in this project, just do some steps.
 2. Now clone the forked repository in you machine. <br> Example command:
 
 ```
-git clone --depth=1 https://github.com/your_user_name/hyprconf.git
+git clone --depth=1 --branch=noct https://github.com/your_user_name/hyprconf.git
 ```
 
 3. Create a branch by your user_name. <br> Example command:
@@ -221,7 +216,7 @@ git commit -m "delete: Deleted this. It was creating this example problem"
 git push origin your_branch_name
 ```
 
-5. Now you can create a pull request in the main repository.<br> But make sure to create the pull request in the `development` branch, no the `main` branch.
+5. Now you can create a pull request in the main repository.<br> But make sure to create the pull request in the `noct` branch.
 
 ### Thats all about contributing.
 
@@ -229,4 +224,4 @@ git push origin your_branch_name
 
 ## <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=90EE90&vCenter=true&width=435&height=25&lines=THANKS" width="450"/>
 
-I would like to thank [JaKooLit](https://github.com/JaKooLit). I was inspired from his Hyprland installation scripts and prepared my script. I took and modified some of his scripts and used here.
+I was inspired by the [Ryoku](https://ryoku.dev/) installer and prepared this one.
