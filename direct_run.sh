@@ -25,6 +25,28 @@ printf "  ${cyan}✦${end} ${bold}Bootstrapping installer environment...${end}\n
 
 [[ ! "$(pwd)" == "$HOME" ]] && cd "$HOME"
 
+# ----------------- Ensure dependencies
+if ! command -v unzip &> /dev/null; then
+    printf "  ${purple}→${end} Installing unzip...\n"
+    if command -v pacman &> /dev/null; then
+        sudo pacman -S --needed --noconfirm unzip &> /dev/null
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -y unzip &> /dev/null
+    elif command -v zypper &> /dev/null; then
+        sudo zypper in -y unzip &> /dev/null
+    elif command -v apt-get &> /dev/null; then
+        sudo apt-get update -y &> /dev/null
+        sudo apt-get install -y unzip &> /dev/null
+    fi
+
+    if command -v unzip &> /dev/null; then
+        printf "  ${green}✓${end} Successfully installed ${green}unzip${end}\n\n"
+    else
+        printf "  ${red}✗${end} Failed to install unzip. Please install it manually.\n\n"
+        exit 1
+    fi
+fi
+
 # ----------------- Branch selection
 
 printf "\n  ${purple}✦${end} ${bold}Select the variant to install:${end}\n\n"
@@ -50,7 +72,7 @@ curl -L "https://github.com/shell-ninja/hyprconf-install/archive/refs/heads/${se
 
 if [[ -f "$HOME/hyprconf-install.zip" ]]; then
     mkdir -p hyprconf-install
-    unzip -q hyprconf-install.zip "hyprconf-install-${selected_branch}/*" -d hyprconf-install
+    unzip -q -o hyprconf-install.zip "hyprconf-install-${selected_branch}/*" -d hyprconf-install
     cd hyprconf-install || exit 1
     mv "hyprconf-install-${selected_branch}/"* . 2>/dev/null || true
     rmdir "hyprconf-install-${selected_branch}" 2>/dev/null || true
