@@ -1,11 +1,11 @@
 <a id="top"></a>
 
-<h1 align="center">Minimal Hyprland Install Script</h1>
+<h1 align="center">Hyprland TUI Installation Script</h1>
 <h3 align="center">By</h3>
 <h2 align="center">Shell Ninja</h2>
 <br>
 
-This Hyprland configuration is kind of minila looking, but also little bit gorgeous I guess. Why don't you check it out?
+### This Hyprland configuration is based on the [Noctalia](https://noctalia.dev/) shell.
 
 <div align="center">
 
@@ -16,8 +16,6 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 <a href="#keyboards"><kbd> <br> keyboard Shortcuts <br> </kbd></a>&ensp;&ensp;
 <a href="#updates"><kbd> <br> Updates <br> </kbd></a>&ensp;&ensp;
 <a href="#contrib"><kbd> <br> Contrubution <br> </kbd></a>&ensp;&ensp;
-
-<!-- <a href="https://t.me/+OxKQy7Y6XWxjOTQ9"><kbd> <br> Telegram <br> </kbd></a> -->
 
 </div><br><br>
 
@@ -44,68 +42,23 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 ## <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=90EE90&vCenter=true&width=435&height=25&lines=SCREENSHOTS" width="450"/>
 
 <details close>
-<summary>Overall</summary>
+<summary>Screenshots</summary>
 <p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/2.png?raw=true" /> <br>
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/overall.png?raw=true" />
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/bar-leyout.png?raw=true" />
 
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/3.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/4.png?raw=true" />
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/controlcenter.png?raw=true" />
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/hyprconf-apps.png?raw=true" />
 
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/5.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/6.png?raw=true" />
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/wallpaper-select1.png?raw=true" />
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/wallpaper-select2.png?raw=true" />
+
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/powermenu.png?raw=true" />
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf-noct/lockscreen.png?raw=true" />
+
+   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm.png?raw=true" />
+
 </p> <br>
-</details>
-
-<details close>
-<summary>Menu</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/menu/1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/menu/2.png?raw=true" /> <br>
-
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/menu/4.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/menu/3.png?raw=true" />
-    <br>
-
-   <img aligh="center" width="99%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/clipboard.png?raw=true" />
-</p> <br>
-</details>
-
-<details close>
-<summary>Power Menu</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/power/1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/power/2.png?raw=true" /> <br>
-
-   <img aligh="center" width="99%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/power/3.png?raw=true" />
-</p> <br>
-</details>
-
-<details close>
-<summary>Wallpaper</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/wallpaper/1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/wallpaper/2.png?raw=true" /> <br>
-</p> <br>
-</details>
-
-<details close>
-<summary>Lock Screen</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/lockscreen/lock-1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/lockscreen/lock-2.png?raw=true" />
-        <br>
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/lockscreen/lock-3.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/lockscreen/selecttheme.png?raw=true" />
-</p>
-</details>
-
-<details close>
-<summary>Login Screen (sddm)</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm1.jpg?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm2.jpg?raw=true" />
-</p>
 </details>
 
 <br>
@@ -175,63 +128,27 @@ chmod +x install.sh
 ### Prompts
 
 <details close>
-<summary>Installation Prompts</summary>
+<summary>Select variants</summary>
 
-When you run the script, it will ask you some prompts. You can choose according to your need. You can choose multiple options using the space bar.
+Select from this 2 variants: </br> 1. Traditional </br> 2. Noctalia.
 
 <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/1.png?raw=true" /> <br>
 
 </details>
 
 <details close>
-<summary>Install Shell</summary>
+<summary>Select options</summary>
+ Press <kbd>Space</kbd> to toggle, <kbd>j</kbd> or <kbd>k</kbd> for navigation.
 
 <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/2.png?raw=true" /> <br>
 
 </details>
 
 <details close>
-<summary>Install Browser</summary>
-
-You have the freedom to choose a web browser. I you don't want to install any, you can simply skip it.
+<summary>Installation Progress</summary>
 
 <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/3.png?raw=true" />
 <br>
-</details>
-
-<details close>
-<summary>Install From 2 versions</summary>
-
-You can choose between the [Hyprconf](https://github.com/shell-ninja/hyprconf) and [Hyprconf-V2](https://github.com/shell-ninja/hyprconf-v2) configuration.
-<br>
-
-- Hyprconf is a dynamic color changing configuration which use pywal to change colors.
-- Hyprconf-V2 is a theme based configuration. I has pre-configured themes.
-
-<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/version.png?raw=true" />
-<br>
-</details>
-
-<details close>
-<summary>keyboard layout and variant</summary>
-<br>
-
-The default keyboard layout will be `us`. If it's not your preferred keyboard layout, you can pick your one. <br>
-Also, you can choose the keyboard variant, or keep it empty.
-
-- Keyboard Layout
-<p align="center">
-<br>
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/kb_layout.png?raw=true" />
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/kb_layout_select.png?raw=true" />
-</p>
-
-- Keyboar Variant
-<p align="center">
-<br>
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/kb_variant.png?raw=true" />
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/kb_variant_select.png?raw=true" />
-</p>
 </details>
 
 <br>
