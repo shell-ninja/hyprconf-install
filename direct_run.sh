@@ -26,7 +26,7 @@ printf "  ${cyan}✦${end} ${bold}Bootstrapping installer environment...${end}\n
 [[ ! "$(pwd)" == "$HOME" ]] && cd "$HOME"
 
 # ----------------- Ensure dependencies
-if ! command -v unzip &> /dev/null; then
+if [[ -z $(command -v unzip) ]]; then
     printf "  ${purple}→${end} Installing unzip...\n"
     if command -v pacman &> /dev/null; then
         sudo pacman -S --needed --noconfirm unzip &> /dev/null
@@ -45,6 +45,8 @@ if ! command -v unzip &> /dev/null; then
         printf "  ${red}✗${end} Failed to install unzip. Please install it manually.\n\n"
         exit 1
     fi
+else
+    printf "  ${cyan}✓${end} unzip is already installed\n"
 fi
 
 # ----------------- Branch selection
