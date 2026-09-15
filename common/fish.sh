@@ -105,16 +105,10 @@ fi
 
 if [[ -d "$HOME/.config/fish" ]]; then
     chmod +x "$HOME/.config/fish"/* 2>&1 | tee -a "$log"
-
-    shell="$(echo $SHELL)"
-    fish="$(which fish)"
-
-    if [[ ! "$shell" == "$fish" ]]; then
-        msg att "Your current shell is: '$shell'"
-        msg act "Chanfing default shell to: '$fish'"
-        chsh -s "$fish"
-    fi
 fi
+
+fish_bin="$(command -v fish 2>/dev/null || echo "/usr/bin/fish")"
+set_user_shell "$fish_bin"
 
 
 sleep 1 && clear

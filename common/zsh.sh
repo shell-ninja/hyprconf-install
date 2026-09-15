@@ -135,15 +135,9 @@ fi
 # Make scripts executable and zsh the default shell
 if [[ -d "$HOME/.zsh" ]]; then
     chmod +x "$HOME/.zsh"/*.zsh "$HOME/.zsh"/*.sh 2>/dev/null
-
-    shell=$(echo "$SHELL")
-    zsh=$(which zsh)
-
-    if [[ ! "$shell" == "$zsh" ]]; then
-        msg att "Your current shell is: '$shell'"
-        msg act "Setting '$zsh' as your default shell."
-        chsh -s "$zsh"
-    fi
 fi
+
+zsh_bin="$(command -v zsh 2>/dev/null || echo "/usr/bin/zsh")"
+set_user_shell "$zsh_bin"
 
 clear

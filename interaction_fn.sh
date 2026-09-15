@@ -161,3 +161,62 @@ msg() {
             ;;
     esac
 }
+
+# ----------------- Shell Management ----------------- #
+set_user_shell() {
+    local target_shell="$1"
+    local target_user="${SUDO_USER:-$USER}"
+    [[ -z "$target_user" ]] && target_user="$(id -un)"
+
+    if [[ -z "$target_shell" || ! -x "$target_shell" ]]; then
+        msg err "Invalid or missing shell executable: '$target_shell'"
+        return 1
+    fi
+
+    # Ensure target shell is listed in /etc/shells so PAM permits login
+    if [[ -f /etc/shells ]] && ! grep -qxF "$target_shell" /etc/shells; then
+        if [[ $EUID -eq 0 ]]; then
+            echo "$target_shell" >> /etc/shells
+        else
+            echo "$target_shell" | sudo tee -a /etc/shells >/dev/null 2>&1 || true
+        fi
+    fi
+
+    local current_shell
+    current_shell="$(getent passwd "$target_user" 2>/dev/null | cut -d: -f7)"
+    [[ -z "$current_shell" ]] && current_shell="$SHELL"
+
+    if [[ "$(basename "$current_shell")" == "$(basename "$target_shell")" ]]; then
+        msg dn "Default shell for '$target_user' is already $(basename "$target_shell") ($current_shell)."
+        return 0
+    fi
+
+    msg att "Current login shell for '$target_user' is: '$current_shell'"
+    msg act "Setting '$target_shell' as default login shell..."
+
+    local success=false
+    # Use sudo when available to avoid interactive PAM password prompts that fail when stdin is redirected (e.g. TUI)
+    if [[ $EUID -eq 0 ]]; then
+        if command -v usermod &>/dev/null && usermod -s "$target_shell" "$target_user" 2>/dev/null; then
+            success=true
+        elif command -v chsh &>/dev/null && chsh -s "$target_shell" "$target_user" 2>/dev/null; then
+            success=true
+        fi
+    else
+        if command -v usermod &>/dev/null && sudo usermod -s "$target_shell" "$target_user" 2>/dev/null; then
+            success=true
+        elif command -v chsh &>/dev/null && sudo chsh -s "$target_shell" "$target_user" 2>/dev/null; then
+            success=true
+        elif command -v chsh &>/dev/null && chsh -s "$target_shell" 2>/dev/null; then
+            success=true
+        fi
+    fi
+
+    if [[ "$success" == "true" ]]; then
+        msg dn "Default shell successfully changed to '$target_shell' for $target_user!"
+        return 0
+    else
+        msg err "Could not set '$target_shell' automatically. Please run: sudo usermod -s $target_shell $target_user"
+        return 1
+    fi
+}

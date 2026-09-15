@@ -8,6 +8,7 @@ Pair programmed for Shell Ninja (https://github.com/shell-ninja)
 """
 
 import atexit
+import getpass
 import os
 import re
 import select
@@ -1193,6 +1194,24 @@ def run_interactive_installer():
                         f.write(content)
                 except Exception:
                     pass
+
+    # 5b. Ensure Login Shell is Applied
+    shell_choice = opt_map.get("shell", {}).get("choices", ["Bash"])[opt_map.get("shell", {}).get("index", 0)].lower()
+    if shell_choice in ("fish", "zsh", "bash"):
+        shell_bin = shutil.which(shell_choice) or f"/usr/bin/{shell_choice}"
+        target_user = os.environ.get("SUDO_USER") or os.environ.get("USER") or getpass.getuser()
+        if os.path.exists(shell_bin) and target_user:
+            try:
+                if os.path.exists("/etc/shells"):
+                    with open("/etc/shells", "r") as sf:
+                        shells_content = sf.read()
+                    if shell_bin not in shells_content:
+                        subprocess.run(["sudo", "tee", "-a", "/etc/shells"], input=f"{shell_bin}\n", text=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except Exception:
+                pass
+            res = subprocess.run(["sudo", "usermod", "-s", shell_bin, target_user], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if res.returncode != 0:
+                subprocess.run(["sudo", "chsh", "-s", shell_bin, target_user], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     # 6. Celebratory Finish Screen
     stop_sudo.set()

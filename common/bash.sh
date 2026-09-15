@@ -152,15 +152,14 @@ if [ -d ~/.bash ]; then
 
 fi
 
-# Make scripts executable
+# Make scripts executable and ensure bash is the default shell
 if [[ -d "$HOME/.bash" ]]; then
-    if chmod +x "$HOME/.bash"/* 2>/dev/null; then
-        msg dn "Bash configuration has been completed! Close the terminal and open it again." && sleep 2
-        exit 0
-    else
-        msg err "Could not make all the scripts executable."
-        printf " Run: \n \"chmod +x ~/.bash/*\" in your terminal\n"
-    fi
+    chmod +x "$HOME/.bash"/* 2>/dev/null
 fi
+
+bash_bin="$(command -v bash 2>/dev/null || echo "/bin/bash")"
+set_user_shell "$bash_bin"
+
+msg dn "Bash configuration has been completed! Close the terminal and open it again." && sleep 2
 
 clear
