@@ -105,14 +105,6 @@ if [[ "$pkgman" == "zypper" ]]; then
     done
 fi
 
-# --- Change Default Shell ---
-if [[ "$SHELL" != *"zsh"* ]]; then
-    msg act "Changing default shell to zsh..."
-    chsh -s "$(command -v zsh)"
-    msg dn "Shell changed. (You may need to log out and back in for this to take effect)."
-else
-    msg skp "zsh is already the default shell."
-fi
 
 sleep 1
 msg act "Proceeding to configure ZSH environment..."
@@ -140,9 +132,18 @@ else
     msg err "Could not find .zsh directory. Config copy failed."
 fi
 
-# Make scripts executable
+# Make scripts executable and zsh the default shell
 if [[ -d "$HOME/.zsh" ]]; then
     chmod +x "$HOME/.zsh"/*.zsh "$HOME/.zsh"/*.sh 2>/dev/null
+
+    shell=$(echo "$SHELL")
+    zsh=$(which zsh)
+
+    if [[ ! "$shell" == "$zsh" ]]; then
+        msg att "Your current shell is: '$shell'"
+        msg act "Setting '$zsh' as your default shell."
+        chsh -s "$zsh"
+    fi
 fi
 
 clear
