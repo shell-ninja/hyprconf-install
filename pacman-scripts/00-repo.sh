@@ -48,16 +48,16 @@ cd "$parent_dir" || exit 1
 sudo rm -rf "$parent_dir/.cache/${_aur}"
 
 
-if command -v $_aur; then
-    msg dn "$_aur was installed successfully!"
-    echo "[ DONE ] - $_aur helper was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+if [[ -n "$_aur" ]]; then
+    msg dn "aur helper: '$_aur' was installed successfully!"
+    echo "[ DONE ] - aur helper: '$_aur' was installed successfully!" >> "$log"
 
-    msg act "Performing a full system update.."
+    msg act "Performing a full system update with $_aur..."
     "$_aur" -Syyu --noconfirm 2>&1 | tee -a "$log"
     exit 0
 else
-    msg err "Could not install aru helper. Maybe there was an issue."
-    echo "[ ERROR ] - Could not install aru helper. Maybe there was an issue." 2>&1 | tee -a "$log" &>/dev/null
+    msg err "Could not install aur helper: '$_aur'. Please check '$log' for details."
+    echo "[ ERROR ] - Could not install aur helper: '$_aur'." >> "$log"
     exit 1
 fi
 
