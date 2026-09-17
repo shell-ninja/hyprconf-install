@@ -31,6 +31,7 @@ log="$log_dir/aur_helper-$(date +%d-%m-%y).log"
 if [[ -f "$aur_cache" ]]; then
     _aur=$(tr -d '[:space:]' < "$aur_cache")
 fi
+
 [[ -z "$_aur" ]] && _aur="yay"
 
 # Handle Skip choice
@@ -78,16 +79,16 @@ if git clone "https://aur.archlinux.org/${_aur}.git" "$cache_dir/${_aur}" 2>&1 |
 fi
 
 
-if command -v "$_aur" &>/dev/null; then
-    msg dn "$_aur was installed successfully!"
-    echo "[ DONE ] - $_aur helper was installed successfully!" >> "$log"
+if [[ -n "$_aur" ]]; then
+    msg dn "aur helper: '$_aur' was installed successfully!"
+    echo "[ DONE ] - aur helper: '$_aur' was installed successfully!" >> "$log"
 
     msg act "Performing a full system update with $_aur..."
     "$_aur" -Syyu --noconfirm 2>&1 | tee -a "$log"
     exit 0
 else
-    msg err "Could not install $_aur helper. Please check $log for details."
-    echo "[ ERROR ] - Could not install $_aur helper" >> "$log"
+    msg err "Could not install aur helper: '$_aur'. Please check '$log' for details."
+    echo "[ ERROR ] - Could not install aur helper: '$_aur'." >> "$log"
     exit 1
 fi
 
