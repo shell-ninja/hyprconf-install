@@ -1,0 +1,119 @@
+# ─── Caelestia ────────────────────────────────────────────────────────────────
+# Inspired by the Caelestia shell prompt & dotfiles
+# Geometric glyphs, minimal left prompt (◄ 0s ◉), right-aligned path & git status
+# ─────────────────────────────────────────────────────────────────────────────
+
+command_timeout = 100
+scan_timeout = 10
+add_newline = false
+
+format = """\
+$cmd_duration\
+$jobs\
+$sudo\
+$username\
+$character"""
+
+right_format = """\
+$directory\
+$git_branch\
+$git_status\
+$git_metrics\
+$python\
+$nodejs\
+$rust\
+$golang\
+$time\
+"""
+
+[character]
+format = "$symbol "
+success_symbol = "[◉](bold fg:#bac2de)"
+error_symbol = "[○](bold fg:#f38ba8)"
+vimcmd_symbol = "[■](bold fg:#a6e3a1)"
+vimcmd_replace_one_symbol = "[◌](bold fg:#f9e2af)"
+vimcmd_replace_symbol = "[□](bold fg:#f9e2af)"
+vimcmd_visual_symbol = "[▼](bold fg:#cba6f7)"
+
+[cmd_duration]
+min_time = 0
+format = "[◄ $duration ](italic fg:#9399b2)"
+
+[directory]
+home_symbol = "⌂"
+truncation_length = 3
+truncation_symbol = "□ "
+read_only = " ◈"
+use_os_path_sep = true
+style = "italic fg:#89dceb"
+format = '[$path]($style)[$read_only]($read_only_style)'
+repo_root_style = 'bold fg:#89b4fa'
+repo_root_format = '[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) [△](bold fg:#89b4fa)'
+
+[git_branch]
+format = " [$symbol$branch]($style)"
+symbol = "△ "
+style = "italic fg:#89b4fa"
+truncation_symbol = "⋯"
+truncation_length = 15
+
+[git_status]
+style = "bold italic fg:#89b4fa"
+format = "([⎪$ahead_behind$staged$modified$untracked$renamed$deleted$conflicted$stashed⎥]($style))"
+conflicted = "[◪◦](italic fg:#f5c2e7)"
+ahead = "[▴│[${count}](bold fg:#cdd6f4)│](italic fg:#a6e3a1)"
+behind = "[▿│[${count}](bold fg:#cdd6f4)│](italic fg:#f38ba8)"
+diverged = "[◇ ▴┤[${ahead_count}](fg:#cdd6f4)│▿┤[${behind_count}](fg:#cdd6f4)│](italic fg:#f5c2e7)"
+untracked = "[◌◦](italic fg:#f9e2af)"
+stashed = "[◃◈](italic fg:#cdd6f4)"
+modified = "[●◦](italic fg:#f9e2af)"
+staged = "[▪┤[$count](bold fg:#cdd6f4)│](italic fg:#94e2d5)"
+renamed = "[◎◦](italic fg:#89b4fa)"
+deleted = "[✕](italic fg:#f38ba8)"
+
+[git_metrics]
+disabled = false
+format = '([▴$added]($added_style))([▿$deleted]($deleted_style))'
+added_style = 'italic fg:#a6e3a1'
+deleted_style = 'italic fg:#f38ba8'
+
+[python]
+format = " [py](italic fg:#6c7086) [${symbol}${version}]($style)"
+symbol = "⌊ "
+style = "bold fg:#f9e2af"
+
+[nodejs]
+format = " [node](italic fg:#6c7086) [◫ $version]($style)"
+style = "bold fg:#a6e3a1"
+
+[rust]
+format = " [rs](italic fg:#6c7086) [⊃ $version]($style)"
+style = "bold fg:#f38ba8"
+
+[golang]
+format = " [go](italic fg:#6c7086) [∩ $version]($style)"
+style = "bold fg:#89dceb"
+
+[jobs]
+format = "[$symbol$number]($style) "
+style = "fg:#cdd6f4"
+symbol = "[▶](italic fg:#89b4fa)"
+
+[sudo]
+format = "[$symbol]($style)"
+style = "bold italic fg:#cba6f7"
+symbol = "⋈┈"
+disabled = false
+
+[username]
+style_user = "bold italic fg:#f9e2af"
+style_root = "bold italic fg:#f38ba8"
+format = "[⭘ $user]($style) "
+disabled = false
+show_always = false
+
+[time]
+disabled = false
+format = "[ $time]($style)"
+time_format = "%I:%M %p"
+style = "italic dimmed fg:#6c7086"

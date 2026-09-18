@@ -92,4 +92,4 @@ else
     exit 1
 fi
 
-clear
+sleep 1 && clear

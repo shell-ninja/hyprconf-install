@@ -1,0 +1,91 @@
+# ─── Zen ──────────────────────────────────────────────────────────────────────
+# "Quiet confidence" — breathable spacing, muted moss & clay tones, zero clutter
+# ─────────────────────────────────────────────────────────────────────────────
+
+command_timeout = 100
+scan_timeout = 10
+
+format = """\
+$directory\
+$git_branch\
+$git_status\
+$git_metrics\
+$python\
+$nodejs\
+$rust\
+$golang\
+$cmd_duration \
+$character"""
+
+right_format = """\
+$time\
+"""
+
+[directory]
+format = '[$path]($style)[$read_only]($read_only_style)'
+style = 'fg:#87a987'
+read_only_style = 'fg:#e46876'
+truncation_length = 3
+truncation_symbol = '…/'
+home_symbol = 'HOME_PLACEHOLDER'
+read_only = ' 󰌾'
+
+[directory.substitutions]
+'HOME_PLACEHOLDER/' = '~/'
+'HOME_PLACEHOLDER' = '⊙ ◉'
+
+[git_branch]
+format = ' [⌥ $branch]($style)'
+style = 'fg:#c5a880'
+
+[git_status]
+format = ' [$all_status$ahead_behind]($style)'
+style = 'fg:#727169'
+modified = '[•${count}](fg:#c5a880)'
+staged = '[+${count}](fg:#87a987)'
+deleted = '[-${count}](fg:#e46876)'
+ahead = '[⇡${count}](fg:#7e9cd8)'
+behind = '[⇣${count}](fg:#e46876)'
+diverged = '[⇕${ahead_count}/${behind_count}](fg:#957fb8)'
+untracked = '[?${count}](fg:#727169)'
+
+[git_metrics]
+disabled = false
+added_style = 'fg:#87a987'
+deleted_style = 'fg:#e46876'
+format = ' [+$added]($added_style)[/-$deleted]($deleted_style)'
+
+[python]
+format = ' [py $version]($style)'
+style = 'dimmed fg:#727169'
+
+[nodejs]
+format = ' [node $version]($style)'
+style = 'dimmed fg:#727169'
+
+[rust]
+format = ' [rs $version]($style)'
+style = 'dimmed fg:#727169'
+
+[golang]
+format = ' [go $version]($style)'
+style = 'dimmed fg:#727169'
+
+[cmd_duration]
+min_time = 500
+format = ' [took $duration]($style)'
+style = 'dimmed italic fg:#727169'
+
+[time]
+disabled = false
+format = '[$time]($style)'
+style = 'dimmed fg:#54546d'
+time_format = '%I:%M %p'
+
+[character]
+success_symbol = '[❯](bold fg:#87a987) '
+error_symbol = '[❯](bold fg:#e46876) '
+vimcmd_symbol = '[❮](bold fg:#c5a880) '
+vimcmd_replace_one_symbol = '[❮](bold fg:#e46876) '
+vimcmd_replace_symbol = '[❮](bold fg:#e46876) '
+vimcmd_visual_symbol = '[◈](bold fg:#957fb8) '
