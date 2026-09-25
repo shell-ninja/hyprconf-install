@@ -47,6 +47,7 @@ copr_repos=(
     tofik/nwg-shell
     alternateved/eza
     jkinred/satty
+    atim/starship
     lihaohong/yazi
 )
 
@@ -57,7 +58,7 @@ install_package https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release
 # Enable COPR Repositories 
 for repo in "${copr_repos[@]}";do 
   msg act "Enabling copr repo: '$repo'"
-  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" || { msg err "Failed to enable necessary copr repos."; exit 1; } &> /dev/null
+  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" &> /dev/null || { msg err "Failed to enable necessary copr repos."; exit 1; }
 done
 
 # Run a full update

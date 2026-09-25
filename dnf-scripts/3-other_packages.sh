@@ -84,7 +84,7 @@ main_packages=(
     python3-pillow
     python3-pyquery
     qt5ct
-    qt6ct-kde
+    qt6ct
     qt6-qtsvg
     ripgrep
     slurp
@@ -108,9 +108,8 @@ other_packages=(
     mpv-mpris
     nwg-look
     pamixer
-    awww
-    # noctalia: not in official Fedora repos yet.
-    # Install manually from https://github.com/linkfrg/noctalia or via a COPR.
+    swww
+    noctalia
 )
 
 dolphin=(
