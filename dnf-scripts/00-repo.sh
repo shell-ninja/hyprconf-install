@@ -10,7 +10,7 @@ yellow="\e[1;33m"
 blue="\e[1;34m"
 magenta="\e[1;1;35m"
 cyan="\e[1;36m"
-orange="\e[1;38;5;214m"
+purple="\e[1;38;2;189;147;249m"  # Electric neon purple
 end="\e[1;0m"
 
 ###------ Startup ------###
@@ -43,12 +43,11 @@ fi
 
 # List of COPR repositories to be added and enabled
 copr_repos=(
-    solopasha/hyprland
+    sdegler/hyprland
     tofik/nwg-shell
-    lihaohong/yazi
-    erikreider/SwayNotificationCenter  
     alternateved/eza
     jkinred/satty
+    lihaohong/yazi
 )
 
 # enabling 3rd party repo
@@ -57,5 +56,14 @@ install_package https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release
 
 # Enable COPR Repositories 
 for repo in "${copr_repos[@]}";do 
-  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" || { msg err "Failed to enable necessary copr repos."; exit 1; }
+  msg act "Enabling copr repo: '$repo'"
+  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" || { msg err "Failed to enable necessary copr repos."; exit 1; } &> /dev/null
 done
+
+# Run a full update
+msg act "Running a full system update..."
+sudo dnf clean all 2>&1 | tee -a "$log" &> /dev/null
+sudo dnf update -y
+
+sleep 1 && clear
+
