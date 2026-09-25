@@ -80,9 +80,8 @@ checkup=(
     qt5-graphicaleffects
     qt5-quickcontrols2
     ripgrep
-    # swappy
     satty
-    awww
+    swww
     sddm
     ark
     crudini
