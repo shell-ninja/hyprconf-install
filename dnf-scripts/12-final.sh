@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
@@ -66,7 +66,7 @@ checkup=(
     pipewire-alsa
     pipewire-utils
     pipewire-pulse
-    power-profiles-daemon
+    tuned-ppd
     pulseaudio-utils
     python3-requests
     python3-devel
@@ -121,7 +121,7 @@ for skipable in "${checkup[@]}"; do
     skip_installed "$skipable" &> /dev/null
 done
 
-to_install=($(printf "%s\n" "${hypr_packages[@]}" | grep -vxFf "$installed_cache"))
+to_install=($(printf "%s\n" "${checkup[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 

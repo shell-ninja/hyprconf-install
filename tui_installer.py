@@ -766,44 +766,6 @@ class ExecutionUI:
             sys.stdout.write(output)
             sys.stdout.flush()
 
-# ----------------- Celebratory Finish & Reboot Screen
-def render_finish_screen(plan, term_w, term_h):
-    box_w = min(max(term_w - 4, 60), 74)
-    box_pad = " " * max(0, (term_w - box_w) // 2)
-
-    lines = []
-    lines.append("")
-    lines.append(f"{box_pad}{BORDER_COLOR}╭{'─' * (box_w - 2)}╮{RESET}")
-
-    title = f"{COLOR_GREEN}{BOLD}✦ HYPRLAND & HYPRCONF INSTALLED SUCCESSFULLY ✦{RESET}"
-    avail_w = (box_w - 2) - 4
-    t_pad_left = max(0, (avail_w - visible_len(title)) // 2) + 2
-    lines.append(make_box_row(title, box_w, box_pad, BORDER_COLOR, t_pad_left, 2))
-    lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
-
-    lines.append(make_box_row(f"{COLOR_TEXT}All selected packages, dotfiles, themes, and services are configured.{RESET}", box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(make_box_row(f"{COLOR_MUTED}A system reboot is required to start your new Hyprland session.{RESET}", box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(f"{box_pad}{BORDER_COLOR}╰{'─' * (box_w - 2)}╯{RESET}")
-    lines.append("")
-
-    footer = (
-        f"{COLOR_ACCENT}enter{RESET} {COLOR_WHITE}{BOLD}reboot now{RESET}   ·   "
-        f"{COLOR_ACCENT}q / esc{RESET} {COLOR_MUTED}exit to terminal{RESET}"
-    )
-    f_pad = " " * max(0, (term_w - visible_len(footer)) // 2)
-    lines.append(f"{f_pad}{footer}")
-
-    total_h = len(lines)
-    top_pad = max(0, (term_h - total_h) // 2)
-
-    frame_lines = [""] * top_pad + lines
-    while len(frame_lines) < term_h:
-        frame_lines.append("")
-
-    output = "\033[H" + "\r\n".join(l + CLEAR_LINE for l in frame_lines)
-    sys.stdout.write(output)
-    sys.stdout.flush()
 
 # ----------------- Sudo Keep-Alive Thread
 def sudo_keepalive(stop_event):
@@ -1213,29 +1175,10 @@ def run_interactive_installer():
             if res.returncode != 0:
                 subprocess.run(["sudo", "chsh", "-s", shell_bin, target_user], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    # 6. Celebratory Finish Screen
+    # 6. Return control to install.sh
     stop_sudo.set()
-    while True:
-        term_w, term_h = shutil.get_terminal_size((80, 24))
-        render_finish_screen(plan, term_w, term_h)
-        key = inp.get_key(timeout=0.1)
-        if key == 'ENTER':
-            inp.disable()
-            exit_alt_screen()
-            for sec in range(5, 0, -1):
-                clear_screen()
-                msg = f"{COLOR_ACCENT}✦ Rebooting in {sec}s... (Press Ctrl+C to cancel){RESET}"
-                print(f"\n\n\n\t{msg}\n")
-                time.sleep(1)
-            clear_screen()
-            subprocess.run(["systemctl", "reboot"], check=False)
-            subprocess.run(["sudo", "reboot"], check=False)
-            sys.exit(0)
-        elif key in ('QUIT', 'CTRL_C', 'ESC'):
-            inp.disable()
-            exit_alt_screen()
-            print(f"\n  {COLOR_GREEN}✓ Installation complete!{RESET} Please remember to reboot when ready.\n")
-            sys.exit(0)
+    inp.disable()
+    exit_alt_screen()
 
 # ----------------- CLI Argument Parsing
 if __name__ == "__main__":

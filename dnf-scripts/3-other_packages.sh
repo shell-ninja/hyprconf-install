@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
@@ -63,8 +63,7 @@ main_packages=(
     make
     network-manager-applet
     NetworkManager-tui
-    nodejs
-    nodejs-npm
+    node
     neovim
     nvtop
     pamixer
@@ -74,7 +73,6 @@ main_packages=(
     pipewire-alsa
     pipewire-utils
     pipewire-pulse
-    power-profiles-daemon
     pulseaudio-utils
     python3-requests
     python3-devel
@@ -90,6 +88,7 @@ main_packages=(
     slurp
     satty
     tar
+    tuned-ppd
     unzip
     vte291
     wget2

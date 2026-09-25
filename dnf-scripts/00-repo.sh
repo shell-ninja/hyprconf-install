@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
@@ -56,9 +56,16 @@ install_package https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release
 
 
 # Enable COPR Repositories 
-for repo in "${copr_repos[@]}";do 
+for repo in "${copr_repos[@]}"; do 
   msg act "Enabling copr repo: '$repo'"
-  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" &> /dev/null || { msg err "Failed to enable necessary copr repos."; exit 1; }
+  if sudo dnf copr enable -y "$repo" &> /dev/null; then
+    msg dn "Copr repo '$repo' enabled successfully"
+    echo "[ DONE ] - Copr repo '$repo' enabled successfully" >> "$log" &> /dev/null
+  else
+    msg err "Failed to enable necessary copr repos."
+    echo "[ ERROR ] - Failed to enable copr repo: '$repo'" >> "$log" &> /dev/null
+    exit 1
+  fi
 done
 
 # Run a full update

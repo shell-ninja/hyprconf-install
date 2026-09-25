@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
@@ -45,7 +45,6 @@ fi
 
 _hypr=(
     hyprland
-    hypridle
     hyprcursor
     pyprland
 )

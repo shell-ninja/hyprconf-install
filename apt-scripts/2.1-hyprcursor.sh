@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
