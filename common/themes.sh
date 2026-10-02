@@ -50,7 +50,7 @@ else
 fi
 
 ###------ Icon Theme: Kora ------###
-kora_archive="$assets_dir/kora-2-0-4.tar.xz"
+kora_archive="$assets_dir/kora-2-0-5.tar.xz"
 if [[ -f "$kora_archive" ]]; then
     msg act "Installing Kora icon theme..."
     tar -xJf "$kora_archive" -C "$icons_dir" &>/dev/null
@@ -165,7 +165,35 @@ install_adw_gtk3() {
 
 install_adw_gtk3
 
-gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' &> /dev/null
-gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" &> /dev/null
+# Set default themes, icon, and cursor if tools are available
+if command -v gsettings &> /dev/null; then
+    gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3" &> /dev/null || true
+    gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" &> /dev/null || true
+    gsettings set org.gnome.desktop.interface icon-theme "kora" &> /dev/null || true
+    gsettings set org.gnome.desktop.interface cursor-theme "Bibata-Modern-Ice" &> /dev/null || true
+fi
+
+mkdir -p ~/.config/Kvantum
+
+# 1. Detect KDE configuration tool for kdeglobals
+if command -v kwriteconfig6 &> /dev/null; then
+    KWRITECONFIG="kwriteconfig6"
+elif command -v kwriteconfig5 &> /dev/null; then
+    KWRITECONFIG="kwriteconfig5"
+elif command -v kwriteconfig &> /dev/null; then
+    KWRITECONFIG="kwriteconfig"
+fi
+
+# 2. Set KDE Icon Theme
+if [ -n "$KWRITECONFIG" ]; then
+    "$KWRITECONFIG" --file kdeglobals --group Icons --key Theme "kora"
+fi
+
+# 3. Set Kvantum Theme (crudini works here, or fallback to kwriteconfig)
+if command -v crudini &> /dev/null; then
+    crudini --set ~/.config/Kvantum/kvantum.kvconfig General theme "Dracula"
+elif [ -n "$KWRITECONFIG" ]; then
+    "$KWRITECONFIG" --file ~/.config/Kvantum/kvantum.kvconfig --group General --key theme "Dracula"
+fi
 
 sleep 1 && clear

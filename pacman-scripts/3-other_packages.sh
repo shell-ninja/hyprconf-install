@@ -82,6 +82,7 @@ other_packages=(
     pciutils
     power-profiles-daemon
     python-gobject
+    python-requests
     qt5ct
     qt5-svg
     qt6ct-kde
