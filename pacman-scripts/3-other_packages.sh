@@ -146,14 +146,4 @@ for _pkgs in "${installble_pkg[@]}" "${installble_aur_pkg[@]}" "${installble_dol
     fi
 done
 
-for _pkgs in "${crunini_pkg[@]}"; do
-    install_package_nocheck "$_pkgs"
-    if sudo pacman -Q "$_pkgs" &>/dev/null; then
-        echo "[ DONE ] - $_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
-    else
-        echo "[ ERROR ] - Sorry, could not install $_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
-    fi
-done
-
-
 sleep 1 && clear
