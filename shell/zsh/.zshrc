@@ -14,7 +14,7 @@
 # ================================= fastfetch ================================= #
 if command -v fastfetch &> /dev/null; then
     if [[ -d "$HOME/.local/share/fastfetch" ]]; then
-export ffconfig="tokyo-night"
+        export ffconfig="minimal"
         command fastfetch --config \
         "$HOME/.local/share/fastfetch/presets/${ffconfig}.jsonc"
     else

@@ -1236,7 +1236,26 @@ def run_interactive_installer():
                 except Exception:
                     pass
 
-    # 6. Celebratory Finish Screen
+    # 6. Ensure selected shell is applied to user account
+    shell_choice = opt_map.get("shell", {}).get("choices", ["Bash"])[opt_map.get("shell", {}).get("index", 0)]
+    if shell_choice.lower() in ("fish", "zsh", "bash"):
+        sh_bin = shutil.which(shell_choice.lower())
+        if sh_bin:
+            target_user = os.environ.get("SUDO_USER") or os.environ.get("USER") or os.environ.get("LOGNAME")
+            if target_user:
+                try:
+                    if os.path.exists("/etc/shells"):
+                        with open("/etc/shells", "r") as sf:
+                            shells = sf.read().splitlines()
+                        if sh_bin not in shells:
+                            subprocess.run(["sudo", "tee", "-a", "/etc/shells"], input=f"{sh_bin}\n", text=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    res = subprocess.run(["sudo", "usermod", "-s", sh_bin, target_user], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    if res.returncode != 0:
+                        subprocess.run(["sudo", "chsh", "-s", sh_bin, target_user], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                except Exception:
+                    pass
+
+    # 7. Celebratory Finish Screen
     stop_sudo.set()
     while True:
         term_w, term_h = shutil.get_terminal_size((80, 24))
@@ -1311,7 +1330,7 @@ if __name__ == "__main__":
                 {"title": "Wiring the login session (SDDM, network)", "script": "", "cmd": "sudo systemctl enable sddm.service"},
                 {"title": "Laying down your Hyprconf configs", "script": "", "cmd": "chmod +x setup.sh && ./setup.sh"},
                 {"title": "Deploying GTK & icon themes", "script": "", "cmd": "tar -xf themes.tar.gz -C ~/.themes"},
-                {"title": "Configuring your login shell with Bash", "script": "", "cmd": "chsh -s /bin/bash"},
+                {"title": "Configuring your login shell with Bash", "script": "", "cmd": "sudo usermod -s /bin/bash $USER"},
                 {"title": "Verifying the installation health", "script": "", "cmd": "fastfetch && sleep 1"}
             ]
             

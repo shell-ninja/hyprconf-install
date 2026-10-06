@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
@@ -155,12 +155,31 @@ fi
 # Make scripts executable
 if [[ -d "$HOME/.bash" ]]; then
     if chmod +x "$HOME/.bash"/* 2>/dev/null; then
-        msg dn "Bash configuration has been completed! Close the terminal and open it again." && sleep 2
-        exit 0
+        msg dn "Bash scripts permissions updated successfully!"
     else
         msg err "Could not make all the scripts executable."
         printf " Run: \n \"chmod +x ~/.bash/*\" in your terminal\n"
     fi
 fi
 
-clear
+# Set bash as default shell
+target_user="${SUDO_USER:-$(whoami)}"
+current_shell=$(getent passwd "$target_user" 2>/dev/null | cut -d: -f7)
+[[ -z "$current_shell" ]] && current_shell="$SHELL"
+bash_path=$(which bash 2>/dev/null || command -v bash 2>/dev/null || echo "/usr/bin/bash")
+
+if [[ -n "$bash_path" && "$current_shell" != "$bash_path" && "$(realpath "$current_shell" 2>/dev/null)" != "$(realpath "$bash_path" 2>/dev/null)" ]]; then
+    msg att "Your current shell is: '$current_shell'"
+    msg act "Setting '$bash_path' as your default shell."
+    if ! grep -qxF "$bash_path" /etc/shells 2>/dev/null; then
+        echo "$bash_path" | sudo tee -a /etc/shells >/dev/null
+    fi
+    if sudo usermod -s "$bash_path" "$target_user" 2>&1 | tee -a "$log" >/dev/null || sudo chsh -s "$bash_path" "$target_user" 2>&1 | tee -a "$log" >/dev/null; then
+        msg dn "Default shell changed to '$bash_path' successfully!"
+    else
+        msg err "Failed to change default shell to '$bash_path'!"
+    fi
+fi
+
+msg dn "Bash configuration has been completed!"
+sleep 1 && clear
