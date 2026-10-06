@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
@@ -104,17 +104,25 @@ fi
 
 
 if [[ -d "$HOME/.config/fish" ]]; then
-    chmod +x "$HOME/.config/fish"/* 2>&1 | tee -a "$log"
-
-    shell="$(echo $SHELL)"
-    fish="$(which fish)"
-
-    if [[ ! "$shell" == "$fish" ]]; then
-        msg att "Your current shell is: '$shell'"
-        msg act "Chanfing default shell to: '$fish'"
-        chsh -s "$fish"
-    fi
+    chmod +x "$HOME/.config/fish"/* 2>&1 | tee -a "$log" || true
 fi
 
+target_user="${SUDO_USER:-$(whoami)}"
+current_shell=$(getent passwd "$target_user" 2>/dev/null | cut -d: -f7)
+[[ -z "$current_shell" ]] && current_shell="$SHELL"
+fish_path=$(which fish 2>/dev/null || command -v fish 2>/dev/null)
+
+if [[ -n "$fish_path" && "$current_shell" != "$fish_path" && "$(realpath "$current_shell" 2>/dev/null)" != "$(realpath "$fish_path" 2>/dev/null)" ]]; then
+    msg att "Your current shell is: '$current_shell'"
+    msg act "Setting '$fish_path' as your default shell."
+    if ! grep -qxF "$fish_path" /etc/shells 2>/dev/null; then
+        echo "$fish_path" | sudo tee -a /etc/shells >/dev/null
+    fi
+    if sudo usermod -s "$fish_path" "$target_user" 2>&1 | tee -a "$log" >/dev/null || sudo chsh -s "$fish_path" "$target_user" 2>&1 | tee -a "$log" >/dev/null; then
+        msg dn "Default shell changed to '$fish_path' successfully!"
+    else
+        msg err "Failed to change default shell to '$fish_path'!"
+    fi
+fi
 
 sleep 1 && clear

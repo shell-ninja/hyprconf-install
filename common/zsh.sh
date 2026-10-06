@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
@@ -134,15 +134,24 @@ fi
 
 # Make scripts executable and zsh the default shell
 if [[ -d "$HOME/.zsh" ]]; then
-    chmod +x "$HOME/.zsh"/*.zsh "$HOME/.zsh"/*.sh 2>/dev/null
+    chmod +x "$HOME/.zsh"/*.zsh "$HOME/.zsh"/*.sh 2>/dev/null || true
+fi
 
-    shell=$(echo "$SHELL")
-    zsh=$(which zsh)
+target_user="${SUDO_USER:-$(whoami)}"
+current_shell=$(getent passwd "$target_user" 2>/dev/null | cut -d: -f7)
+[[ -z "$current_shell" ]] && current_shell="$SHELL"
+zsh_path=$(which zsh 2>/dev/null || command -v zsh 2>/dev/null)
 
-    if [[ ! "$shell" == "$zsh" ]]; then
-        msg att "Your current shell is: '$shell'"
-        msg act "Setting '$zsh' as your default shell."
-        chsh -s "$zsh"
+if [[ -n "$zsh_path" && "$current_shell" != "$zsh_path" && "$(realpath "$current_shell" 2>/dev/null)" != "$(realpath "$zsh_path" 2>/dev/null)" ]]; then
+    msg att "Your current shell is: '$current_shell'"
+    msg act "Setting '$zsh_path' as your default shell."
+    if ! grep -qxF "$zsh_path" /etc/shells 2>/dev/null; then
+        echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+    fi
+    if sudo usermod -s "$zsh_path" "$target_user" 2>&1 | tee -a "$log" >/dev/null || sudo chsh -s "$zsh_path" "$target_user" 2>&1 | tee -a "$log" >/dev/null; then
+        msg dn "Default shell changed to '$zsh_path' successfully!"
+    else
+        msg err "Failed to change default shell to '$zsh_path'!"
     fi
 fi
 
