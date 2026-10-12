@@ -50,13 +50,26 @@ else
 fi
 
 ###------ Icon Theme: Kora ------###
-kora_archive="$assets_dir/kora-2-0-5.tar.xz"
-if [[ -f "$kora_archive" ]]; then
+kora_archive=""
+if [[ -f "$assets_dir/kora-2-0-5.tar.gz" ]]; then
+    kora_archive="$assets_dir/kora-2-0-5.tar.gz"
+elif [[ -f "$assets_dir/kora-2-0-5.tar.xz" ]]; then
+    kora_archive="$assets_dir/kora-2-0-5.tar.xz"
+fi
+
+if [[ -n "$kora_archive" && -f "$kora_archive" ]]; then
     msg act "Installing Kora icon theme..."
-    tar -xJf "$kora_archive" -C "$icons_dir" &>/dev/null
+    tar -xf "$kora_archive" -C "$icons_dir" &>/dev/null
     # Kora archives may extract a versioned subdir; find and copy all kora* dirs
     if ls "$icons_dir"/kora* &>/dev/null 2>&1; then
         sudo cp -r "$icons_dir"/kora* /usr/share/icons/ &>/dev/null
+        # Ensure XDG Directory Discovery (~/.local/share/icons)
+        mkdir -p "$HOME/.local/share/icons"
+        for kora_dir in "$icons_dir"/kora*; do
+            if [[ -d "$kora_dir" ]]; then
+                ln -snf "$kora_dir" "$HOME/.local/share/icons/$(basename "$kora_dir")"
+            fi
+        done
         msg dn "Kora icon theme installed."
         echo "[ DONE ] - Kora icon theme installed." >>"$log"
     else
@@ -173,7 +186,16 @@ if command -v gsettings &> /dev/null; then
     gsettings set org.gnome.desktop.interface cursor-theme "Bibata-Modern-Ice" &> /dev/null || true
 fi
 
-mkdir -p ~/.config/Kvantum
+# Ensure XDG Directory Discovery for Qt/KDE
+mkdir -p "$HOME/.local/share/icons"
+if [[ -d "$icons_dir/kora" ]]; then
+    ln -snf "$icons_dir/kora" "$HOME/.local/share/icons/kora"
+fi
+for kora_dir in "$icons_dir"/kora*; do
+    if [[ -d "$kora_dir" ]]; then
+        ln -snf "$kora_dir" "$HOME/.local/share/icons/$(basename "$kora_dir")"
+    fi
+done
 
 # 1. Detect KDE configuration tool for kdeglobals
 if command -v kwriteconfig6 &> /dev/null; then
@@ -184,16 +206,46 @@ elif command -v kwriteconfig &> /dev/null; then
     KWRITECONFIG="kwriteconfig"
 fi
 
-# 2. Set KDE Icon Theme
+# 2. Set KDE Icon Theme (kdeglobals)
 if [ -n "$KWRITECONFIG" ]; then
     "$KWRITECONFIG" --file kdeglobals --group Icons --key Theme "kora"
+elif command -v crudini &> /dev/null; then
+    crudini --ini-options=nospace --set "$HOME/.config/kdeglobals" Icons Theme "kora"
 fi
 
-# 3. Set Kvantum Theme (crudini works here, or fallback to kwriteconfig)
+# 3. Set Qt Platform Theme (qt5ct / qt6ct) Icon Theme
+mkdir -p "$HOME/.config/qt5ct" "$HOME/.config/qt6ct"
+for qtconf in "$HOME/.config/qt5ct/qt5ct.conf" "$HOME/.config/qt6ct/qt6ct.conf"; do
+    if command -v crudini &> /dev/null; then
+        crudini --ini-options=nospace --set "$qtconf" Appearance icon_theme "kora"
+    elif [ -n "$KWRITECONFIG" ]; then
+        "$KWRITECONFIG" --file "$qtconf" --group Appearance --key icon_theme "kora"
+    else
+        if [[ -f "$qtconf" ]]; then
+            if grep -q "^\[Appearance\]" "$qtconf"; then
+                if grep -q "^icon_theme=" "$qtconf"; then
+                    sed -i 's/^icon_theme=.*/icon_theme=kora/' "$qtconf"
+                else
+                    sed -i '/^\[Appearance\]/a icon_theme=kora' "$qtconf"
+                fi
+            else
+                printf "\n[Appearance]\nicon_theme=kora\n" >> "$qtconf"
+            fi
+        else
+            printf "[Appearance]\nicon_theme=kora\n" > "$qtconf"
+        fi
+    fi
+done
+
+# 4. Set Kvantum Theme (crudini works here, or fallback to kwriteconfig)
+mkdir -p "$HOME/.config/Kvantum"
 if command -v crudini &> /dev/null; then
     crudini --set ~/.config/Kvantum/kvantum.kvconfig General theme "Dracula"
 elif [ -n "$KWRITECONFIG" ]; then
     "$KWRITECONFIG" --file ~/.config/Kvantum/kvantum.kvconfig --group General --key theme "Dracula"
 fi
+
+msg dn "Qt and KDE themes & icons configured."
+echo "[ DONE ] - Qt and KDE themes & icons configured." >>"$log"
 
 sleep 1 && clear
