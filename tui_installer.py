@@ -916,10 +916,10 @@ def run_interactive_installer():
         "cmd": f"bash {scripts_dir}/9-sddm.sh"
     })
 
-    # Step 5b: SDDM theme (SilentSDDM) — runs as a dedicated step when enabled
+    # Step 5b: SDDM theme (Prohori) — runs as a dedicated step when enabled
     if opt_map.get("sddm_theme", {}).get("enabled", True):
         steps.append({
-            "title": "Installing SilentSDDM greeter theme & fonts",
+            "title": "Installing Prohori SDDM greeter theme & fonts",
             "script": os.path.join(common_dir, "sddm_theme.sh"),
             "cmd": f"bash {common_dir}/sddm_theme.sh"
         })
