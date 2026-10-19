@@ -53,8 +53,16 @@ if [[ -d "$parent_dir/.cache/themes_icons" ]]; then
     ./extract.sh
 fi
 
-if [[ -d "$HOME/.icons/Bibata-Modern-Ice" ]]; then
-    sudo cp -r "$HOME/.icons"/* /usr/share/icons/ &> /dev/null
+mkdir -p "$HOME/.local/share/icons"
+if [[ -d "$HOME/.icons" ]]; then
+    for icon_dir in "$HOME/.icons"/*; do
+        [[ -d "$icon_dir" ]] || continue
+        name=$(basename "$icon_dir")
+        if [[ ! -e "$HOME/.local/share/icons/$name" ]]; then
+            ln -sfn "$icon_dir" "$HOME/.local/share/icons/$name" 2>/dev/null || cp -r "$icon_dir" "$HOME/.local/share/icons/" 2>/dev/null || true
+        fi
+    done
+    sudo cp -r "$HOME/.icons"/* /usr/share/icons/ 2>/dev/null || true
 fi
 
-sleep 1 && cleary
+sleep 1 && clear

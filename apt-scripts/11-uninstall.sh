@@ -32,6 +32,10 @@ removable_pkg=(
     wofi
     mako
     dunst
+    waybar
+    rofi
+    wlogout
+    sway-notification-center
 )
 
 for pkg in "${removable_pkg[@]}"; do

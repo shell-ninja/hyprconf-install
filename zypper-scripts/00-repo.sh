@@ -62,4 +62,11 @@ else
   echo "[ ERROR ] - Sorry, could not install 'opi'" 2>&1 | tee -a "$log" &> /dev/null
 fi
 
+# Adding OBS repository for Quickshell
+if ! sudo zypper lr 2>/dev/null | grep -qi "quickshell\|danklinux\|fisiu"; then
+  msg act "Adding Quickshell OBS repository..."
+  sudo zypper addrepo --refresh https://download.opensuse.org/repositories/home:Fisiu:apps/openSUSE_Tumbleweed/home:Fisiu:apps.repo 2>&1 | tee -a "$log" || true
+  sudo zypper --gpg-auto-import-keys refresh 2>&1 | tee -a "$log" || true
+fi
+
 clear

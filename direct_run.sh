@@ -51,22 +51,13 @@ fi
 
 # ----------------- Branch selection
 
-printf "\n  ${purple}✦${end} ${bold}Select the variant to install:${end}\n\n"
-printf "    ${cyan}1)${end} ${bold}Traditional${end}  ${muted}— Classic Hyprconf setup with Waybar, Rofi, SwayNC, and related utilities${end}\n"
-printf "    ${cyan}2)${end} ${bold}Noctalia${end}     ${muted}— Modern desktop experience powered by Noctalia Shell${end}\n\n"
+selected_branch="qs"
 
-selected_branch=""
-while [[ -z "$selected_branch" ]]; do
-    printf "  ${yellow}→${end} Enter your choice ${muted}[1/2]${end}: "
-    read -r branch_choice
-    case "$branch_choice" in
-        1) selected_branch="main" ;;
-        2) selected_branch="noct" ;;
-        *) printf "  ${red}✗${end} Invalid choice. Please enter ${cyan}1${end} or ${cyan}2${end}.\n" ;;
-    esac
-done
+printf "\n  ${purple}✦${end} ${bold}Installing Hyprconf Quickshell Edition:${end}\n"
+printf "    ${muted}Modern hardware-accelerated desktop experience powered by Quickshell${end}\n"
+printf "    ${muted}(Dynamic Island, native app launcher, unified settings & lockscreen)${end}\n\n"
 
-printf "\n  ${green}✓${end} Selected Variant: ${bold}${green}${selected_branch}${end}\n"
+printf "  ${green}✓${end} Selected Variant: ${bold}${green}${selected_branch}${end}\n"
 
 
 printf "\n  ${cyan}→${end} Downloading latest Hyprconf installer payload (${bold}${selected_branch}${end})...\n"
@@ -74,11 +65,13 @@ curl -L "https://github.com/shell-ninja/hyprconf-install/archive/refs/heads/${se
 
 if [[ -f "$HOME/hyprconf-install.zip" ]]; then
     mkdir -p hyprconf-install
-    unzip -q -o hyprconf-install.zip "hyprconf-install-${selected_branch}/*" -d hyprconf-install
+    unzip -q -o hyprconf-install.zip "hyprconf-install-${selected_branch}/*" -d hyprconf-install 2>/dev/null || unzip -q -o hyprconf-install.zip -d hyprconf-install
     cd hyprconf-install || exit 1
-    mv "hyprconf-install-${selected_branch}/"* . 2>/dev/null || true
-    rmdir "hyprconf-install-${selected_branch}" 2>/dev/null || true
-    rm "$HOME/hyprconf-install.zip"
+    if [[ -d "hyprconf-install-${selected_branch}" ]]; then
+        mv "hyprconf-install-${selected_branch}/"* . 2>/dev/null || true
+        rmdir "hyprconf-install-${selected_branch}" 2>/dev/null || true
+    fi
+    rm -f "$HOME/hyprconf-install.zip"
 fi
 
 if [[ -d "$HOME/hyprconf-install" ]]; then

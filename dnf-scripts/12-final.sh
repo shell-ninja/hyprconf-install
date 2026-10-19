@@ -36,6 +36,7 @@ if [[ ! -f "$log" ]]; then
 fi
 
 checkup=(
+    quickshell
     hyprland
     hyprlock
     hypridle
@@ -43,7 +44,6 @@ checkup=(
     hyprsunset
     pyprland
     curl
-    # dunst
     fastfetch
     ffmpeg-free
     git
@@ -55,19 +55,18 @@ checkup=(
     kvantum-qt5
     libX11-devel
     libXext-devel
-    lxappearance
     make
     network-manager-applet
     NetworkManager-tui
     neovim
     nvtop
     pamixer
+    playerctl
     pciutils
     pavucontrol
     pipewire-alsa
     pipewire-utils
     pipewire-pulse
-    # polkit-kde-agent
     power-profiles-daemon
     pulseaudio-utils
     python3-requests
@@ -76,17 +75,20 @@ checkup=(
     python3-pip
     python3-pillow
     python3-pyquery
+    python3-dbus
     qt5ct
     qt6ct-kde
     qt6-qtsvg
+    qt6-qtdeclarative
+    qt6-qtimageformats
+    qt6-qtmultimedia
+    qt6-qt5compat
     ripgrep
-    rofi-wayland
     slurp
-    SwayNotificationCenter
     satty
     tar
     unzip
-    waybar
+    vte291
     wget2
     wl-clipboard
     xdg-utils
@@ -98,7 +100,6 @@ checkup=(
     mpv
     mpv-mpris
     nwg-look
-    pamixer
     awww
     ark
     crudini
@@ -113,10 +114,6 @@ checkup=(
     qt5-qtgraphicaleffects
     qt5-qtquickcontrols
     sddm
-    qt6-qt5compat 
-    qt6-qtdeclarative 
-    qt6-qtsvg
-    xfce-polkit
     xdg-desktop-portal-hyprland
     xdg-desktop-portal-kde
 )
@@ -127,7 +124,7 @@ for skipable in "${checkup[@]}"; do
     skip_installed "$skipable" &> /dev/null
 done
 
-to_install=($(printf "%s\n" "${hypr_packages[@]}" | grep -vxFf "$installed_cache"))
+to_install=($(printf "%s\n" "${checkup[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
@@ -150,10 +147,5 @@ for _pkgs in "${to_install[@]}"; do
         echo "[ ERROR ] - Sorry, could not install $_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
-
-# checking if pywal is installed
-if ! command -v wal &> /dev/null; then
-    sudo pip install pywal 2>&1 | tee -a "$log" &> /dev/null
-fi
 
 sleep 1 && clear

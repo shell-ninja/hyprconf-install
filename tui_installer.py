@@ -383,11 +383,10 @@ class PlanConfig:
         self.options = [
             {
                 "id": "dotfiles_repo",
-                "name": "Hyprconf dotfiles",
-                "desc": "choose dotfiles repository: hyprconf (v1) or hyprconf-v2 (v2)",
-                "type": "choice",
-                "choices": ["hyprconf", "hyprconf-v2"],
-                "index": 0,
+                "name": "Hyprconf (Quickshell)",
+                "desc": "deploys Quickshell desktop shell, dynamic island, launcher & configs",
+                "type": "toggle",
+                "enabled": True,
             },
             {
                 "id": "sddm_theme",
@@ -455,8 +454,8 @@ class PlanConfig:
 
         opt_map = {opt["id"]: opt for opt in self.options}
 
-        dotfiles_opt = opt_map.get("dotfiles_repo", {})
-        dotfiles_choice = dotfiles_opt.get("choices", ["hyprconf"])[dotfiles_opt.get("index", 0)]
+        dotfiles_enabled = opt_map.get("dotfiles_repo", {}).get("enabled", True)
+        dotfiles_choice = "hyprconf-qs" if dotfiles_enabled else "skip"
         dotfiles_cache = os.path.join(cache_dir, "dotfiles")
         with open(dotfiles_cache, "w") as f:
             f.write(f"{dotfiles_choice}\n")
@@ -466,7 +465,7 @@ class PlanConfig:
 
         with open(user_cache, "w") as f:
             f.write(f"dotfiles_repo='{dotfiles_choice}'\n")
-            f.write(f"hyprconf_version='{dotfiles_choice}'\n")
+            f.write(f"hyprconf_version='quickshell'\n")
             f.write(f"setup_for_bluetooth='{'Y' if opt_map.get('bluetooth', {}).get('enabled') else 'N'}'\n")
             f.write("install_vs_code='N'\n")
             browser_choice = "Skip"
@@ -506,7 +505,7 @@ def render_plan_screen(plan, selected_idx, term_w, term_h):
     # Top Block Logo
     logo_l1 = "█░█ █▄█ █▀█ █▀█ █▀▀ █▀█ █▄░█ █▀▀"
     logo_l2 = "█▀█ ░█░ █▀▀ █▀▄ █▄▄ █▄█ █░▀█ █▀░"
-    sub_title = "shell installer"
+    sub_title = "quickshell hyprland installer"
     plan_desc = f"Here is the plan for {COLOR_PURPLE}{plan.distro_id}{RESET}"
 
     l1_pad = " " * max(0, (term_w - len(logo_l1)) // 2)
@@ -1032,20 +1031,15 @@ def run_interactive_installer():
         "cmd": f"bash {common_dir}/themes.sh"
     })
 
-    # Step 13: Hyprconf dotfiles  (interactive — full terminal handoff)
-    dotfiles_opt = opt_map.get("dotfiles_repo", {})
-    dotfiles_choice = dotfiles_opt.get("choices", ["hyprconf"])[dotfiles_opt.get("index", 0)]
-    is_v2 = (dotfiles_choice == "hyprconf-v2")
-    dotfiles_script_file = "hyprconf-v2.sh" if is_v2 else "hyprconf.sh"
-    dotfiles_title = "Deploying Hyprconf v2 dotfiles & configs" if is_v2 else "Deploying Hyprconf dotfiles & wallpapers"
-
-    steps.append({
-        "title": dotfiles_title,
-        "script": os.path.join(common_dir, dotfiles_script_file),
-        "cmd": f"bash {common_dir}/{dotfiles_script_file}",
-        "interactive": True,       # TUI will pause and hand terminal to setup script
-        "repo_choice": dotfiles_choice,
-    })
+    # Step 13: Hyprconf dotfiles (interactive — full terminal handoff)
+    if opt_map.get("dotfiles_repo", {}).get("enabled", True):
+        steps.append({
+            "title": "Deploying Hyprconf (Quickshell) dotfiles & configurations",
+            "script": os.path.join(common_dir, "hyprconf.sh"),
+            "cmd": f"bash {common_dir}/hyprconf.sh",
+            "interactive": True,       # TUI will pause and hand terminal to setup script
+            "repo_choice": "hyprconf",
+        })
 
     # Step 14: Hardware Profile (Laptop vs Desktop)
     is_laptop = (
@@ -1104,42 +1098,24 @@ def run_interactive_installer():
             inp.disable()
             exit_alt_screen()
 
-            step_is_v2 = (step.get("repo_choice") == "hyprconf-v2")
-
             # 2. Print a styled interstitial screen in normal terminal mode
             os.system("clear")
             print()
             print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
-            if step_is_v2:
-                print(f"  {COLOR_ACCENT}{BOLD}  ✦  DOTFILES SETUP  ─  Hyprconf v2{RESET}")
-                print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
-                print()
-                print(f"  {COLOR_TEXT}The TUI installer is handing control to the Hyprconf v2 setup\n"
-                      f"  script (github.com/shell-ninja/hyprconf-v2):\n")
-                print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Safely backs up previous configurations{RESET}")
-                print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Deploys modern Waybar, Hyprland, & app configs{RESET}")
-                print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Configures Catppuccin themes, wallpapers, & styles{RESET}")
-                print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Applies font caches and hardware environment flags{RESET}")
-                print()
-                print(f"  {COLOR_MUTED}When the setup script finishes, the TUI will automatically resume.{RESET}")
-                print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
-                print()
-                input(f"  {COLOR_CYAN}Press Enter to launch the Hyprconf v2 setup script...{RESET} ")
-            else:
-                print(f"  {COLOR_ACCENT}{BOLD}  ✦  INTERACTIVE SETUP  ─  Hyprconf Dotfiles{RESET}")
-                print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
-                print()
-                print(f"  {COLOR_TEXT}The TUI installer is handing control to the Hyprconf setup\n"
-                      f"  script. You can now interact with all prompts directly:\n")
-                print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Choose your bar layout (Waybar){RESET}")
-                print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Choose your lockscreen style (Hyprlock){RESET}")
-                print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Opt in/out of extra wallpaper download{RESET}")
-                print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Backup existing configs as you prefer{RESET}")
-                print()
-                print(f"  {COLOR_MUTED}When the setup script finishes, the TUI will automatically resume.{RESET}")
-                print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
-                print()
-                input(f"  {COLOR_CYAN}Press Enter to launch the Hyprconf setup script...{RESET} ")
+            print(f"  {COLOR_ACCENT}{BOLD}  ✦  INTERACTIVE SETUP  ─  Hyprconf Quickshell Dotfiles{RESET}")
+            print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
+            print()
+            print(f"  {COLOR_TEXT}The TUI installer is handing control to the Hyprconf setup\n"
+                  f"  script. You can now interact with all prompts directly:\n")
+            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Configure Quickshell Dynamic Island & status bar{RESET}")
+            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Configure Quickshell App Launcher styles & animations{RESET}")
+            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Configure Quickshell Lockscreen & Control Center{RESET}")
+            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Safely back up and restore existing user configs{RESET}")
+            print()
+            print(f"  {COLOR_MUTED}When the setup script finishes, the TUI will automatically resume.{RESET}")
+            print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
+            print()
+            input(f"  {COLOR_CYAN}Press Enter to launch the Hyprconf setup script...{RESET} ")
             print()
 
             # 3. Run the script with FULL terminal (stdin, stdout, stderr all native)
@@ -1158,7 +1134,7 @@ def run_interactive_installer():
                 lf.write(f"[INTERACTIVE] {step['title']} completed — {outcome}\n")
 
             # 5. Resume-prompt before returning to the TUI
-            repo_disp = "Hyprconf v2" if step_is_v2 else "Hyprconf"
+            repo_disp = "Hyprconf (Quickshell)"
             print()
             print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
             if ret.returncode == 0:

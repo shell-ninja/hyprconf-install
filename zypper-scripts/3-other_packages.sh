@@ -41,6 +41,7 @@ fi
 
 # packages neeeded
 hypr_package=( 
+  quickshell
   curl
   ffmpeg
   fastfetch
@@ -55,29 +56,33 @@ hypr_package=(
   kvantum-qt6
   kvantum-themes
   kvantum-manager
-  gtk-layer-shell
   less
   libnotify-tools
   libvte-2.91-0
-  lxappearance
   make
   neovim
   pamixer
+  playerctl
   pavucontrol
   pciutils
   pipewire-alsa
-  python313-requests
+  python3-requests
+  python3-Pillow
+  python3-dbus-python
   qt5ct
   qt6ct
-  qt6-svg-devel
+  qt6-declarative
+  qt6-svg
+  qt6-imageformats
+  qt6-multimedia
+  qt6-declarative-tools
   ripgrep
   libqt5-qtquickcontrols
   libqt5-qtquickcontrols2
   libqt5-qtgraphicaleffects
   nwg-look
-  rofi-wayland
   slurp
-  SwayNotificationCenter
+  satty
   swappy
   awww
   tar
@@ -102,7 +107,6 @@ other_packages=(
 no_recommands=(
   eog
   NetworkManager-applet
-  waybar
 )
 
 # dolphin
@@ -189,6 +193,4 @@ if command -v go &> /dev/null; then
 fi
 
 sleep 2 && clear
-
-"$dir/pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 

@@ -45,6 +45,7 @@ else
 fi
 
 main_packages=(
+    quickshell
     curl
     fastfetch
     ffmpeg-free
@@ -55,11 +56,9 @@ main_packages=(
     kitty
     kvantum
     kvantum-qt5
-    gtk-layer-shell
     less
     libX11-devel
     libXext-devel
-    lxappearance
     make
     network-manager-applet
     NetworkManager-tui
@@ -74,6 +73,7 @@ main_packages=(
     pipewire-alsa
     pipewire-utils
     pipewire-pulse
+    playerctl
     power-profiles-daemon
     pulseaudio-utils
     python3-requests
@@ -82,22 +82,23 @@ main_packages=(
     python3-pip
     python3-pillow
     python3-pyquery
+    python3-dbus
     qt5ct
     qt6ct-kde
     qt6-qtsvg
+    qt6-qtdeclarative
+    qt6-qtimageformats
+    qt6-qtmultimedia
+    qt6-qt5compat
     ripgrep
-    rofi-wayland
     slurp
-    SwayNotificationCenter
     satty
     tar
     unzip
     vte291
-    waybar
     wget2
     wl-clipboard
     xdg-utils
-    xfce-polkit
     yazi
 )
 
@@ -110,9 +111,7 @@ other_packages=(
     mpv
     mpv-mpris
     nwg-look
-    pamixer
     awww
-    wlogout
 )
 
 dolphin=(
@@ -168,5 +167,3 @@ if [ -f '/usr/local/bin/grimblast' ]; then
 fi
 
 sleep 1 && clear
-
-"$dir/pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")

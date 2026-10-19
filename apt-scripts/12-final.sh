@@ -36,6 +36,7 @@ if [[ ! -f "$log" ]]; then
 fi
 
 checkup=(
+    quickshell
     hyprland
     hyprlock
     hypridle
@@ -54,13 +55,13 @@ checkup=(
     qt5-style-kvantum
     libx11-dev
     libxext-dev
-    lxappearance
     make
     network-manager-gnome
     network-manager
     neovim
     nvtop
     pamixer
+    playerctl
     pciutils
     pavucontrol
     pipewire-alsa
@@ -74,15 +75,21 @@ checkup=(
     python3-pip
     python3-pil
     python3-pyquery
+    python3-dbus
     qt5ct
     qt6ct
     libqt6svg6
+    libqt6multimedia6
+    qml6-module-qtquick
+    qml6-module-qtquick-controls
+    qml6-module-qtquick-layouts
+    qml6-module-qt5compat
+    qt6-declarative-dev
     ripgrep
+    satty
     slurp
-    sway-notification-center
     tar
     unzip
-    waybar
     wget
     wl-clipboard
     xdg-utils
@@ -93,8 +100,6 @@ checkup=(
     mpv
     mpv-mpris
     nwg-look
-    pamixer
-    wlogout
     crudini
     thunar
     thunar-archive-plugin
@@ -107,10 +112,6 @@ checkup=(
     qml-module-qtgraphicaleffects
     qml-module-qtquick-controls2
     sddm
-    qt6-qt5compat 
-    qt6-qtdeclarative 
-    libqt6svg6
-    polkit-kde-agent
     xdg-desktop-portal-hyprland
 )
 
@@ -120,7 +121,7 @@ for skipable in "${checkup[@]}"; do
     skip_installed "$skipable" &> /dev/null
 done
 
-to_install=($(printf "%s\n" "${hypr_packages[@]}" | grep -vxFf "$installed_cache"))
+to_install=($(printf "%s\n" "${checkup[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
@@ -143,11 +144,6 @@ for _pkgs in "${to_install[@]}"; do
         echo "[ ERROR ] - Sorry, could not install $_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
-
-# checking if pywal is installed
-if ! command -v wal &> /dev/null; then
-    sudo pip install pywal --break-system-packages 2>&1 | tee -a "$log" &> /dev/null
-fi
 
 # checking if swww is installed
 if ! command -v swww &> /dev/null; then

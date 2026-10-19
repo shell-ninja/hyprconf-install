@@ -49,6 +49,7 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
 # any other packages will be installed from here
 other_packages=(
+    quickshell
     awww
     btop
     cliphist
@@ -62,9 +63,7 @@ other_packages=(
     kitty
     kvantum
     kvantum-qt5
-    gtk-layer-shell
     less
-    lxappearance
     mpv-mpris
     network-manager-applet
     networkmanager
@@ -80,24 +79,27 @@ other_packages=(
     pavucontrol
     parallel
     pciutils
-    polkit-kde-agent
+    playerctl
     power-profiles-daemon
-    python-pywal
+    python-pillow
+    python-requests
     python-gobject
+    python-dbus
     qt5ct
     qt5-svg
     qt6ct-kde
     qt6-svg
+    qt6-declarative
+    qt6-imageformats
+    qt6-multimedia
+    qt6-5compat
     qt5-graphicaleffects
     qt5-quickcontrols2
     ripgrep
-    rofi
     satty
-    swaync
     unzip
     vte3
     vte4
-    waybar
     wget
     wl-clipboard
     xorg-xrandr
@@ -110,7 +112,6 @@ aur_packages=(
     grimblast-git
     hyprsunset
     pyprland
-    wlogout
 )
 
 dolphin=(

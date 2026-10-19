@@ -116,16 +116,16 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 
 ## <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=90EE90&vCenter=true&width=435&height=25&lines=FEATURES" width="450"/>
 
-- Dynamic Wallpaper changing script
-- Change colors according to the changed wallpaper (pywal)
-- Select and Open apps using Rofi app launcher
-- Gorgeous looking Waybar styles
-- Rofi app launcher styles
-- Wlogout power menu
-- Locking with Hyprlock
-- Set your user image in Hyprlock ( a script `~/.config/hypr/add_user.sh` to set your user image )
-- Hypridle to handle auto lock and suspend when no action is runnin
-- Hyprsunset to use nightlight, `SUPER` + F1 to increase, `SUPER` + F2 to decrease and `SUPER` + F3 to set to default
+- Hardware-accelerated desktop shell powered by Quickshell
+- Dynamic Island status bar with hardware monitors, per-process network traffic, quick toggles, and audio visualizer
+- Dynamic theming engine (`hypr-colors.py` with Pillow) extracting vibrant obsidian palettes directly from wallpapers
+- Quickshell App Launcher with multiple styles (Style 1: Slanted Split Quad, Style 2: Panoramic Grid)
+- Native Polkit authentication agent built directly into Quickshell (`PolkitView.qml`)
+- Quickshell Lockscreen with native PAM authentication, breathing avatar animations, and failure shockwave
+- Unified Settings App with WYSIWYG draggable lockscreen canvas, appearance, display scaling, and curve tuners
+- Screenshot Studio launcher (`qs-screenshot.sh` / Satty) with 4 capture modes and island countdown timer
+- Hyprsunset 3-stage night light manager and Caffeine mode
+- SDDM login greeter integration (SilentSDDM)
 
 <br>
 
@@ -142,43 +142,29 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 >
 > ### Direct Installation
 >
-> You can now easily install the config directly without cloning the repository. Just copy and paste the command bellow in your terminal and run it. Before that, make sure to install `curl, git`. Install it using pacman, dnf or zypper.
-
-```bash
-bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/main/direct_run.sh)
-```
+> You can now easily install the Quickshell Hyprconf setup directly without cloning the repository. Just copy and paste the command below in your terminal and run it. Before that, make sure to install `curl, git`.
+>
+> ```bash
+> bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/qs/direct_run.sh)
+> ```
 
 > [!NOTE]
 >
-> ### Manusally Installation
+> ### Manual Installation
 
-> - Clone this repository:
+> - Clone this repository (qs branch):
 
 ```bash
-git clone --depth=1 https://github.com/shell-ninja/hyprconf-install.git
+git clone --depth=1 -b qs https://github.com/shell-ninja/hyprconf-install.git
 ```
 
-> - Now cd into hyprconf-install directory and run this command.:
+> - Now cd into hyprconf-install directory and run this command:
 
 ```bash
-cd ~/hyprconf-install
+cd hyprconf-install
 chmod +x install.sh
 ./install.sh
 ```
-
-> [!TIP]
-> You can follow this part while installing. Here are the prompts that will be askes while installing.
-
-### Prompts
-
-<details close>
-<summary>Select variants</summary>
-
-Select from this 2 variants: </br> 1. Traditional </br> 2. Noctalia.
-
-<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/1.png?raw=true" /> <br>
-
-</details>
 
 <details close>
 <summary>Select options</summary>

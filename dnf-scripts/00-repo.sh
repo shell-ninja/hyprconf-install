@@ -48,6 +48,7 @@ copr_repos=(
     alternateved/eza
     jkinred/satty
     lihaohong/yazi
+    errornointernet/quickshell
 )
 
 # enabling 3rd party repo

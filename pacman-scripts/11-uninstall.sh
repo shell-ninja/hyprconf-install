@@ -30,6 +30,11 @@ removable_pkg=(
     wofi
     mako
     dunst
+    waybar
+    rofi
+    rofi-wayland
+    wlogout
+    swaync
 )
 
 

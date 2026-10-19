@@ -24,7 +24,7 @@ clear
 printf "\n"
 printf "  ${purple}${bold}█░█ █▄█ █▀█ █▀█ █▀▀ █▀█ █▄░█ █▀▀${end}\n"
 printf "  ${lavender}${bold}█▀█ ░█░ █▀▀ █▀▄ █▄▄ █▄█ █░▀█ █▀░${end}\n"
-printf "          ${muted}hyprland rice installer${end}\n\n"
+printf "          ${muted}hyprland rice installer (quickshell edition)${end}\n\n"
 
 # ----------------- Fallback CLI & Helper Functions ----------------- #
 if [[ -f "$dir/interaction_fn.sh" ]]; then
