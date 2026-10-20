@@ -61,7 +61,7 @@ selected_variant=""
 # Support optional CLI argument
 case "${1,,}" in
     1|qs|quickshell|main)
-        selected_branch="qs"
+        selected_branch="main"
         selected_variant="Quickshell"
         ;;
     2|noct|noctalia)
@@ -79,7 +79,7 @@ while [[ -z "$selected_branch" ]]; do
     fi
     case "$branch_choice" in
         1)
-            selected_branch="qs"
+            selected_branch="main"
             selected_variant="Quickshell"
             ;;
         2)

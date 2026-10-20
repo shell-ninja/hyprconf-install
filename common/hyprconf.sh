@@ -35,7 +35,7 @@ fi
 # 2. Acquire Hyprconf dotfiles payload (Quickshell edition)
 target_dir="$parent_dir/.cache/hyprconf"
 zip_path="$target_dir.zip"
-url="https://github.com/shell-ninja/hyprconf/archive/refs/heads/qs.zip"
+url="https://github.com/shell-ninja/hyprconf/archive/refs/heads/main.zip"
 
 if [[ -f "$target_dir/setup.sh" ]]; then
     msg act "Initializing Hyprconf desktop suite..."
@@ -48,17 +48,18 @@ else
     if [[ -f "$zip_path" && -s "$zip_path" ]]; then
         rm -rf "$target_dir"
         mkdir -p "$target_dir"
-        unzip -q "$zip_path" "hyprconf-qs/*" -d "$target_dir" 2>/dev/null || unzip -q "$zip_path" -d "$target_dir"
-        if [[ -d "$target_dir/hyprconf-qs" ]]; then
-            mv "$target_dir/hyprconf-qs/"* "$target_dir/" 2>/dev/null || true
-            rmdir "$target_dir/hyprconf-qs" 2>/dev/null || true
+        unzip -q "$zip_path" -d "$target_dir" 2>/dev/null
+        subfolder=$(find "$target_dir" -mindepth 1 -maxdepth 1 -type d -name "hyprconf*" | head -n 1)
+        if [[ -n "$subfolder" && -d "$subfolder" ]]; then
+            mv "$subfolder"/* "$target_dir/" 2>/dev/null || true
+            rmdir "$subfolder" 2>/dev/null || true
         fi
         rm -f "$zip_path"
     fi
 
     if [[ ! -f "$target_dir/setup.sh" ]]; then
         rm -rf "$target_dir"
-        git clone --depth=1 -b qs https://github.com/shell-ninja/hyprconf.git "$target_dir" 2>&1 | tee -a "$log" >/dev/null || true
+        git clone --depth=1 -b main https://github.com/shell-ninja/hyprconf.git "$target_dir" 2>&1 | tee -a "$log" >/dev/null || true
     fi
 fi
 
