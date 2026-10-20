@@ -391,9 +391,10 @@ class PlanConfig:
             {
                 "id": "sddm_theme",
                 "name": "SDDM greeter theme",
-                "desc": "points the SDDM login screen at the Hyprconf greeter",
-                "type": "toggle",
-                "enabled": True,
+                "desc": "custom login greeter theme for SDDM display manager",
+                "type": "choice",
+                "choices": ["Prohori", "SilentSDDM", "Skip"],
+                "index": 0,
             },
             {
                 "id": "bluetooth",
@@ -473,11 +474,23 @@ class PlanConfig:
                 browser_choice = opt_map["browser"]["choices"][opt_map["browser"]["index"]]
             f.write(f"install_browser='{'N' if browser_choice == 'Skip' else 'Y'}'\n")
             f.write(f"have_nvidia='{'Y' if opt_map.get('nvidia', {}).get('enabled') else 'N'}'\n")
-            f.write(f"install_sddm_theme='{'Y' if opt_map.get('sddm_theme', {}).get('enabled', True) else 'N'}'\n")
+            sddm_choice = "Prohori"
+            if "sddm_theme" in opt_map:
+                sddm_opt = opt_map["sddm_theme"]
+                if sddm_opt.get("type") == "choice":
+                    sddm_choice = sddm_opt["choices"][sddm_opt["index"]]
+                else:
+                    sddm_choice = "Prohori" if sddm_opt.get("enabled", True) else "Skip"
+            f.write(f"install_sddm_theme='{'N' if sddm_choice == 'Skip' else 'Y'}'\n")
+            f.write(f"sddm_theme_name='{sddm_choice}'\n")
             f.write(f"install_openbangla='{'Y' if opt_map.get('openbangla', {}).get('enabled') else 'N'}'\n")
 
         with open(browser_cache, "w") as f:
             f.write(f"{browser_choice}\n")
+
+        sddm_cache = os.path.join(cache_dir, "sddm_theme")
+        with open(sddm_cache, "w") as f:
+            f.write(f"{sddm_choice}\n")
 
         if self.pkgman == "pacman":
             aur_cache = os.path.join(cache_dir, "aur")
@@ -967,12 +980,20 @@ def run_interactive_installer():
         "cmd": f"bash {scripts_dir}/9-sddm.sh"
     })
 
-    # Step 5b: SDDM theme (SilentSDDM) — runs as a dedicated step when enabled
-    if opt_map.get("sddm_theme", {}).get("enabled", True):
+    # Step 5b: SDDM theme (Prohori / SilentSDDM) — runs as a dedicated step when enabled
+    sddm_choice = "Prohori"
+    if "sddm_theme" in opt_map:
+        sddm_opt = opt_map["sddm_theme"]
+        if sddm_opt.get("type") == "choice":
+            sddm_choice = sddm_opt["choices"][sddm_opt["index"]]
+        else:
+            sddm_choice = "Prohori" if sddm_opt.get("enabled", True) else "Skip"
+
+    if sddm_choice != "Skip":
         steps.append({
-            "title": "Installing SilentSDDM greeter theme & fonts",
+            "title": f"Installing {sddm_choice} SDDM greeter theme & fonts",
             "script": os.path.join(common_dir, "sddm_theme.sh"),
-            "cmd": f"bash {common_dir}/sddm_theme.sh"
+            "cmd": f"bash {common_dir}/sddm_theme.sh {sddm_choice.lower()}"
         })
 
     # Step 6: XDG Desktop Portal

@@ -95,7 +95,9 @@ done
 msg act "Activating sddm service..."
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-# run sddm theme script
-"$common_scripts/sddm_theme.sh"
+# run sddm theme script (only when run standalone outside TUI installer)
+if [[ "$HYPRCONF_TUI" != "1" ]]; then
+    "$common_scripts/sddm_theme.sh"
+fi
 
 sleep 1 && clear

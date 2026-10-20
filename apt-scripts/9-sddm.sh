@@ -50,6 +50,9 @@ sddm=(
     qml-module-qtgraphicaleffects
     qml-module-qtquick-controls2
     sddm
+    qml6-module-qtquick
+    qml6-module-qtquick-controls
+    qml6-module-qtquick-layouts
     qml6-module-qt5compat-graphicaleffects
     qml6-module-qtqml
     libqt6svg6
@@ -108,8 +111,10 @@ msg act "Activating sddm service..."
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-# run sddm theme script
+# run sddm theme script (only when run standalone outside TUI installer)
 common_scripts="$parent_dir/common"
-"$common_scripts/sddm_theme.sh"
+if [[ "$HYPRCONF_TUI" != "1" ]]; then
+    "$common_scripts/sddm_theme.sh"
+fi
 
 sleep 1 && clear

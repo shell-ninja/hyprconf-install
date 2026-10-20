@@ -14,7 +14,6 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 <a href="#screenshots"><kbd> <br> Screenshots <br> </kbd></a>&ensp;&ensp;
 <a href="#install"><kbd> <br> Install <br> </kbd></a>&ensp;&ensp;
 <a href="#keyboards"><kbd> <br> keyboard Shortcuts <br> </kbd></a>&ensp;&ensp;
-<a href="#updates"><kbd> <br> Updates <br> </kbd></a>&ensp;&ensp;
 <a href="#contrib"><kbd> <br> Contrubution <br> </kbd></a>&ensp;&ensp;
 
 </div><br><br>
@@ -125,7 +124,7 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 - Unified Settings App with WYSIWYG draggable lockscreen canvas, appearance, display scaling, and curve tuners
 - Screenshot Studio launcher (`qs-screenshot.sh` / Satty) with 4 capture modes and island countdown timer
 - Hyprsunset 3-stage night light manager and Caffeine mode
-- SDDM login greeter integration (SilentSDDM)
+- SDDM login greeter integration (Prohori & SilentSDDM)
 
 <br>
 
@@ -145,17 +144,17 @@ This Hyprland configuration is kind of minila looking, but also little bit gorge
 > You can now easily install the Quickshell Hyprconf setup directly without cloning the repository. Just copy and paste the command below in your terminal and run it. Before that, make sure to install `curl, git`.
 >
 > ```bash
-> bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/qs/direct_run.sh)
+> bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/main/direct_run.sh)
 > ```
 
 > [!NOTE]
 >
 > ### Manual Installation
 
-> - Clone this repository (qs branch):
+> - Clone this repository:
 
 ```bash
-git clone --depth=1 -b qs https://github.com/shell-ninja/hyprconf-install.git
+git clone --depth=1 https://github.com/shell-ninja/hyprconf-install.git
 ```
 
 > - Now cd into hyprconf-install directory and run this command:
@@ -196,15 +195,6 @@ chmod +x install.sh
 > After installation, just press the `SUPER + Shift + h`. It will show you all the keybinds.
 
 <br>
-
-<div align="right">
-  <br>
-  <a href="#top"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
-
-<a id="updates"></a>
-
-### See last changes (updates) [here](https://github.com/shell-ninja/hyprconf-install/blob/main/UPDATES.md)
 
 <br>
 
