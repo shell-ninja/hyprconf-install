@@ -836,7 +836,7 @@ def prefetch_hyprconf_payload(workspace_dir, log_file=None):
     if os.path.exists(os.path.join(target_dir, "setup.sh")):
         return True
 
-    url = "https://github.com/shell-ninja/hyprconf/archive/refs/heads/qs.zip"
+    url = "https://github.com/shell-ninja/hyprconf/archive/refs/heads/main.zip"
     try:
         res = subprocess.run(
             ["curl", "-sL", url, "-o", zip_path],
@@ -852,7 +852,7 @@ def prefetch_hyprconf_payload(workspace_dir, log_file=None):
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
             )
-            # Flatten subfolder if packed as hyprconf-qs
+            # Flatten subfolder if packed as hyprconf-main or hyprconf-qs
             subdirs = [d for d in os.listdir(target_dir) if os.path.isdir(os.path.join(target_dir, d))]
             if len(subdirs) == 1 and subdirs[0].startswith("hyprconf"):
                 sub_p = os.path.join(target_dir, subdirs[0])
@@ -872,7 +872,7 @@ def prefetch_hyprconf_payload(workspace_dir, log_file=None):
         try:
             shutil.rmtree(target_dir, ignore_errors=True)
             subprocess.run(
-                ["git", "clone", "--depth=1", "-b", "qs", "https://github.com/shell-ninja/hyprconf.git", target_dir],
+                ["git", "clone", "--depth=1", "-b", "main", "https://github.com/shell-ninja/hyprconf.git", target_dir],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 timeout=180
