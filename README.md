@@ -15,6 +15,7 @@
 
 <a href="#overview"><kbd> Overview </kbd></a>&ensp;&ensp;
 <a href="#features"><kbd> Features </kbd></a>&ensp;&ensp;
+<a href="#screenshots"><kbd> Preview </kbd></a>&ensp;&ensp;
 <a href="#supported-distributions"><kbd> Distributions </kbd></a>&ensp;&ensp;
 <a href="#installation"><kbd> Installation </kbd></a>&ensp;&ensp;
 <a href="#contributing"><kbd> Contributing </kbd></a>
@@ -58,6 +59,47 @@ The installer handles package management, dependency resolution, hardware-specif
 - **Safe State Management**:
   - Automatically creates timestamped backups of existing `~/.config/hypr` and `~/.hyprconf` configurations before making changes.
   - Generates comprehensive execution logs in `Logs/` for effortless troubleshooting.
+
+<br>
+
+<a id="screenshots"></a>
+
+## Desktop Environment Preview
+
+The installer deploys and configures a complete, hardware-accelerated **Quickshell** desktop environment on top of **Hyprland**:
+
+<div align="center">
+  <img src="ss/overview1.png" width="49%" alt="Obsidian Workspace" />
+  <img src="ss/overview2.png" width="49%" alt="Tiled Desktop & Dynamic Island" />
+</div>
+
+<br>
+
+<div align="center">
+  <img src="ss/control-center.png" width="49%" alt="Dynamic Island Control Center" />
+  <img src="ss/overview-with-dynamic-island-settings.png" width="49%" alt="Dynamic Island Settings & Hardware Notch" />
+</div>
+
+<br>
+
+<div align="center">
+  <img src="ss/menu1.png" width="49%" alt="Quickshell Application Launcher" />
+  <img src="ss/menu-selector.png" width="49%" alt="Launcher Style Switcher" />
+</div>
+
+<br>
+
+<div align="center">
+  <img src="ss/wallpaper-selector.png" width="49%" alt="Dynamic Wallpaper & Color Harmonizer" />
+  <img src="ss/pkg-updater.png" width="49%" alt="Quickshell Package Updater" />
+</div>
+
+<br>
+
+<div align="center">
+  <img src="ss/lockscreen.png" width="49%" alt="Dynamic Island Morphing Lockscreen" />
+  <img src="ss/lockscreen-settings.png" width="49%" alt="WYSIWYG Lockscreen Settings" />
+</div>
 
 <br>
 
