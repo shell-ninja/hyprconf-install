@@ -32,7 +32,7 @@ installed_cache="$cache_dir/installed_packages"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "hyprpolkitagent" "$log" | awk {'print $2'})
+    last_installed=$(grep "hyprsunset" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         msg skp "Skipping this script. No need to run it again..."
         sleep 1
@@ -53,7 +53,6 @@ hypr_pkgs=(
     hyprwayland-scanner
     hyprlock
     hypridle
-    hyprpolkitagent
     hyprsunset
 )
 

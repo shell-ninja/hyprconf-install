@@ -37,6 +37,7 @@ fi
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
 checkup=(
+    quickshell
     btop
     cava
     cliphist
@@ -55,7 +56,6 @@ checkup=(
     kitty
     kvantum
     kvantum-qt5
-    lxappearance
     network-manager-applet
     networkmanager
     nodejs
@@ -67,11 +67,14 @@ checkup=(
     pacman-contrib
     pamixer
     pavucontrol
+    parallel
     pciutils
-    polkit-kde-agent
+    playerctl
     power-profiles-daemon
-    python-pywal
+    python-pillow
+    python-requests
     python-gobject
+    python-dbus
     pyprland
     qt5ct
     qt5-svg
@@ -79,13 +82,12 @@ checkup=(
     qt6-svg
     qt6-5compat
     qt6-declarative
-    qt6-svg
+    qt6-imageformats
+    qt6-multimedia
     qt5-graphicaleffects
     qt5-quickcontrols2
     ripgrep
-    rofi
     satty
-    swaync
     awww
     sddm
     ark
@@ -94,7 +96,6 @@ checkup=(
     gwenview
     okular
     unzip
-    waybar
     wget
     wl-clipboard
     xorg-xrandr
@@ -112,23 +113,17 @@ to_install=($(printf "%s\n" "${checkup[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# Instlling main packages...
+# Verifying and installing any remaining packages
 for final_check in "${to_install[@]}"; do
-    msg act "Somehow $final_check could not be installed before. Installing it now..."
-    $aur_helper -S "$final_check" --noconfirm &> /dev/null
+    msg act "Resolving missing package: $final_check..."
+    "$aur_helper" -S --needed --noconfirm "$final_check" &> /dev/null
 
     if sudo pacman -Q "$final_check" &> /dev/null; then
-
-        msg dn "Finally $final_check was installed successfully!"
-        echo
-
-        echo "[ DONE ] - $final_check was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        msg dn "Package $final_check installed successfully."
+        echo "[ DONE ] - $final_check installed successfully." >> "$log"
     else
-
-        msg err "Sorry, this time also could not install $final_check.."
-        echo
-
-        echo "[ ERROR ] - Sorry, could not install $final_check!\n" 2>&1 | tee -a "$log" &>/dev/null
+        msg err "Failed to install $final_check (see $log)"
+        echo "[ ERROR ] - Failed to install $final_check" >> "$log"
     fi
 done
 

@@ -70,22 +70,28 @@ if ! command -v swww &> /dev/null; then
   }
 
   # install binaries
-  sudo cp target/release/swww /usr/local/bin/
-  sudo cp target/release/swww-daemon /usr/local/bin/
+  sudo cp target/release/awww* /usr/local/bin/ 2>/dev/null || true
+  sudo cp target/release/swww* /usr/local/bin/ 2>/dev/null || true
+  if [[ -f /usr/local/bin/awww && ! -f /usr/local/bin/swww ]]; then
+      sudo ln -sf /usr/local/bin/awww /usr/local/bin/swww
+  fi
+  if [[ -f /usr/local/bin/awww-daemon && ! -f /usr/local/bin/swww-daemon ]]; then
+      sudo ln -sf /usr/local/bin/awww-daemon /usr/local/bin/swww-daemon
+  fi
 
   # cleanup
   cd ~
   rm -rf "$awww_dir"
 
   # verify
-  if command -v swww &> /dev/null; then
-    msg dn "swww was installed successfully..."
-    printf "[ DONE ] - swww was installed successfully...\n" | tee -a "$log" &> /dev/null
+  if command -v swww &> /dev/null || command -v awww &> /dev/null; then
+    msg dn "Wallpaper daemon (awww/swww) installed successfully."
+    echo "[ DONE ] - Wallpaper daemon installed successfully." >> "$log"
   else
-    msg err "swww failed to install..."
-    printf "[ ERROR ] - swww installation failed!\n" | tee -a "$log" &> /dev/null
+    msg err "Failed to install wallpaper daemon."
+    echo "[ ERROR ] - Wallpaper daemon installation failed" >> "$log"
   fi
 
 else
-  msg dn "swww is already installed..."
+  msg dn "Wallpaper daemon is already installed."
 fi

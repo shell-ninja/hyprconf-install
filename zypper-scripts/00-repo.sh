@@ -48,18 +48,25 @@ echo
 for deps in "${dependencies[@]}"; do
     install_package_base "$deps"
     if sudo zypper se -i "$deps" &> /dev/null ; then
-      echo "[ DONE ] - '$deps' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+      echo "[ DONE ] - '$deps' was installed successfully" >> "$log"
     else
-      echo "[ ERROR ] - Sorry, could not install '$deps'" 2>&1 | tee -a "$log" &> /dev/null
+      echo "[ ERROR ] - Failed to install '$deps'" >> "$log"
     fi
 done
 
 # installing opi
 install_package opi
 if sudo zypper se -i opi &> /dev/null ; then
-  echo "[ DONE ] - 'opi' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+  echo "[ DONE ] - 'opi' was installed successfully" >> "$log"
 else
-  echo "[ ERROR ] - Sorry, could not install 'opi'" 2>&1 | tee -a "$log" &> /dev/null
+  echo "[ ERROR ] - Failed to install 'opi'" >> "$log"
+fi
+
+# Adding OBS repository for Quickshell
+if ! sudo zypper lr 2>/dev/null | grep -qi "quickshell\|danklinux\|fisiu"; then
+  msg act "Adding Quickshell OBS repository..."
+  sudo zypper addrepo --refresh https://download.opensuse.org/repositories/home:Fisiu:apps/openSUSE_Tumbleweed/home:Fisiu:apps.repo 2>&1 | tee -a "$log" || true
+  sudo zypper --gpg-auto-import-keys refresh 2>&1 | tee -a "$log" || true
 fi
 
 clear

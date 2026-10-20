@@ -76,9 +76,9 @@ printf "\n\n"
 for sddm_pkgs in "${to_install[@]}"; do
     install_package "$sddm_pkgs"
     if rpm -q "$sddm_pkgs" &> /dev/null; then
-        echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $sddm_pkgs was installed successfully" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $sddm_pkgs" >> "$log"
     fi
 done
 
@@ -94,8 +94,10 @@ msg act "Activating sddm service..."
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-# run sddm theme script
+# run sddm theme script (only when run standalone outside TUI installer)
 common_scripts="$parent_dir/common"
-"$common_scripts/sddm_theme.sh"
+if [[ "$HYPRCONF_TUI" != "1" ]]; then
+    "$common_scripts/sddm_theme.sh"
+fi
 
 sleep 1 && clear

@@ -32,24 +32,34 @@ if [[ -d "$HOME/.hyprconf" || -d "$HOME/.config/hypr" ]]; then
     [[ -d "$HOME/.config/hypr" ]] && cp -rf "$HOME/.config/hypr" "$backup_path/" 2>/dev/null || true
 fi
 
-# 2. Download and extract Hyprconf dotfiles payload
-url="https://github.com/shell-ninja/hyprconf/archive/refs/heads/main.zip"
+# 2. Acquire Hyprconf dotfiles payload (Quickshell edition)
 target_dir="$parent_dir/.cache/hyprconf"
 zip_path="$target_dir.zip"
+url="https://github.com/shell-ninja/hyprconf/archive/refs/heads/qs.zip"
 
-msg act "Downloading latest Hyprconf dotfiles payload..."
-mkdir -p "$parent_dir/.cache"
-curl -sL "$url" -o "$zip_path"
+if [[ -f "$target_dir/setup.sh" ]]; then
+    msg act "Initializing Hyprconf desktop suite..."
+    echo "[ PAYLOAD ] Using pre-cached dotfiles payload at $target_dir" >> "$log"
+else
+    msg act "Synchronizing Hyprconf desktop suite..."
+    mkdir -p "$parent_dir/.cache"
+    curl -sL "$url" -o "$zip_path"
 
-if [[ -f "$zip_path" ]]; then
-    rm -rf "$target_dir"
-    mkdir -p "$target_dir"
-    unzip -q "$zip_path" "hyprconf-main/*" -d "$target_dir" 2>/dev/null || unzip -q "$zip_path" -d "$target_dir"
-    if [[ -d "$target_dir/hyprconf-main" ]]; then
-        mv "$target_dir/hyprconf-main/"* "$target_dir/" 2>/dev/null || true
-        rmdir "$target_dir/hyprconf-main" 2>/dev/null || true
+    if [[ -f "$zip_path" && -s "$zip_path" ]]; then
+        rm -rf "$target_dir"
+        mkdir -p "$target_dir"
+        unzip -q "$zip_path" "hyprconf-qs/*" -d "$target_dir" 2>/dev/null || unzip -q "$zip_path" -d "$target_dir"
+        if [[ -d "$target_dir/hyprconf-qs" ]]; then
+            mv "$target_dir/hyprconf-qs/"* "$target_dir/" 2>/dev/null || true
+            rmdir "$target_dir/hyprconf-qs" 2>/dev/null || true
+        fi
+        rm -f "$zip_path"
     fi
-    rm -f "$zip_path"
+
+    if [[ ! -f "$target_dir/setup.sh" ]]; then
+        rm -rf "$target_dir"
+        git clone --depth=1 -b qs https://github.com/shell-ninja/hyprconf.git "$target_dir" 2>&1 | tee -a "$log" >/dev/null || true
+    fi
 fi
 
 # 3. Execute setup.sh non-interactively with automated Gum shimming
@@ -122,20 +132,27 @@ if [[ -d "$target_dir" ]]; then
             configPath="$HOME/.config/$configName"
             ln -sfn "$dotfile" "$configPath"
         done
+        if [[ -d "$HOME/.hyprconf/quickshell" ]]; then
+            ln -sfn "$HOME/.hyprconf/quickshell" "$HOME/.config/quickshell"
+        fi
     fi
 fi
 
 # 4. Ensure all helper scripts in ~/.hyprconf and ~/.config have executable permissions
 if [[ -d "$HOME/.hyprconf/hypr/scripts" ]]; then
     chmod +x "$HOME/.hyprconf/hypr/scripts/"*.sh 2>/dev/null || true
+    chmod +x "$HOME/.hyprconf/hypr/scripts/sh/"*.sh 2>/dev/null || true
+    chmod +x "$HOME/.hyprconf/hypr/scripts/py/"*.py 2>/dev/null || true
 fi
 if [[ -d "$HOME/.config/hypr/scripts" ]]; then
     chmod +x "$HOME/.config/hypr/scripts/"*.sh 2>/dev/null || true
+    chmod +x "$HOME/.config/hypr/scripts/sh/"*.sh 2>/dev/null || true
+    chmod +x "$HOME/.config/hypr/scripts/py/"*.py 2>/dev/null || true
 fi
 
 # 5. Verification
-if [[ -f "$HOME/.config/hypr/hyprland.conf" || -f "$HOME/.hyprconf/hypr/hyprland.conf" || -f "$HOME/.config/hypr/scripts/startup.sh" ]]; then
-    msg dn "Hyprconf dotfiles configured and linked successfully!"
+if [[ -f "$HOME/.config/hypr/hyprland.conf" || -f "$HOME/.hyprconf/hypr/hyprland.conf" || -f "$HOME/.config/hypr/scripts/sh/startup.sh" || -f "$HOME/.hyprconf/hypr/scripts/sh/startup.sh" ]]; then
+    msg dn "Hyprconf (Quickshell) dotfiles configured and linked successfully!"
     echo "[ DONE ] - Dotfiles setup was successful" >> "$log"
 else
     msg att "Dotfiles deployed to ~/.hyprconf and linked to ~/.config"

@@ -78,9 +78,9 @@ for xdg_pkgs in "${to_install[@]}"; do
     fi
     
     if dpkg -s "$xdg_pkgs" &> /dev/null; then
-        echo "[ DONE ] - $xdg_pkgs was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $xdg_pkgs was installed successfully" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $xdg_pkgs!" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $xdg_pkgs" >> "$log"
     fi
 done
 

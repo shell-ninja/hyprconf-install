@@ -65,11 +65,11 @@ if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/
     sleep 1
 
     if command -v hyprsunset &> /dev/null; then
-        msg dn "Hyprsunset was installed successfully!"
-        echo "[ DONE ] - Hyprsunset was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+        msg dn "Hyprsunset was installed successfully."
+        echo "[ DONE ] - Hyprsunset installed successfully" >> "$log"
     else
-        msg err "Hyprsunset failed to install. Maybe there was an issue..."
-        echo "[ ERROR ] - Sorry, could not install Hyprsunset.\n" 2>&1 | tee -a "$log" &> /dev/null
+        msg err "Failed to install Hyprsunset."
+        echo "[ ERROR ] - Failed to install Hyprsunset" >> "$log"
     fi 
 fi
 

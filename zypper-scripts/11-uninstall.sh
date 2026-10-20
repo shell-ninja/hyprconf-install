@@ -30,6 +30,9 @@ removable=(
     mako
     openbox
     wofi
+    waybar
+    rofi-wayland
+    SwayNotificationCenter
 )
 
 for pkg in "${removable[@]}"; do

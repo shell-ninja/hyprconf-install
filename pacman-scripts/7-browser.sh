@@ -47,146 +47,118 @@ fi
 # finding the aur helper
 aur_helper=$(command -v yay || command -v paru)
 
-# Ask user for browser selection
-browser=$(cat "$parent_dir/.cache/browser")
+# Read browser selection with fallback
+browser=$(cat "$parent_dir/.cache/browser" 2>/dev/null || echo "Skip")
 
-case $browser in
+case "$browser" in
     "Brave")
         if command -v "brave" &> /dev/null; then
-            msg skp "Brave browser is already installed. Skipping"
+            msg skp "Brave browser is already installed."
             exit 0
         else
+            msg act "Installing Brave Browser..."
             curl -fsS https://dl.brave.com/install.sh | sh
         fi
-        sleep 1
 
         if [[ -n "$(command -v brave)" ]]; then
-            msg dn "Brave was installed successfully!"
-            echo "[ DONE ] - Brave was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-
-            msg att "After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
-
-            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
-            printf "[ 2 ] - Now search for 'Ozone platform'\n"
-            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
-            sleep 5
+            msg dn "Brave Browser installed successfully."
+            echo "[ DONE ] - Brave installed successfully." >> "$log"
         else 
-            msg err "Could not installed Brave.."
-            echo "[ ERROR ] - Could not install Brave" 2>&1 | tee -a "$log" &> /dev/null
+            msg err "Failed to install Brave Browser."
+            echo "[ ERROR ] - Could not install Brave" >> "$log"
         fi
         ;;
     "Google_Chrome")
         if command -v "google-chrome-stable" &> /dev/null; then
-            msg skp "Google Chrome is already installed. Skipping"
+            msg skp "Google Chrome is already installed."
             exit 0
         else
+            msg act "Installing Google Chrome..."
             install_package google-chrome
         fi
-        sleep 1
 
         if [[ -n "$(command -v google-chrome-stable)" ]]; then
-            msg dn "Google Chrome was installed successfully!"
-            echo "[ DONE ] - Google Chrome was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-
-            msg att "After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
-
-            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
-            printf "[ 2 ] - Now search for 'Ozone platform'\n"
-            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
-            sleep 5
+            msg dn "Google Chrome installed successfully."
+            echo "[ DONE ] - Google Chrome installed successfully." >> "$log"
         else 
-            msg err "Could not installed Google Chrome.."
-            echo "[ ERROR ] - Could not install Google Chrome" 2>&1 | tee -a "$log" &> /dev/null
+            msg err "Failed to install Google Chrome."
+            echo "[ ERROR ] - Could not install Google Chrome" >> "$log"
         fi
         ;;
     "Chromium")
         if command -v chromium &> /dev/null; then
-            msg skp "Chromium is already installed. Skipping"
+            msg skp "Chromium is already installed."
             exit 0
         else
+            msg act "Installing Chromium..."
             install_package chromium
         fi
 
-        sleep 1
-
         if [[ -n "$(command -v chromium)" ]]; then
-            msg dn "Chromium was installed successfully!\n"
-            echo "[ DONE ] - Chromium was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-
-            msg att "After completting the installation, please make sure to open the browser and follow the steps..." && sleep 2 && echo
-
-            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
-            printf "[ 2 ] - Now search for 'Ozone platform'\n"
-            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
-            sleep 5
+            msg dn "Chromium installed successfully."
+            echo "[ DONE ] - Chromium installed successfully." >> "$log"
         else 
-            echo "[ ERROR ] - Could not install Chromium" 2>&1 | tee -a "$log" &> /dev/null
+            msg err "Failed to install Chromium."
+            echo "[ ERROR ] - Could not install Chromium" >> "$log"
         fi
         ;;
     "Firefox")
         if command -v firefox &> /dev/null; then
-            msg skp "Firefox is already installed. Skipping"
+            msg skp "Firefox is already installed."
             exit 0
         else
+            msg act "Installing Firefox..."
             install_package firefox
         fi
 
-        sleep 1
-
         if [[ -n "$(command -v firefox)" ]]; then
-            echo "[ DONE ] - Firefox was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+            msg dn "Firefox installed successfully."
+            echo "[ DONE ] - Firefox installed successfully." >> "$log"
         else 
-            echo "[ ERROR ] - Could not install firefox" 2>&1 | tee -a "$log" &> /dev/null
+            msg err "Failed to install Firefox."
+            echo "[ ERROR ] - Could not install Firefox" >> "$log"
         fi
         ;;
     "Vivaldi")
         if command -v vivaldi &> /dev/null; then
-            msg skp "Vivaldi is already installed. Skipping"
+            msg skp "Vivaldi is already installed."
             exit 0
         else
+            msg act "Installing Vivaldi..."
             install_package vivaldi
         fi
 
-        sleep 1
-
         if [[ -n "$(command -v vivaldi)" ]]; then
-            msg dn "Vivaldi was installed successfully!\n"
-            echo "[ DONE ] - Vivaldi was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-
-            msg att "After completting the installation, please make sure to open the browser and follow the steps..." && sleep 2 && echo
-
-            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
-            printf "[ 2 ] - Now search for 'Ozone platform'\n"
-            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
-            sleep 5
+            msg dn "Vivaldi installed successfully."
+            echo "[ DONE ] - Vivaldi installed successfully." >> "$log"
         else 
-            echo "[ ERROR ] - Could not install Vivaldi" 2>&1 | tee -a "$log" &> /dev/null
+            msg err "Failed to install Vivaldi."
+            echo "[ ERROR ] - Could not install Vivaldi" >> "$log"
         fi
         ;;
     "Zen Browser")
         if command -v zen-browser-bin &> /dev/null; then
-            msg skp "Zen Browser is already installe. Skipping"
+            msg skp "Zen Browser is already installed."
             exit 0
         else
+            msg act "Installing Zen Browser..."
             install_package zen-browser-bin
         fi
 
-        sleep 1
-
         if [[ -n "$(command -v zen-browser-bin)" ]]; then
-            echo "[ DONE ] - Zen Browser was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+            msg dn "Zen Browser installed successfully."
+            echo "[ DONE ] - Zen Browser installed successfully." >> "$log"
         else 
-            echo "[ ERROR ] - Could not install zen" 2>&1 | tee -a "$log" &> /dev/null
+            msg err "Failed to install Zen Browser."
+            echo "[ ERROR ] - Could not install Zen Browser" >> "$log"
         fi
-
         ;;
     "Skip")
-            msg skp "No browser will be installed.."
-            sleep 1
-            exit 0
+        msg skp "Skipping web browser installation."
+        exit 0
         ;;
     *)
-        msg err "Invalid choice: $browser..."
+        msg err "Unrecognized browser choice: $browser"
         ;;
 esac
 

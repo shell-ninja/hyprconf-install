@@ -67,9 +67,9 @@ for hypr_pkgs in "${to_install[@]}"; do
     install_package "$hypr_pkgs"
 
     if rpm -q "$hypr_pkgs" &> /dev/null; then
-        echo "[ DONE ] - '$hypr_pkgs' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ DONE ] - '$hypr_pkgs' was installed successfully" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install '$hypr_pkgs'" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ ERROR ] - Failed to install '$hypr_pkgs'" >> "$log"
     fi
 done
 

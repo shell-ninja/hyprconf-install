@@ -63,13 +63,13 @@ to_install=($(printf "%s\n" "${fonts[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# Instlling main packages...
+# Installing desktop fonts
 for font in "${to_install[@]}"; do
     install_package "$font"
     if sudo pacman -Q "$font" &>/dev/null; then
-        echo "[ DONE ] - $font was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $font installed successfully." >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $font!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $font" >> "$log"
     fi
 done
 

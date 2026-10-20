@@ -70,78 +70,69 @@ printf "\n\n"
 for __nvidia in "${to_install[@]}"; do
     install_package "$__nvidia"
     if sudo pacman -Q "$__nvidia" &>/dev/null; then
-        echo "[ DONE ] - $__nvidia was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $__nvidia was installed successfully" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $__nvidia!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $__nvidia" >> "$log"
     fi
 done
 
 # Install additional Nvidia packages
-msg act "Installing addition Nvidia packages..."
-for krnl in $(cat /usr/lib/modules/*/pkgbase); do
+msg act "Installing additional NVIDIA packages..."
+for krnl in $(cat /usr/lib/modules/*/pkgbase 2>/dev/null); do
     for NVIDIA in "${krnl}-headers" "${nvidia_pkg[@]}"; do
         install_package "$NVIDIA" 2>&1 | tee -a "$log"
     done
 done
 
 # Check if the Nvidia modules are already added in mkinitcpio.conf and add if not
-if grep -qE '^MODULES=.*nvidia. *nvidia_modeset.*nvidia_uvm.*nvidia_drm' /etc/mkinitcpio.conf; then
-    msg att "Nvidia modules already included in /etc/mkinitcpio.conf" 2>&1 | tee -a "$log"
+if grep -qE '^MODULES=.*nvidia.*nvidia_modeset.*nvidia_uvm.*nvidia_drm' /etc/mkinitcpio.conf 2>/dev/null; then
+    msg att "NVIDIA modules already included in /etc/mkinitcpio.conf" 2>&1 | tee -a "$log"
 else
     sudo sed -Ei 's/^(MODULES=\([^\)]*)\)/\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf 2>&1 | tee -a "$log"
-    msg dn "Nvidia modules added in /etc/mkinitcpio.conf"
+    msg dn "NVIDIA modules added to /etc/mkinitcpio.conf"
 fi
 
 sudo mkinitcpio -P 2>&1 | tee -a "$log"
-printf "\n\n\n"
+printf "\n\n"
 
 # Additional Nvidia steps
 NVEA="/etc/modprobe.d/nvidia.conf"
 if [ -f "$NVEA" ]; then
-    msg dn "Seems like nvidia-drm modeset=1 is already added in your system..moving on."
+    msg dn "NVIDIA DRM modeset option already configured."
 else
-    msg act "Adding options to $NVEA."
-    sudo echo -e "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf 2>&1 | tee -a "$log"
-    echo
+    msg act "Configuring $NVEA..."
+    echo "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf 2>&1 | tee -a "$log" >/dev/null
 fi
 
-# additional for GRUB users
-# Check if /etc/default/grub exists
+# Additional for GRUB users
 if [ -f /etc/default/grub ]; then
-    # Check if nvidia_drm.modeset=1 is already present
     if ! sudo grep -q "nvidia-drm.modeset=1" /etc/default/grub; then
-        # Add nvidia_drm.modeset=1 to GRUB_CMDLINE_LINUX_DEFAULT
         sudo sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia-drm.modeset=1"/' /etc/default/grub
-        # Regenerate GRUB configuration
-        sudo grub-mkconfig -o /boot/grub/grub.cfg
-        msg att "nvidia-drm.modeset=1 added to /etc/default/grub" 2>&1 | tee -a "$log"
+        sudo grub-mkconfig -o /boot/grub/grub.cfg 2>&1 | tee -a "$log" >/dev/null
+        msg dn "Added nvidia-drm.modeset=1 to /etc/default/grub" 2>&1 | tee -a "$log"
     else
-        msg skp "nvidia-drm.modeset=1 is already present in /etc/default/grub" 2>&1 | tee -a "$log"
+        msg skp "nvidia-drm.modeset=1 already present in /etc/default/grub" 2>&1 | tee -a "$log"
     fi
-else
-    echo "/etc/default/grub does not exist"
 fi
 
 # Blacklist nouveau
-fn_ask "Would you like to blacklist nouveau?" "Yes!" "No!"
+fn_ask "Would you like to blacklist nouveau?" "Yes" "No"
 if [[ $? -eq 0 ]]; then
     NOUVEAU="/etc/modprobe.d/nouveau.conf"
     if [ -f "$NOUVEAU" ]; then
-        msg act "Seems like nouveau is already blacklisted..moving on"
+        msg dn "Nouveau module is already blacklisted."
     else
-        printf "\n"
-        echo "blacklist nouveau" | sudo tee -a "$NOUVEAU" 2>&1 | tee -a "$log"
-        msg dn "Has been added to $NOUVEAU"
+        echo "blacklist nouveau" | sudo tee -a "$NOUVEAU" 2>&1 | tee -a "$log" >/dev/null
+        msg dn "Nouveau blacklisted in $NOUVEAU"
 
-        # To completely blacklist nouveau (See wiki.archlinux.org/title/Kernel_module#Blacklisting 6.1)
         if [ -f "/etc/modprobe.d/blacklist.conf" ]; then
-            echo "install nouveau /bin/true" | sudo tee -a "/etc/modprobe.d/blacklist.conf" 2>&1 | tee -a "$log"
+            echo "install nouveau /bin/true" | sudo tee -a "/etc/modprobe.d/blacklist.conf" 2>&1 | tee -a "$log" >/dev/null
         else
-            echo "install nouveau /bin/true" | sudo tee "/etc/modprobe.d/blacklist.conf" 2>&1 | tee -a "$log"
+            echo "install nouveau /bin/true" | sudo tee "/etc/modprobe.d/blacklist.conf" 2>&1 | tee -a "$log" >/dev/null
         fi
     fi
 else
-    msg err "Skipping nouveau blacklisting." 2>&1 | tee -a "$log"
+    msg skp "Skipping nouveau blacklisting." 2>&1 | tee -a "$log"
 fi
 
-sleep 1 & clear
+sleep 1 && clear

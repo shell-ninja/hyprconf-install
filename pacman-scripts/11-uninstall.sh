@@ -30,20 +30,23 @@ removable_pkg=(
     wofi
     mako
     dunst
+    waybar
+    rofi
+    rofi-wayland
+    wlogout
+    swaync
 )
 
 
 for pkg in "${removable_pkg[@]}"; do
     if sudo pacman -Q "$pkg" &> /dev/null; then
-        msg att "$pkg was found. It will be removed."
-        sudo pacman -Rns --noconfirm "$pkg" &> /dev/null 2>&1 | tee -a "$log"
-        
-        sleep 1
+        msg act "Removing conflicting package '$pkg'..."
+        sudo pacman -Rns --noconfirm "$pkg" 2>&1 | tee -a "$log" >/dev/null
 
         if sudo pacman -Q "$pkg" &> /dev/null; then
-            msg err "Could not remove $pkg..."
+            msg err "Could not remove $pkg (see $log)"
         else
-            msg dn "$pkg was removed successfully!"
+            msg dn "$pkg was removed successfully."
         fi
     fi
 done

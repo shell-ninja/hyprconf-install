@@ -51,7 +51,7 @@ msg act "Enabling i2c-dev kernel module..."
 sudo modprobe i2c-dev
 echo i2c-dev | sudo tee /etc/modules-load.d/i2c.conf
 
-USER_NAME=$(whoami)
+USER_NAME="${SUDO_USER:-$(whoami)}"
 msg act "Adding user '$USER_NAME' to i2c group..."
 sudo usermod -aG i2c "$USER_NAME"
 

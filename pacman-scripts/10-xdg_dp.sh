@@ -53,31 +53,30 @@ to_install=($(printf "%s\n" "${xdg[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# Instlling xdg packages...
+# Installing XDG Desktop Portal packages
 for xdg_pkgs in "${to_install[@]}"; do
     install_package "$xdg_pkgs"
     if sudo pacman -Q "$xdg_pkgs" &>/dev/null; then
-        echo "[ DONE ] - $xdg_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $xdg_pkgs installed successfully." >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $xdg_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $xdg_pkgs" >> "$log"
     fi
 done
 
 echo
 
-# Clean out other portals
-msg att "Checking for other XDG-Desktop-Portal-Implementations..." && sleep 1
+# Clean out conflicting portals
+msg att "Checking for conflicting desktop portal backends..."
 
 for xdgs in "${removable[@]}"; do
     if sudo pacman -Q "$xdgs" &> /dev/null; then
-
-        fn_ask "Would you like to remove $xdgs?" "Yes!" "No!"
+        fn_ask "Remove conflicting portal '$xdgs'?" "Yes" "No"
 
         if [[ $? -eq 0 ]]; then
             msg act "Removing $xdgs..."
             sudo pacman -Rns --noconfirm "$xdgs" 2>&1 | tee -a "$log" &> /dev/null
         else
-            msg skp "Won't remove $xdgs.."
+            msg skp "Retaining $xdgs."
         fi
     fi
 done

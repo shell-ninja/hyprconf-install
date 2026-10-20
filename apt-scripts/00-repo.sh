@@ -41,6 +41,14 @@ else
 fi
 
 
+if grep -qiE 'ubuntu|mint|pop' /etc/os-release 2>/dev/null; then
+    if ! grep -rq "avengemedia/danklinux" /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null; then
+        msg act "Adding danklinux PPA for Quickshell..."
+        sudo apt-get install -y software-properties-common &>/dev/null
+        sudo add-apt-repository -y ppa:avengemedia/danklinux 2>&1 | tee -a "$log" || true
+    fi
+fi
+
 msg act "Updating APT repositories..."
 sudo apt-get update 2>&1 | tee -a "$log" || { msg err "Failed to update apt repositories."; exit 1; }
 

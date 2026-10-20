@@ -35,7 +35,6 @@ touch "$log"
 
 packages=(
     brightnessctl
-    wlroots
 )
 
 msg att "This system is a Laptop." 

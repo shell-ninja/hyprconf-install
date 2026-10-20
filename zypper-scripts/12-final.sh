@@ -36,11 +36,11 @@ if [[ ! -f "$log" ]]; then
 fi
 
 checkup=(
+    quickshell
     hyprland
     hyprlock
     hypridle
     hyprcursor
-    hyprpolkitagent
     curl
     fastfetch
     ffmpeg
@@ -52,27 +52,32 @@ checkup=(
     kvantum-qt5
     kvantum-qt6
     kvantum-manager
-    lxappearance
     make
     neovim
     NetworkManager-applet
     nvtop
     pamixer
+    playerctl
     pciutils
     pavucontrol
     pipewire-alsa
-    python312-requests
+    python3-requests
+    python3-Pillow
+    python3-dbus-python
     qt5ct
     qt6ct
+    qt6-declarative
+    qt6-svg
+    qt6-imageformats
+    qt6-multimedia
+    qt6-declarative-tools
     ripgrep
-    rofi-wayland
+    satty
     slurp
-    SwayNotificationCenter
     swappy
-    swww
+    awww
     tar
     unzip
-    waybar
     wget
     wl-clipboard
     xdg-utils
@@ -106,31 +111,18 @@ to_install=($(printf "%s\n" "${checkup[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# Installing any missed packages...
+# Verifying and installing any remaining packages
 for _pkgs in "${to_install[@]}"; do
-    msg act "Somehow $_pkgs could not be installed before. Installing it now..."
+    msg act "Resolving missing package: $_pkgs..."
     sudo zypper in -y "$_pkgs"
 
     if sudo zypper se -i "$_pkgs" &> /dev/null; then
-
-        msg dn "Finally $_pkgs was installed successfully!"
-        echo
-
-        echo "[ DONE ] - $_pkgs was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+        msg dn "Package $_pkgs installed successfully."
+        echo "[ DONE ] - $_pkgs was installed successfully!" >> "$log"
     else
-
-        msg err "Sorry, this time also could not install $_pkgs.."
-        echo
-
-        echo "[ ERROR ] - Sorry, could not install $_pkgs!" 2>&1 | tee -a "$log" &> /dev/null
+        msg err "Failed to install $_pkgs (see $log)"
+        echo "[ ERROR ] - Failed to install $_pkgs" >> "$log"
     fi
 done
-
-# checking if pywal is installed
-if ! command -v wal &> /dev/null; then
-    if command -v pipx &> /dev/null; then
-        pipx install pywal 2>&1 | tee -a "$log" &> /dev/null
-    fi
-fi
 
 sleep 1 && clear

@@ -32,9 +32,9 @@ log="$log_dir/hyprland-$(date +%d-%m-%y).log"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "hyprsunset" "$log" | awk {'print $2'})
+    last_installed=$(grep "hypridle" "$log" | awk '{print $2}')
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        msg skp "Skipping this script. No need to run it again..."
+        msg skp "Core Hyprland packages already installed. Skipping..."
         sleep 1
         exit 0
     fi
@@ -82,34 +82,35 @@ for hypr_pkgs in "${to_install[@]}"; do
     fi
 
     if dpkg -s "$hypr_pkgs" &> /dev/null; then
-        echo "[ DONE ] - '$hypr_pkgs' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ DONE ] - '$hypr_pkgs' was installed successfully" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install '$hypr_pkgs'" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ ERROR ] - Failed to install '$hypr_pkgs'" >> "$log"
     fi
 done
 
-sudo apt install hyprland-guiutils -y && msg dn "hyprland-guiutils was installed successfully!" && echo "[ DONE ] hyprland-guiutils was installed sucessfully!" 2>&1 | tee -a "$log" &> /dev/null
+sudo apt-get install -y hyprland-guiutils 2>&1 | tee -a "$log" >/dev/null && msg dn "hyprland-guiutils installed successfully."
 
 # installing pyprland
-# pyprland's executable is 'pypr', not 'pyprland'
 if ! command -v pypr &> /dev/null && [ ! -x "$HOME/.local/bin/pypr" ]; then
-    msg act "Installing pyprland..."
-    sudo apt-get install -y python3-pip python3-aiofiles
-    pip install --user pyprland 2>&1 | tee -a "$log"
+    msg act "Installing pyprland via pip..."
+    sudo apt-get install -y python3-pip python3-aiofiles 2>&1 | tee -a "$log" >/dev/null
+    pip install --break-system-packages --user pyprland 2>&1 | tee -a "$log" || pip install --user pyprland 2>&1 | tee -a "$log"
 
     export PATH="$PATH:$HOME/.local/bin"
 
-    if command -v pypr &> /dev/null; then
-        msg dn "pyprland was installed successfully!"
+    if command -v pypr &> /dev/null || [ -x "$HOME/.local/bin/pypr" ]; then
+        msg dn "pyprland installed successfully."
     else
-        msg err "pyprland failed to install..."
+        msg err "Failed to install pyprland."
     fi
 else
-    msg dn "pyprland is already installed..."
+    msg dn "pyprland is already installed."
 fi
 
-# Executing separate scripts for hyprcursor, hyprsunset, and swww
-"$dir/2.1-hyprcursor.sh"
-"$dir/2.2-hyprsunset.sh"
+# Execute helper scripts only when running standalone (not under TUI orchestrator)
+if [[ "${HYPRCONF_TUI:-}" != "1" ]]; then
+    "$dir/2.1-hyprcursor.sh"
+    "$dir/2.2-hyprsunset.sh"
+fi
 
 sleep 1 && clear

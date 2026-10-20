@@ -28,9 +28,9 @@ log="$log_dir/others-$(date +%d-%m-%y).log"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "thunar-plugin-archive" "$log" | awk {'print $2'})
+    last_installed=$(grep "yazi" "$log" | awk '{print $2}')
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        msg skp "Skipping this script. No need to run it again..."
+        msg skp "System utility packages already installed. Skipping..."
         sleep 1
         exit 0
     fi
@@ -41,6 +41,7 @@ fi
 
 # packages neeeded
 hypr_package=( 
+  quickshell
   curl
   ffmpeg
   fastfetch
@@ -55,29 +56,33 @@ hypr_package=(
   kvantum-qt6
   kvantum-themes
   kvantum-manager
-  gtk-layer-shell
   less
   libnotify-tools
   libvte-2.91-0
-  lxappearance
   make
   neovim
   pamixer
+  playerctl
   pavucontrol
   pciutils
   pipewire-alsa
-  python313-requests
+  python3-requests
+  python3-Pillow
+  python3-dbus-python
   qt5ct
   qt6ct
-  qt6-svg-devel
+  qt6-declarative
+  qt6-svg
+  qt6-imageformats
+  qt6-multimedia
+  qt6-declarative-tools
   ripgrep
   libqt5-qtquickcontrols
   libqt5-qtquickcontrols2
   libqt5-qtgraphicaleffects
   nwg-look
-  rofi-wayland
   slurp
-  SwayNotificationCenter
+  satty
   swappy
   awww
   tar
@@ -102,7 +107,6 @@ other_packages=(
 no_recommands=(
   eog
   NetworkManager-applet
-  waybar
 )
 
 # dolphin
@@ -177,18 +181,16 @@ if command -v go &> /dev/null; then
   if go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &> /dev/null; then
     # copy cliphist into /usr/local/bin (go installs to ~/go/bin by default)
     sudo cp -r "$HOME/go/bin/cliphist" "/usr/local/bin/" 2>&1 | tee -a "$log" &> /dev/null
-    msg dn "Cliphist was installed successfully!"
-    echo "[ DONE ] - Cliphist was installed successfully!" 2>&1 | tee -a  "$log" &> /dev/null
+    msg dn "Cliphist installed successfully."
+    echo "[ DONE ] - Cliphist was installed successfully!" >> "$log"
 
     # only remove the cliphist binary from ~/go/bin, not the whole go directory
     rm -f "$HOME/go/bin/cliphist"
   else
-    msg err "Cliphist failed to install. Maybe there was an issue..."
-    echo "[ ERROR ] - Could not install cliphist. (╥﹏╥)" 2>&1 | tee -a "$log" &> /dev/null
+    msg err "Failed to install cliphist (see $log)"
+    echo "[ ERROR ] - Failed to install cliphist" >> "$log"
   fi
 fi
 
 sleep 2 && clear
-
-"$dir/pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 

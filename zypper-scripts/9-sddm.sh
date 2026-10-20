@@ -51,6 +51,10 @@ sddm_pkgs=(
   libqt5-qtquickcontrols
   libqt5-qtquickcontrols2
   sddm-qt6
+  qt6-declarative
+  qt6-declarative-imports
+  qt6-qt5compat
+  qt6-svg
   xauth
   xf86-input-evdev
   xorg-x11-server
@@ -88,7 +92,9 @@ sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo update-alternatives --set default-displaymanager /usr/lib/X11/displaymanagers/sddm 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-# run sddm theme script
-"$common_scripts/sddm_theme.sh"
+# run sddm theme script (only when run standalone outside TUI installer)
+if [[ "$HYPRCONF_TUI" != "1" ]]; then
+    "$common_scripts/sddm_theme.sh"
+fi
 
 sleep 1 && clear
