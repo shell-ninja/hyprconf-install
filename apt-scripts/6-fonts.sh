@@ -65,9 +65,9 @@ for font in "${to_install[@]}"; do
   install_package "$font"
 
     if dpkg -s "$font" &> /dev/null; then
-        echo " [ DONE ] - $font was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ DONE ] - $font was installed successfully" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $font" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ ERROR ] - Failed to install $font" >> "$log"
     fi
 done
 
@@ -110,12 +110,6 @@ fi
 sudo fc-cache -fv &> /dev/null
 
 # clean up 
-if [ -d "JetBrainsMono.tar.xz" ]; then
-	rm -rf JetBrainsMono.tar.xz
-fi
-
-if [ -d "CascadiaCode.tar.xz" ]; then
-	rm -rf CascadiaCode.tar.xz
-fi
+rm -f JetBrainsMono.tar.xz CascadiaCode.tar.xz 2>/dev/null || true
 
 sleep 1 && clear

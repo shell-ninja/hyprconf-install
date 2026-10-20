@@ -76,9 +76,9 @@ printf "\n\n"
 for sddm_pkgs in "${to_install[@]}"; do
     install_package "$sddm_pkgs"
     if rpm -q "$sddm_pkgs" &> /dev/null; then
-        echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $sddm_pkgs was installed successfully" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $sddm_pkgs" >> "$log"
     fi
 done
 

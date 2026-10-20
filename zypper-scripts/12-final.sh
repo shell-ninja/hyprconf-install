@@ -111,23 +111,17 @@ to_install=($(printf "%s\n" "${checkup[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# Installing any missed packages...
+# Verifying and installing any remaining packages
 for _pkgs in "${to_install[@]}"; do
-    msg act "Somehow $_pkgs could not be installed before. Installing it now..."
+    msg act "Resolving missing package: $_pkgs..."
     sudo zypper in -y "$_pkgs"
 
     if sudo zypper se -i "$_pkgs" &> /dev/null; then
-
-        msg dn "Finally $_pkgs was installed successfully!"
-        echo
-
-        echo "[ DONE ] - $_pkgs was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+        msg dn "Package $_pkgs installed successfully."
+        echo "[ DONE ] - $_pkgs was installed successfully!" >> "$log"
     else
-
-        msg err "Sorry, this time also could not install $_pkgs.."
-        echo
-
-        echo "[ ERROR ] - Sorry, could not install $_pkgs!" 2>&1 | tee -a "$log" &> /dev/null
+        msg err "Failed to install $_pkgs (see $log)"
+        echo "[ ERROR ] - Failed to install $_pkgs" >> "$log"
     fi
 done
 

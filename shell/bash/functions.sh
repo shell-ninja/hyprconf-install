@@ -489,7 +489,7 @@ push() {
     if [[ $status -eq 0 ]]; then
         printf ":: Pushed successfully!\n"
     else
-        printf "!! Sorry, push failed. Please check for errors.\n"
+        printf "!! Git push failed. Please inspect remote errors.\n"
     fi
 }
 
@@ -815,8 +815,8 @@ vite() {
             break
         fi
     done
-    [[ -z "$PKG_MANAGER" ]] && { printf "❌ No package manager found\n"; return 1; }
-    printf "🚀 Using %s\n" "$PKG_MANAGER"
+    [[ -z "$PKG_MANAGER" ]] && { printf "Error: No package manager found\n"; return 1; }
+    printf ":: Using %s\n" "$PKG_MANAGER"
 
     # Create project (non-interactive)
     case $PKG_MANAGER in
@@ -824,11 +824,11 @@ vite() {
         pnpm) pnpm create vite "$PROJ_NAME" --template react --no-interactive ;;
         yarn) yarn create vite "$PROJ_NAME" --template react --no-interactive ;;
         bun)  bun  create vite "$PROJ_NAME" --template react --no-interactive ;;
-    esac || { printf "❌ Project creation failed\n"; return 1; }
+    esac || { printf "Error: Project creation failed\n"; return 1; }
 
     cd "$PROJ_NAME" || return 1
-    printf "📦 Installing dependencies...\n"
-    $PKG_MANAGER install || { printf "❌ Install failed\n"; return 1; }
+    printf ":: Installing dependencies...\n"
+    $PKG_MANAGER install || { printf "Error: Dependency installation failed\n"; return 1; }
 
     # Setup VS Code auto‑run task
     mkdir -p .vscode
@@ -850,11 +850,11 @@ vite() {
 }
 EOF
 
-    printf "🧠 Opening in VS Code...\n"
+    printf ":: Opening in VS Code...\n"
     command -v code &>/dev/null && code .
 
-    printf "🌐 Dev server will auto-start inside VS Code terminal\n"
-    printf "✅ Done!\n"
+    printf ":: Dev server configured for VS Code workspace\n"
+    printf ":: Done.\n"
 }
 
 

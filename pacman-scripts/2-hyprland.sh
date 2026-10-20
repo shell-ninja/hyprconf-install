@@ -32,9 +32,9 @@ installed_cache="$cache_dir/installed_packages"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "xdg-desktop-portal-hyprland" "$log" | awk {'print $2'})
+    last_installed=$(grep "hyprcursor" "$log" | awk '{print $2}')
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        msg skp "Skipping this script. No need to run it again..."
+        msg skp "Hyprland packages already installed. Skipping..."
         sleep 1
         exit 0
     fi
@@ -43,17 +43,16 @@ else
     touch "$log"
 fi
 
-aur_helper=$(command -v yay || command -v paru) # find the aur helper
+aur_helper=$(command -v yay || command -v paru)
 
 _hypr=(
     hyprland
     hyprlock
     hypridle
     hyprcursor
-    # hyprpolkitagent
 )
 
-# checking already installed packages 
+# Checking already installed packages
 for skipable in "${_hypr[@]}"; do
     skip_installed "$skipable"
 done
@@ -62,14 +61,14 @@ to_install=($(printf "%s\n" "${_hypr[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# Instlling main packages...
+# Installing core packages
 for hypr_pkgs in "${to_install[@]}"; do
     install_package "$hypr_pkgs"
 
     if sudo pacman -Q "$hypr_pkgs" &>/dev/null; then
-        echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $hypr_pkgs installed successfully." >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $hypr_pkgs" >> "$log"
     fi
 done
 

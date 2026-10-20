@@ -32,24 +32,34 @@ if [[ -d "$HOME/.hyprconf" || -d "$HOME/.config/hypr" ]]; then
     [[ -d "$HOME/.config/hypr" ]] && cp -rf "$HOME/.config/hypr" "$backup_path/" 2>/dev/null || true
 fi
 
-# 2. Download and extract Hyprconf dotfiles payload (Quickshell edition)
-url="https://github.com/shell-ninja/hyprconf/archive/refs/heads/qs.zip"
+# 2. Acquire Hyprconf dotfiles payload (Quickshell edition)
 target_dir="$parent_dir/.cache/hyprconf"
 zip_path="$target_dir.zip"
+url="https://github.com/shell-ninja/hyprconf/archive/refs/heads/qs.zip"
 
-msg act "Downloading latest Hyprconf (Quickshell) dotfiles payload..."
-mkdir -p "$parent_dir/.cache"
-curl -sL "$url" -o "$zip_path"
+if [[ -f "$target_dir/setup.sh" ]]; then
+    msg act "Initializing Hyprconf desktop suite..."
+    echo "[ PAYLOAD ] Using pre-cached dotfiles payload at $target_dir" >> "$log"
+else
+    msg act "Synchronizing Hyprconf desktop suite..."
+    mkdir -p "$parent_dir/.cache"
+    curl -sL "$url" -o "$zip_path"
 
-if [[ -f "$zip_path" ]]; then
-    rm -rf "$target_dir"
-    mkdir -p "$target_dir"
-    unzip -q "$zip_path" "hyprconf-qs/*" -d "$target_dir" 2>/dev/null || unzip -q "$zip_path" -d "$target_dir"
-    if [[ -d "$target_dir/hyprconf-qs" ]]; then
-        mv "$target_dir/hyprconf-qs/"* "$target_dir/" 2>/dev/null || true
-        rmdir "$target_dir/hyprconf-qs" 2>/dev/null || true
+    if [[ -f "$zip_path" && -s "$zip_path" ]]; then
+        rm -rf "$target_dir"
+        mkdir -p "$target_dir"
+        unzip -q "$zip_path" "hyprconf-qs/*" -d "$target_dir" 2>/dev/null || unzip -q "$zip_path" -d "$target_dir"
+        if [[ -d "$target_dir/hyprconf-qs" ]]; then
+            mv "$target_dir/hyprconf-qs/"* "$target_dir/" 2>/dev/null || true
+            rmdir "$target_dir/hyprconf-qs" 2>/dev/null || true
+        fi
+        rm -f "$zip_path"
     fi
-    rm -f "$zip_path"
+
+    if [[ ! -f "$target_dir/setup.sh" ]]; then
+        rm -rf "$target_dir"
+        git clone --depth=1 -b qs https://github.com/shell-ninja/hyprconf.git "$target_dir" 2>&1 | tee -a "$log" >/dev/null || true
+    fi
 fi
 
 # 3. Execute setup.sh non-interactively with automated Gum shimming

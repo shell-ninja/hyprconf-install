@@ -73,13 +73,13 @@ to_install=($(printf "%s\n" "${sddm[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# Instlling main packages...
+# Installing SDDM greeter packages
 for sddm_pkgs in "${to_install[@]}"; do
     install_package "$sddm_pkgs"
     if sudo pacman -Q "$sddm_pkgs" &>/dev/null; then
-        echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $sddm_pkgs was installed successfully!" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $sddm_pkgs" >> "$log"
     fi
 done
 

@@ -87,9 +87,9 @@ printf "\n\n"
 for _pkgs in "${installble_pkg[@]}"; do
     install_package "$_pkgs"
     if command -v "$_pkgs" &>/dev/null || [[ "$_pkgs" == "bash-completion" && ( -f /usr/share/bash-completion/bash_completion || -f /etc/bash_completion || -d /usr/share/bash-completion ) ]]; then
-        echo -e "[ DONE ] - $_pkgs was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $_pkgs was installed successfully" >> "$log"
     else
-        echo -e "[ ERROR ] - Could not install $_pkgs!" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $_pkgs" >> "$log"
     fi
 done
 
@@ -98,9 +98,9 @@ if [[ "$pkgman" == "zypper" ]]; then
     for _pkgs in "${for_opensuse[@]}"; do
         install_package "$_pkgs"
         if sudo zypper se -i "$_pkgs" &>/dev/null; then
-            echo -e "[ DONE ] - $_pkgs was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+            echo "[ DONE ] - $_pkgs was installed successfully" >> "$log"
         else
-            echo -e "[ ERROR ] - Sorry, could not install $_pkgs!" 2>&1 | tee -a "$log" &>/dev/null
+            echo "[ ERROR ] - Failed to install $_pkgs" >> "$log"
         fi
     done
 fi

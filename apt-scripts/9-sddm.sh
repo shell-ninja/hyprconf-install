@@ -63,19 +63,10 @@ sddm=(
 logins=(
     lightdm
     gdm
+    gdm3
     lxdm
     lxdm-gtk3
 )
-
-
-# Disable other login managers if installed
-for login_manager in "${logins[@]}"; do
-    if dpkg -s "$login_manager" &> /dev/null; then
-        msg att "$login_manager Login Manager found. Won't install SDDM here."
-
-        exit 0
-    fi
-done
 
 # checking already installed packages
 for skipable in "${sddm[@]}"; do
@@ -89,20 +80,21 @@ printf "\n\n"
 # Pre-seed debconf so apt doesn't prompt for default display manager
 echo "sddm shared/default-x-display-manager select sddm" | sudo debconf-set-selections
 
+# Installing SDDM greeter packages
 for sddm_pkgs in "${to_install[@]}"; do
     install_package "$sddm_pkgs"
     if dpkg -s "$sddm_pkgs" &> /dev/null; then
-        echo "[ DONE ] - $sddm_pkgs was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $sddm_pkgs was installed successfully!" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $sddm_pkgs" >> "$log"
     fi
 done
 
-# Disable other login managers if installed
+# Disable conflicting login managers if present
 for login_manager in "${logins[@]}"; do
     if dpkg -s "$login_manager" &> /dev/null; then
-        msg act "Disabling $login_manager..."
-        sudo systemctl disable "$login_manager" 2>&1 | tee -a "$log"
+        msg act "Disabling conflicting display manager: $login_manager..."
+        sudo systemctl disable "$login_manager" 2>&1 | tee -a "$log" >/dev/null || true
     fi
 done
 

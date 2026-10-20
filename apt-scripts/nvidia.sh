@@ -57,9 +57,9 @@ printf "\n\n"
 for __nvidia in "${to_install[@]}"; do
     install_package "$__nvidia"
     if dpkg -s "$__nvidia" &>/dev/null; then
-        echo "[ DONE ] - $__nvidia was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $__nvidia was installed successfully" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $__nvidia!" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $__nvidia" >> "$log"
     fi
 done
 

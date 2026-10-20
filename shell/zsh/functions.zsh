@@ -536,7 +536,7 @@ push() {
     if (( exit_code == 0 )); then
         printf ":: Pushed successfully!\n"
     else
-        printf "!! Sorry, push failed. Please check for errors.\n"
+        printf "!! Git push failed. Please inspect remote errors.\n"
     fi
 }
 

@@ -65,7 +65,7 @@ check_pkgman() {
     elif command -v apt-get &> /dev/null; then
         pkgman="apt"
     else
-        fn_exit "Sorry, the script won't work with your package manager for now..."
+        fn_exit "Unsupported package manager. Hyprconf installer supports pacman, dnf, zypper, and apt."
     fi
 
     scripts_dir="$dir/${pkgman}-scripts"
@@ -140,9 +140,9 @@ sleep 1
 if [[ "$pkgman" == "pacman" ]]; then
     aur=$(command -v yay 2>/dev/null || command -v paru 2>/dev/null)
     if [[ -n "$aur" ]]; then
-        msg dn "AUR helper $aur was located... Moving on"
+        msg dn "AUR helper '$(basename "$aur")' located."
         echo "$(basename "$aur")" > "$aur_cache"
-        sleep 1
+        sleep 0.5
     else
         msg ask "Which AUR helper would you like to install?"
         choice=$(gum choose \
@@ -152,17 +152,17 @@ if [[ "$pkgman" == "pacman" ]]; then
             "yay-bin" "yay" "paru-bin" "paru" "Skip"
         )
         echo "${choice:-yay-bin}" > "$aur_cache"
-        sleep 1
-        run_script "$scripts_dir/00-repo.sh" || msg err "Failed to install AUR helper"
-        if [[ $? -ne 0 ]]; then
-            fn_exit "Exiting"
-        fi  
+        sleep 0.5
+        if ! run_script "$scripts_dir/00-repo.sh"; then
+            msg err "Failed to install AUR helper."
+            fn_exit "Prerequisite installation failed"
+        fi
     fi
 else
-    run_script "$scripts_dir/00-repo.sh" || msg err "Failed to update repository"
-    if [[ $? -ne 0 ]]; then
-        fn_exit "Exiting"
-    fi  
+    if ! run_script "$scripts_dir/00-repo.sh"; then
+        msg err "Failed to configure package repositories."
+        fn_exit "Repository update failed"
+    fi
 fi
 
 

@@ -34,13 +34,13 @@ source "$parent_dir/interaction_fn.sh"
 
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
-# skip already insalled packages
+# Skip already installed packages
 skip_installed() {
 
     [[ -z "$installed_cache" ]] && touch "$installed_cache"
 
     if "$aur_helper" -Q "$1" &> /dev/null; then
-        msg skp "$1 is already installed. Skipping..." && sleep 0.1
+        msg skp "$1 is already installed."
         if ! grep -qx "$1" "$installed_cache"; then
             echo "$1" >> "$installed_cache"
         fi
@@ -48,29 +48,29 @@ skip_installed() {
 }
 
 
-# package installation function..
+# Package installation function
 install_package() {
 
     msg act "Installing $1..."
-    "$aur_helper" -S --noconfirm "$1" &> /dev/null
+    "$aur_helper" -S --needed --noconfirm "$1" &> /dev/null
 
     if "$aur_helper" -Q "$1" &> /dev/null; then
-        msg dn "$1 was installed successfully!"
+        msg dn "$1 installed successfully."
     else
-        msg err "$1 failed to install. Maybe therer is an issue..."
+        msg err "Failed to install $1."
     fi
 }
 
 
-# package installation function..
+# Package installation function (nocheck)
 install_package_nocheck() {
 
     msg act "Installing $1..."
-    "$aur_helper" -S --noconfirm --mflags "--nocheck" "$1" &> /dev/null
+    "$aur_helper" -S --needed --noconfirm --mflags "--nocheck" "$1" &> /dev/null
 
     if "$aur_helper" -Q "$1" &> /dev/null; then
-        msg dn "$1 was installed successfully!"
+        msg dn "$1 installed successfully."
     else
-        msg err "$1 failed to install. Maybe therer is an issue..."
+        msg err "Failed to install $1."
     fi
 }

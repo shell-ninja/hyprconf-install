@@ -28,9 +28,9 @@ log="$log_dir/others-$(date +%d-%m-%y).log"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "thunar-plugin-archive" "$log" | awk {'print $2'})
+    last_installed=$(grep "yazi" "$log" | awk '{print $2}')
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        msg skp "Skipping this script. No need to run it again..."
+        msg skp "System utility packages already installed. Skipping..."
         sleep 1
         exit 0
     fi
@@ -181,14 +181,14 @@ if command -v go &> /dev/null; then
   if go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &> /dev/null; then
     # copy cliphist into /usr/local/bin (go installs to ~/go/bin by default)
     sudo cp -r "$HOME/go/bin/cliphist" "/usr/local/bin/" 2>&1 | tee -a "$log" &> /dev/null
-    msg dn "Cliphist was installed successfully!"
-    echo "[ DONE ] - Cliphist was installed successfully!" 2>&1 | tee -a  "$log" &> /dev/null
+    msg dn "Cliphist installed successfully."
+    echo "[ DONE ] - Cliphist was installed successfully!" >> "$log"
 
     # only remove the cliphist binary from ~/go/bin, not the whole go directory
     rm -f "$HOME/go/bin/cliphist"
   else
-    msg err "Cliphist failed to install. Maybe there was an issue..."
-    echo "[ ERROR ] - Could not install cliphist. (╥﹏╥)" 2>&1 | tee -a "$log" &> /dev/null
+    msg err "Failed to install cliphist (see $log)"
+    echo "[ ERROR ] - Failed to install cliphist" >> "$log"
   fi
 fi
 

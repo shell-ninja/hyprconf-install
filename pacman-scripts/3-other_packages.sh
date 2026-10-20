@@ -32,9 +32,9 @@ installed_cache="$cache_dir/installed_packages"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "thunar-archive-plugin" "$log" | awk {'print $2'})
+    last_installed=$(grep "yazi" "$log" | awk '{print $2}')
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        msg skp "Skipping this script. No need to run it again..."
+        msg skp "System utility packages already installed. Skipping..."
         sleep 1
         exit 0
     fi
@@ -127,7 +127,7 @@ crunini_pkg=(
 )
 
 # checking already installed packages 
-for skipable in "${other_packages[@]}" "${aur_packages[@]}" "${dolphin[@]} ${crunini_pkg[@]}"; do
+for skipable in "${other_packages[@]}" "${aur_packages[@]}" "${dolphin[@]}" "${crunini_pkg[@]}"; do
     skip_installed "$skipable"
 done
 
@@ -141,9 +141,9 @@ printf "\n\n"
 for _pkgs in "${installble_pkg[@]}" "${installble_aur_pkg[@]}" "${installble_dolphin_pkg[@]}" "${installble_crunini_pkg[@]}"; do
     install_package "$_pkgs"
     if sudo pacman -Q "$_pkgs" &>/dev/null; then
-        echo "[ DONE ] - $_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $_pkgs was installed successfully!" >> "$log"
     else
-        echo "[ ERROR ] - Sorry, could not install $_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Failed to install $_pkgs" >> "$log"
     fi
 done
 

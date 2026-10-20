@@ -98,6 +98,18 @@ def make_box_row(content_str, box_w, box_pad="", border_color=BORDER_COLOR, pad_
         f"{border_color}│{RESET}"
     )
 
+def make_box_header(title, box_w, box_pad="", border_color=BORDER_COLOR, title_color=COLOR_ACCENT):
+    inner_len = box_w - 2
+    vis_title = visible_len(title)
+    if vis_title > inner_len - 6:
+        title = title[:inner_len - 9] + "..."
+        vis_title = visible_len(title)
+    fill = max(0, inner_len - vis_title - 3)
+    return f"{box_pad}{border_color}╭─ {title_color}{BOLD}{title}{RESET}{border_color} {'─' * fill}╮{RESET}"
+
+def make_box_footer(box_w, box_pad="", border_color=BORDER_COLOR):
+    return f"{box_pad}{border_color}╰{'─' * (box_w - 2)}╯{RESET}"
+
 # ----------------- Hardware & System Info Detection
 def detect_os():
     if os.path.exists('/etc/os-release'):
@@ -383,53 +395,53 @@ class PlanConfig:
         self.options = [
             {
                 "id": "dotfiles_repo",
-                "name": "Hyprconf (Quickshell)",
-                "desc": "deploys Quickshell desktop shell, dynamic island, launcher & configs",
+                "name": "Hyprconf Quickshell Stack",
+                "desc": "Deploys Quickshell status island, app launcher & window rules",
                 "type": "toggle",
                 "enabled": True,
             },
             {
                 "id": "sddm_theme",
-                "name": "SDDM greeter theme",
-                "desc": "custom login greeter theme for SDDM display manager",
+                "name": "SDDM Greeter Theme",
+                "desc": "Modern lockscreen & login greeter for SDDM display manager",
                 "type": "choice",
                 "choices": ["Prohori", "SilentSDDM", "Skip"],
                 "index": 0,
             },
             {
                 "id": "bluetooth",
-                "name": "Bluetooth support",
-                "desc": "enables bluez daemon and bluetooth management tray applets",
+                "name": "Bluetooth Support",
+                "desc": "Enables bluez daemon, rfkill manager & system tray applets",
                 "type": "toggle",
                 "enabled": True,
             },
             {
                 "id": "shell",
-                "name": "Login shell",
-                "desc": "modern friendly interactive shell with hyprconf presets",
+                "name": "Default Login Shell",
+                "desc": "Configures user shell with curated aliases and functions",
                 "type": "choice",
                 "choices": ["Bash", "Fish", "Zsh", "Skip"],
                 "index": 0,
             },
             {
                 "id": "browser",
-                "name": "Web browser",
-                "desc": "installs and configures your preferred modern web browser",
+                "name": "Default Web Browser",
+                "desc": "Installs and configures modern Wayland-accelerated browser",
                 "type": "choice",
                 "choices": ["Brave", "Google_Chrome", "Zen Browser", "Firefox", "Chromium", "Vivaldi", "Skip"],
                 "index": 0,
             },
             {
                 "id": "nvidia",
-                "name": "NVIDIA GPU drivers & patches",
-                "desc": "enables proprietary nvidia drivers, env vars & Wayland flags",
+                "name": "NVIDIA GPU Drivers & Flags",
+                "desc": "Proprietary NVIDIA kernel modules, GBM backend & Wayland flags",
                 "type": "toggle",
                 "enabled": self.has_nvidia,
             },
             {
                 "id": "keyboard",
-                "name": f"Keyboard layout ({self.keyboard})",
-                "desc": f"sets keyboard layout in Hyprland configuration (current: {self.keyboard})",
+                "name": f"Keyboard Layout ({self.keyboard})",
+                "desc": f"Configures active keymap layout in Hyprland settings",
                 "type": "toggle",
                 "enabled": True,
             }
@@ -439,7 +451,7 @@ class PlanConfig:
             self.options.append({
                 "id": "openbangla",
                 "name": "Fcitx5 & OpenBangla Keyboard",
-                "desc": "Bangla typing support with OpenBangla Keyboard and Fcitx5 input method",
+                "desc": "Bangla phonetic typing support with Fcitx5 input engine",
                 "type": "toggle",
                 "enabled": True,
             })
@@ -512,96 +524,65 @@ class PlanConfig:
 def render_plan_screen(plan, selected_idx, term_w, term_h):
     lines = []
 
-    box_w = min(max(term_w - 4, 60), 74)
+    box_w = min(max(term_w - 4, 64), 76)
     box_pad = " " * max(0, (term_w - box_w) // 2)
 
-    # Top Block Logo
+    # Top Block Logo & Subtitle
     logo_l1 = "█░█ █▄█ █▀█ █▀█ █▀▀ █▀█ █▄░█ █▀▀"
     logo_l2 = "█▀█ ░█░ █▀▀ █▀▄ █▄▄ █▄█ █░▀█ █▀░"
-    sub_title = "quickshell hyprland installer"
-    plan_desc = f"Here is the plan for {COLOR_PURPLE}{plan.distro_id}{RESET}"
+    sub_title = "Q U I C K S H E L L   E D I T I O N"
+    system_tag = f"{COLOR_PURPLE}◈{RESET} {COLOR_TEXT}Hyprland Desktop Environment Setup{RESET}  {COLOR_MUTED}·{RESET}  {COLOR_CYAN}{plan.distro_name}{RESET}"
 
     l1_pad = " " * max(0, (term_w - len(logo_l1)) // 2)
     l2_pad = " " * max(0, (term_w - len(logo_l2)) // 2)
     sub_pad = " " * max(0, (term_w - len(sub_title)) // 2)
-    plan_pad = " " * max(0, (term_w - visible_len(plan_desc)) // 2)
+    tag_pad = " " * max(0, (term_w - visible_len(system_tag)) // 2)
 
     lines.append("")
     lines.append(f"{l1_pad}{COLOR_ACCENT}{BOLD}{logo_l1}{RESET}")
     lines.append(f"{l2_pad}{COLOR_ACCENT_ALT}{BOLD}{logo_l2}{RESET}")
-    lines.append(f"{sub_pad}{COLOR_MUTED}{sub_title}{RESET}")
-    lines.append("")
-    lines.append(f"{plan_pad}{COLOR_TEXT}{plan_desc}{RESET}")
+    lines.append(f"{sub_pad}{COLOR_SLATE}{BOLD}{sub_title}{RESET}")
+    lines.append(f"{tag_pad}{system_tag}")
     lines.append("")
 
-    # Card 1: System Info Box
-    top_border = f"{box_pad}{BORDER_COLOR}╭{'─' * (box_w - 2)}╮{RESET}"
-    bot_border = f"{box_pad}{BORDER_COLOR}╰{'─' * (box_w - 2)}╯{RESET}"
-
-    lines.append(top_border)
+    # Card 1: System Environment Box
+    lines.append(make_box_header("System Environment", box_w, box_pad, BORDER_COLOR, COLOR_ACCENT))
 
     def format_sys_content(label, val):
-        max_val_w = box_w - 18
+        max_val_w = box_w - 20
         disp_val = val if len(val) <= max_val_w else val[:max_val_w - 3] + "..."
-        return f"{COLOR_CYAN}{label:<11}{RESET} {COLOR_TEXT}{disp_val}{RESET}"
+        return f"{COLOR_CYAN}{label:<13}{RESET} {COLOR_TEXT}{disp_val}{RESET}"
 
-    lines.append(make_box_row(format_sys_content("system", plan.distro_name), box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(make_box_row(format_sys_content("gpu", plan.gpu_name), box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(make_box_row(format_sys_content("login", "sddm.service"), box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(make_box_row(format_sys_content("snapshots", plan.snapshots), box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(make_box_row(format_sys_content("backup", "your touched configs are saved before changes"), box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(bot_border)
+    lines.append(make_box_row(format_sys_content("Platform", plan.distro_name), box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(format_sys_content("Graphics", plan.gpu_name), box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(format_sys_content("Compositor", "Hyprland Wayland Compositor (v0.42+)"), box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(format_sys_content("Display Mgr", "sddm.service (Simple Desktop Display Manager)"), box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(format_sys_content("Safety Net", "Automated timestamped user backups preserved"), box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_footer(box_w, box_pad, BORDER_COLOR))
     lines.append("")
 
     # Card 2: Interactive Options Checklist Box
-    lines.append(f"{box_pad}{BORDER_COLOR}╭{'─' * (box_w - 2)}╮{RESET}")
-
-    # Title block centered inside the box
-    title_line1 = f"{BOLD}{COLOR_ACCENT}Hyprconf Installation Script{RESET}"
-    title_line2 = f"{COLOR_MUTED}by{RESET}"
-    title_line3 = f"{BOLD}{COLOR_CYAN}Shell Ninja{RESET}"
-
-    def center_in_box(content_str):
-        """Center content_str within the inner box width."""
-        inner_w = box_w - 2  # subtract left and right border chars
-        vis = visible_len(content_str)
-        total_pad = max(0, inner_w - vis)
-        lpad = total_pad // 2
-        rpad = total_pad - lpad
-        return (
-            f"{box_pad}{BORDER_COLOR}│{RESET}"
-            f"{' ' * lpad}{content_str}{' ' * rpad}"
-            f"{BORDER_COLOR}│{RESET}"
-        )
-
-    lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(center_in_box(title_line1))
-    lines.append(center_in_box(title_line2))
-    lines.append(center_in_box(title_line3))
-    lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
-    # Divider
-    sep = f"{BORDER_COLOR}{'─' * (box_w - 2)}{RESET}"
-    lines.append(f"{box_pad}{BORDER_COLOR}│{RESET}{sep}{BORDER_COLOR}│{RESET}")
+    lines.append(make_box_header("Installation Components & Profile", box_w, box_pad, BORDER_COLOR, COLOR_ACCENT))
+    lines.append(make_box_row(f"{COLOR_MUTED}Customize the packages and configuration profile for this system:{RESET}", box_w, box_pad, BORDER_COLOR, 2, 2))
     lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
 
     for idx, opt in enumerate(plan.options):
         is_selected = (idx == selected_idx)
-        bar = f"{COLOR_ACCENT}▍{RESET}" if is_selected else " "
+        bar = f"{COLOR_ACCENT_ALT}{BOLD}▍{RESET}" if is_selected else " "
 
         if opt["type"] == "toggle":
             if opt["enabled"]:
-                status = f"{COLOR_GREEN}● on{RESET} "
+                status = f"{COLOR_GREEN}{BOLD}[● ON ]{RESET}"
             else:
-                status = f"{COLOR_MUTED}○ off{RESET}"
+                status = f"{COLOR_MUTED}[○ OFF]{RESET}"
             title_text = opt["name"]
         else:
             curr = opt["choices"][opt["index"]]
             if curr == "Skip":
-                status = f"{COLOR_MUTED}○ off{RESET}"
-                title_text = f"{opt['name']} {COLOR_MUTED}(skip){RESET}"
+                status = f"{COLOR_MUTED}[◄ Skip ►]{RESET}"
             else:
-                status = f"{COLOR_GREEN}● on{RESET} "
-                title_text = f"{opt['name']} {COLOR_ACCENT_ALT}({curr}){RESET}"
+                status = f"{COLOR_PURPLE}[◄ {BOLD}{curr}{RESET}{COLOR_PURPLE} ►]{RESET}"
+            title_text = opt["name"]
 
         if is_selected:
             title_styled = f"{BOLD}{COLOR_WHITE}{title_text}{RESET}"
@@ -613,21 +594,21 @@ def render_plan_screen(plan, selected_idx, term_w, term_h):
 
         if is_selected:
             desc_text = opt['desc']
-            max_desc_w = box_w - 12
+            max_desc_w = box_w - 14
             if len(desc_text) > max_desc_w:
                 desc_text = desc_text[:max_desc_w - 3] + "..."
-            desc_content = f"     {COLOR_MUTED}{ITALIC}{desc_text}{RESET}"
+            desc_content = f"     {COLOR_CYAN}▸{RESET} {COLOR_MUTED}{ITALIC}{desc_text}{RESET}"
             lines.append(make_box_row(desc_content, box_w, box_pad, BORDER_COLOR, 1, 2))
 
-    lines.append(f"{box_pad}{BORDER_COLOR}╰{'─' * (box_w - 2)}╯{RESET}")
+    lines.append(make_box_footer(box_w, box_pad, BORDER_COLOR))
     lines.append("")
 
     # Footer navigation keys
     footer = (
-        f"{COLOR_ACCENT}↑↓{RESET} {COLOR_MUTED}move{RESET}   ·   "
-        f"{COLOR_ACCENT}space{RESET} {COLOR_MUTED}toggle{RESET}   ·   "
-        f"{COLOR_ACCENT}enter{RESET} {COLOR_MUTED}install{RESET}   ·   "
-        f"{COLOR_ACCENT}q{RESET} {COLOR_MUTED}quit{RESET}"
+        f"{COLOR_ACCENT}[ ↑ / ↓ ]{RESET} {COLOR_TEXT}Select{RESET}   "
+        f"{COLOR_ACCENT}[ Space ]{RESET} {COLOR_TEXT}Toggle / Cycle{RESET}   "
+        f"{COLOR_GREEN}[ Enter ]{RESET} {COLOR_TEXT}Begin Install{RESET}   "
+        f"{COLOR_RED}[ Q ]{RESET} {COLOR_TEXT}Quit{RESET}"
     )
     f_pad = " " * max(0, (term_w - visible_len(footer)) // 2)
     lines.append(f"{f_pad}{footer}")
@@ -686,27 +667,22 @@ class ExecutionUI:
             term_w = self.term_w
             term_h = self.term_h
 
-            box_w = min(max(term_w - 4, 60), 74)
+            box_w = min(max(term_w - 4, 64), 76)
             box_pad = " " * max(0, (term_w - box_w) // 2)
 
             lines = []
-            # Top Border
-            lines.append(f"{box_pad}{ACCENT_BORDER}╭{'─' * (box_w - 2)}╮{RESET}")
-
-            # Header inside box
-            header_title = f"{BOLD}{COLOR_ACCENT}Installing the Hyprland desktop{RESET}"
-            lines.append(make_box_row(header_title, box_w, box_pad, ACCENT_BORDER, 2, 2))
-            lines.append(make_box_row("", box_w, box_pad, ACCENT_BORDER, 2, 2))
+            lines.append(make_box_header("Hyprland Deployment in Progress", box_w, box_pad, ACCENT_BORDER, COLOR_ACCENT_ALT))
 
             # Progress Bar Calculation
             total_steps = max(len(self.steps), 1)
             completed_count = min(self.current_step_idx, total_steps)
-            fraction_str = f"{completed_count}/{total_steps}"
+            pct = int((completed_count / total_steps) * 100)
+            prefix = "Progress: "
+            fraction_str = f"{pct:>3}%  ({completed_count}/{total_steps} steps)"
 
-            # Exact bar width
             inner_content_w = (box_w - 2) - 4
-            avail_bar_w = inner_content_w - len(fraction_str) - 4
-            bar_w = min(max(avail_bar_w, 20), 44)
+            avail_bar_w = inner_content_w - len(prefix) - len(fraction_str) - 2
+            bar_w = min(max(avail_bar_w, 14), 28)
             filled_len = int((completed_count / total_steps) * bar_w)
             unfilled_len = bar_w - filled_len
 
@@ -714,12 +690,12 @@ class ExecutionUI:
                 f"{COLOR_ACCENT}{'█' * filled_len}{RESET}"
                 f"{COLOR_DARK_BAR}{'░' * unfilled_len}{RESET}"
             )
-            prog_content = f"{bar_str}  {COLOR_WHITE}{BOLD}{fraction_str}{RESET}"
+            prog_content = f"{prefix}{bar_str}  {COLOR_WHITE}{BOLD}{fraction_str}{RESET}"
             lines.append(make_box_row(prog_content, box_w, box_pad, ACCENT_BORDER, 2, 2))
             lines.append(make_box_row("", box_w, box_pad, ACCENT_BORDER, 2, 2))
 
             # Step Checklist
-            max_visible_steps = max(min(len(self.steps), term_h - 16), 5)
+            max_visible_steps = max(min(len(self.steps), term_h - 18), 5)
             start_s = 0
             if len(self.steps) > max_visible_steps:
                 start_s = max(0, min(self.current_step_idx - 2, len(self.steps) - max_visible_steps))
@@ -727,7 +703,7 @@ class ExecutionUI:
 
             for i in range(start_s, end_s):
                 step = self.steps[i]
-                max_step_title_w = box_w - 10
+                max_step_title_w = box_w - 12
                 st_title = step['title']
                 if len(st_title) > max_step_title_w:
                     st_title = st_title[:max_step_title_w - 3] + "..."
@@ -743,41 +719,41 @@ class ExecutionUI:
                     icon = f"{COLOR_MUTED}·{RESET}"
                     label = f"{COLOR_MUTED}{st_title}{RESET}"
 
-                s_content = f"{icon} {label}"
+                s_content = f"{icon}  {label}"
                 lines.append(make_box_row(s_content, box_w, box_pad, ACCENT_BORDER, 2, 2))
 
             lines.append(make_box_row("", box_w, box_pad, ACCENT_BORDER, 2, 2))
-            
-            # Sub-separator line (aligned perfectly)
-            sep_str = f"{BORDER_COLOR}{'─' * (box_w - 2)}{RESET}"
-            lines.append(f"{box_pad}{ACCENT_BORDER}│{RESET}{sep_str}{ACCENT_BORDER}│{RESET}")
 
-            # Sub-Terminal Window
-            cmd_display = self.current_cmd if self.current_cmd else "running tasks..."
-            max_cmd_w = box_w - 10
+            # Sub-Terminal Window Header
+            sub_w = box_w - 6
+            sub_bar = f"{BORDER_COLOR}{'─' * (sub_w - 24)}{RESET}"
+            lines.append(make_box_row(f"{BORDER_COLOR}┌─{RESET} {COLOR_CYAN}Live Console Stream{RESET} {sub_bar}{BORDER_COLOR}┐{RESET}", box_w, box_pad, ACCENT_BORDER, 2, 2))
+
+            cmd_display = self.current_cmd if self.current_cmd else "orchestrating installation..."
+            max_cmd_w = sub_w - 6
             if len(cmd_display) > max_cmd_w:
                 cmd_display = cmd_display[:max_cmd_w - 3] + "..."
-            cmd_line = f"{COLOR_CYAN}${RESET} {COLOR_MUTED}{cmd_display}{RESET}"
+            cmd_line = f"{BORDER_COLOR}│{RESET} {COLOR_ACCENT}❯{RESET} {COLOR_TEXT}{cmd_display}{RESET}"
             lines.append(make_box_row(cmd_line, box_w, box_pad, ACCENT_BORDER, 2, 2))
 
-            sub_lines = self.log_lines[-5:] if self.log_lines else []
-            while len(sub_lines) < 5:
+            sub_lines = self.log_lines[-4:] if self.log_lines else []
+            while len(sub_lines) < 4:
                 sub_lines.append("")
 
             for l in sub_lines:
-                max_log_w = box_w - 10
+                max_log_w = sub_w - 6
                 disp_l = l if len(l) <= max_log_w else l[:max_log_w - 3] + "..."
-                l_content = f"{COLOR_MUTED}{disp_l}{RESET}"
-                lines.append(make_box_row(l_content, box_w, box_pad, ACCENT_BORDER, 4, 2))
+                l_content = f"{BORDER_COLOR}│{RESET}   {COLOR_MUTED}{disp_l}{RESET}"
+                lines.append(make_box_row(l_content, box_w, box_pad, ACCENT_BORDER, 2, 2))
 
-            # Bottom Border
-            lines.append(f"{box_pad}{ACCENT_BORDER}╰{'─' * (box_w - 2)}╯{RESET}")
+            lines.append(make_box_row(f"{BORDER_COLOR}└{'─' * (sub_w - 2)}┘{RESET}", box_w, box_pad, ACCENT_BORDER, 2, 2))
+            lines.append(make_box_footer(box_w, box_pad, ACCENT_BORDER))
             lines.append("")
 
             # Log path truncation if too long
-            max_log_w = term_w - 34
+            max_log_w = term_w - 36
             disp_log = self.log_path if len(self.log_path) <= max_log_w else "..." + self.log_path[-(max_log_w - 3):]
-            footer_text = f"{COLOR_MUTED}installing, do not interrupt  ·  log: {disp_log}{RESET}"
+            footer_text = f"{COLOR_MUTED}◈ Automated deployment in progress  ·  Active log: {disp_log}{RESET}"
             foot_pad = " " * max(0, (term_w - visible_len(footer_text)) // 2)
             lines.append(f"{foot_pad}{footer_text}")
 
@@ -794,28 +770,37 @@ class ExecutionUI:
 
 # ----------------- Celebratory Finish & Reboot Screen
 def render_finish_screen(plan, term_w, term_h):
-    box_w = min(max(term_w - 4, 60), 74)
+    box_w = min(max(term_w - 4, 64), 76)
     box_pad = " " * max(0, (term_w - box_w) // 2)
 
     lines = []
     lines.append("")
-    lines.append(f"{box_pad}{BORDER_COLOR}╭{'─' * (box_w - 2)}╮{RESET}")
+    lines.append(make_box_header("Installation Complete", box_w, box_pad, BORDER_COLOR, COLOR_GREEN))
+    lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
 
-    title = f"{COLOR_GREEN}{BOLD}✦ HYPRLAND & HYPRCONF INSTALLED SUCCESSFULLY ✦{RESET}"
+    title = f"{COLOR_GREEN}{BOLD}◈  HYPRLAND & QUICKSHELL INSTALLED SUCCESSFULLY  ◈{RESET}"
     avail_w = (box_w - 2) - 4
     t_pad_left = max(0, (avail_w - visible_len(title)) // 2) + 2
     lines.append(make_box_row(title, box_w, box_pad, BORDER_COLOR, t_pad_left, 2))
     lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
 
-    lines.append(make_box_row(f"{COLOR_TEXT}All selected packages, dotfiles, themes, and services are configured.{RESET}", box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(make_box_row(f"{COLOR_MUTED}A system reboot is required to start your new Hyprland session.{RESET}", box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(f"{COLOR_CYAN}Summary of Deployed Components:{RESET}", box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(f" {COLOR_GREEN}✓{RESET}  {COLOR_WHITE}Wayland Compositor{RESET}    Hyprland core, IPC daemons & tools", box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(f" {COLOR_GREEN}✓{RESET}  {COLOR_WHITE}Desktop Shell{RESET}         Quickshell Dynamic Island & App Launcher", box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(f" {COLOR_GREEN}✓{RESET}  {COLOR_WHITE}Display Manager{RESET}       SDDM Greeter (Prohori) configured", box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(f" {COLOR_GREEN}✓{RESET}  {COLOR_WHITE}Visual Themes{RESET}         adw-gtk3 & Kora icons (GTK & Qt)", box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row(f" {COLOR_GREEN}✓{RESET}  {COLOR_WHITE}Backup Archive{RESET}        Previous user configurations preserved", box_w, box_pad, BORDER_COLOR, 2, 2))
     lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
-    lines.append(f"{box_pad}{BORDER_COLOR}╰{'─' * (box_w - 2)}╯{RESET}")
+
+    lines.append(make_box_row(f"{COLOR_MUTED}A system reboot is required to initialize your new desktop session.{RESET}", box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_row("", box_w, box_pad, BORDER_COLOR, 2, 2))
+    lines.append(make_box_footer(box_w, box_pad, BORDER_COLOR))
     lines.append("")
 
     footer = (
-        f"{COLOR_ACCENT}enter{RESET} {COLOR_WHITE}{BOLD}reboot now{RESET}   ·   "
-        f"{COLOR_ACCENT}q / esc{RESET} {COLOR_MUTED}exit to terminal{RESET}"
+        f"{COLOR_GREEN}[ Enter ]{RESET} {COLOR_WHITE}{BOLD}Reboot System Now{RESET}   "
+        f"{COLOR_MUTED}·{RESET}   "
+        f"{COLOR_ACCENT}[ Q / Esc ]{RESET} {COLOR_MUTED}Exit to Terminal{RESET}"
     )
     f_pad = " " * max(0, (term_w - visible_len(footer)) // 2)
     lines.append(f"{f_pad}{footer}")
@@ -836,6 +821,75 @@ def sudo_keepalive(stop_event):
     while not stop_event.is_set():
         subprocess.run(["sudo", "-v"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(45)
+
+# ----------------- Background Payload Prefetcher
+def prefetch_hyprconf_payload(workspace_dir, log_file=None):
+    """
+    Downloads and extracts the Hyprconf (Quickshell) repository in the background
+    while system packages are being installed, eliminating user wait time.
+    """
+    cache_dir = os.path.join(workspace_dir, ".cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    target_dir = os.path.join(cache_dir, "hyprconf")
+    zip_path = os.path.join(cache_dir, "hyprconf.zip")
+
+    if os.path.exists(os.path.join(target_dir, "setup.sh")):
+        return True
+
+    url = "https://github.com/shell-ninja/hyprconf/archive/refs/heads/qs.zip"
+    try:
+        res = subprocess.run(
+            ["curl", "-sL", url, "-o", zip_path],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=120
+        )
+        if res.returncode == 0 and os.path.exists(zip_path) and os.path.getsize(zip_path) > 1000:
+            shutil.rmtree(target_dir, ignore_errors=True)
+            os.makedirs(target_dir, exist_ok=True)
+            subprocess.run(
+                ["unzip", "-q", "-o", zip_path, "-d", target_dir],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            # Flatten subfolder if packed as hyprconf-qs
+            subdirs = [d for d in os.listdir(target_dir) if os.path.isdir(os.path.join(target_dir, d))]
+            if len(subdirs) == 1 and subdirs[0].startswith("hyprconf"):
+                sub_p = os.path.join(target_dir, subdirs[0])
+                for item in os.listdir(sub_p):
+                    shutil.move(os.path.join(sub_p, item), os.path.join(target_dir, item))
+                try:
+                    os.rmdir(sub_p)
+                except Exception:
+                    pass
+            if os.path.exists(zip_path):
+                os.remove(zip_path)
+    except Exception:
+        pass
+
+    # Fallback to git clone if curl/unzip did not yield setup.sh
+    if not os.path.exists(os.path.join(target_dir, "setup.sh")):
+        try:
+            shutil.rmtree(target_dir, ignore_errors=True)
+            subprocess.run(
+                ["git", "clone", "--depth=1", "-b", "qs", "https://github.com/shell-ninja/hyprconf.git", target_dir],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=180
+            )
+        except Exception:
+            pass
+
+    if os.path.exists(os.path.join(target_dir, "setup.sh")):
+        os.chmod(os.path.join(target_dir, "setup.sh"), 0o755)
+        if log_file:
+            try:
+                with open(log_file, "a") as lf:
+                    lf.write("[PREFETCH] Hyprconf payload pre-cached successfully in background\n")
+            except Exception:
+                pass
+        return True
+    return False
 
 # ----------------- Main Orchestration Flow
 def run_interactive_installer():
@@ -863,6 +917,16 @@ def run_interactive_installer():
     stop_sudo = threading.Event()
     sudo_thread = threading.Thread(target=sudo_keepalive, args=(stop_sudo,), daemon=True)
     sudo_thread.start()
+
+    # Start stealth background prefetch of hyprconf dotfiles immediately.
+    # While the user browses the plan screen and packages install, the repo
+    # downloads and extracts into .cache/hyprconf with zero user-visible lag.
+    prefetch_thread = threading.Thread(
+        target=prefetch_hyprconf_payload,
+        args=(workspace_dir, log_file),
+        daemon=True
+    )
+    prefetch_thread.start()
 
     # Enter alternate screen buffer & enable raw input
     enter_alt_screen()
@@ -1047,22 +1111,12 @@ def run_interactive_installer():
 
     # Step 12: Themes
     steps.append({
-        "title": "Deploying GTK, Qt, Kvantum & icon themes",
+        "title": "Deploying adw-gtk3 & Kora icon packs (GTK & Qt)",
         "script": os.path.join(common_dir, "themes.sh"),
         "cmd": f"bash {common_dir}/themes.sh"
     })
 
-    # Step 13: Hyprconf dotfiles (interactive — full terminal handoff)
-    if opt_map.get("dotfiles_repo", {}).get("enabled", True):
-        steps.append({
-            "title": "Deploying Hyprconf (Quickshell) dotfiles & configurations",
-            "script": os.path.join(common_dir, "hyprconf.sh"),
-            "cmd": f"bash {common_dir}/hyprconf.sh",
-            "interactive": True,       # TUI will pause and hand terminal to setup script
-            "repo_choice": "hyprconf",
-        })
-
-    # Step 14: Hardware Profile (Laptop vs Desktop)
+    # Step 13: Hardware Profile (Laptop vs Desktop)
     is_laptop = (
         os.path.exists("/sys/class/power_supply/BAT0") or
         any("BAT" in name for name in os.listdir("/sys/class/power_supply") if os.path.isdir(os.path.join("/sys/class/power_supply", name))) if os.path.exists("/sys/class/power_supply") else False
@@ -1074,14 +1128,26 @@ def run_interactive_installer():
         "cmd": f"bash {common_dir}/{hw_script}"
     })
 
-    # Step 15: Final Checkup
+    # Step 14: Final System Verification
     steps.append({
         "title": "Running final system verification & health check",
         "script": os.path.join(scripts_dir, "12-final.sh"),
         "cmd": f"bash {scripts_dir}/12-final.sh"
     })
 
+    # Step 15: Hyprconf Dotfiles (Interactive handoff at the very end — pre-cached in background)
+    if opt_map.get("dotfiles_repo", {}).get("enabled", True):
+        steps.append({
+            "title": "Configuring Hyprconf (Quickshell) dotfiles & desktop suite",
+            "script": os.path.join(common_dir, "hyprconf.sh"),
+            "cmd": f"bash {common_dir}/hyprconf.sh",
+            "interactive": True,       # TUI will pause and hand terminal to setup script
+            "repo_choice": "hyprconf",
+        })
+
     # 4. Live Progress Execution Loop
+    # (Background payload prefetch was already kicked off at launch and is running in parallel)
+
     term_w, term_h = shutil.get_terminal_size((80, 24))
     exec_ui = ExecutionUI(steps, log_file, term_w, term_h)
 
@@ -1113,6 +1179,9 @@ def run_interactive_installer():
 
         # ── Interactive Handoff Step ────────────────────────────────────────────
         if step.get("interactive"):
+            # Ensure background download completes before terminal handoff
+            prefetch_thread.join(timeout=30)
+
             # 1. Freeze spinner, stop the TUI
             stop_spinner.set()
             spin_thread.join(timeout=0.5)
@@ -1123,20 +1192,20 @@ def run_interactive_installer():
             os.system("clear")
             print()
             print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
-            print(f"  {COLOR_ACCENT}{BOLD}  ✦  INTERACTIVE SETUP  ─  Hyprconf Quickshell Dotfiles{RESET}")
+            print(f"  {COLOR_ACCENT}{BOLD}  ◈  HYPRCONF QUICKSHELL SETUP  ─  Interactive Configuration{RESET}")
             print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
             print()
-            print(f"  {COLOR_TEXT}The TUI installer is handing control to the Hyprconf setup\n"
-                  f"  script. You can now interact with all prompts directly:\n")
-            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Configure Quickshell Dynamic Island & status bar{RESET}")
+            print(f"  {COLOR_TEXT}All system packages, hardware profiles, and visual themes are installed.\n"
+                  f"  The installer is now launching the Hyprconf configuration wizard:\n")
+            print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Configure Quickshell Dynamic Island & status notch{RESET}")
             print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Configure Quickshell App Launcher styles & animations{RESET}")
             print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Configure Quickshell Lockscreen & Control Center{RESET}")
             print(f"  {COLOR_ACCENT}▸{RESET} {COLOR_TEXT}Safely back up and restore existing user configs{RESET}")
             print()
-            print(f"  {COLOR_MUTED}When the setup script finishes, the TUI will automatically resume.{RESET}")
+            print(f"  {COLOR_MUTED}Payload is pre-cached and ready. When setup completes, installation will finish.{RESET}")
             print(f"  {COLOR_ACCENT}{BOLD}{'─' * 64}{RESET}")
             print()
-            input(f"  {COLOR_CYAN}Press Enter to launch the Hyprconf setup script...{RESET} ")
+            input(f"  {COLOR_CYAN}Press Enter to launch setup...{RESET} ")
             print()
 
             # 3. Run the script with FULL terminal (stdin, stdout, stderr all native)

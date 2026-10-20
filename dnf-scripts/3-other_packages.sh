@@ -33,9 +33,9 @@ log="$log_dir/others-$(date +%d-%m-%y).log"
 # log directory
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "thunar-archive-plugin" "$log" | awk {'print $2'})
+    last_installed=$(grep "yazi" "$log" | awk '{print $2}')
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        msg skp "Skipping this script. No need to run it again..."
+        msg skp "System utility packages already installed. Skipping..."
         sleep 1
         exit 0
     fi
@@ -142,16 +142,15 @@ for packages in "${installble_main_pkg[@]}" "${installble_other_pkg[@]}" "${inst
   if rpm -q "$packages" &> /dev/null; then
     echo "[ DONE ] - $packages was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
   else
-    echo "[ ERROR ] - Sorry, could not install '$packages'" 2>&1 | tee -a "$log" &> /dev/null
+    echo "[ ERROR ] - Failed to install '$packages'" >> "$log"
   fi
 done
 
 # installing grimblast
 if [ -f '/usr/local/bin/grimblast' ]; then
-  msg dn "Grimblast is already installed..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  msg dn "Grimblast is already installed."
 else
-
-  msg act "Installing Grumblast..."
+  msg act "Building and installing Grimblast..."
   git clone --depth=1 "$grimblast_url" "$parent_dir/.cache/grimblast/" 2>&1 | tee -a "$log" &> /dev/null
   cd "$parent_dir/.cache/grimblast/grimblast"
   make 2>&1 | tee -a "$log" &> /dev/null
@@ -162,8 +161,8 @@ else
 fi
 
 if [ -f '/usr/local/bin/grimblast' ]; then
-  msg dn "Grimblast was installed successfully..."
-  printf "[ DONE ] - Grimblast was installed successfully...\n" 2>&1 | tee -a "$log"
+  msg dn "Grimblast installed successfully."
+  echo "[ DONE ] - Grimblast was installed successfully." >> "$log"
 fi
 
 sleep 1 && clear

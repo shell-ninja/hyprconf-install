@@ -143,18 +143,17 @@ printf "\n\n"
 for packages in "${installble_main_pkg[@]}" "${installble_other_pkg[@]}" "${installble_file_utils_pkg[@]}"; do
   install_package "$packages"
   if dpkg -s "$packages" &> /dev/null; then
-    echo "[ DONE ] - $packages was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+    echo "[ DONE ] - $packages was installed successfully" >> "$log"
   else
-    echo "[ ERROR ] - Sorry, could not install '$packages'" 2>&1 | tee -a "$log" &> /dev/null
+    echo "[ ERROR ] - Failed to install '$packages'" >> "$log"
   fi
 done
 
 # installing grimblast
 if [ -f '/usr/local/bin/grimblast' ]; then
-  msg dn "Grimblast is already installed..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  msg dn "Grimblast is already installed."
 else
-
-  msg act "Installing Grumblast..."
+  msg act "Building and installing Grimblast..."
   git clone --depth=1 "$grimblast_url" "$parent_dir/.cache/grimblast/" 2>&1 | tee -a "$log" &> /dev/null
   cd "$parent_dir/.cache/grimblast/grimblast"
   make 2>&1 | tee -a "$log" &> /dev/null
@@ -163,10 +162,10 @@ else
   sleep 1
   rm -rf "$parent_dir/.cache/grimblast" 2>&1 | tee -a "$log"
 
-	if [ -f '/usr/local/bin/grimblast' ]; then
-    msg dn "Grimblast was installed successfully..."
-    printf "[ DONE ] - Grimblast was installed successfully...\n" 2>&1 | tee -a "$log" &> /dev/null
-	fi
+  if [ -f '/usr/local/bin/grimblast' ]; then
+    msg dn "Grimblast installed successfully."
+    echo "[ DONE ] - Grimblast was installed successfully." >> "$log"
+  fi
 fi
 
 # ensuring quickshell is available

@@ -42,6 +42,9 @@ fn_welcome() {
 }
 
 fn_ask() {
+    if [[ "${HYPRCONF_TUI:-}" == "1" || ! -t 0 ]]; then
+        return 0
+    fi
     gum confirm "$1" \
         --prompt.foreground "#bd93f9" \
         --affirmative "$2" \
@@ -51,11 +54,15 @@ fn_ask() {
 }
 
 fn_exit() {
-    gum spin --spinner line \
-        --spinner.foreground "#f7768e" \
-        --title "$1" \
-        --title.foreground "#f7768e" -- \
-        sleep 1
+    if command -v gum &>/dev/null && [[ -t 1 ]]; then
+        gum spin --spinner line \
+            --spinner.foreground "#f7768e" \
+            --title "$1" \
+            --title.foreground "#f7768e" -- \
+            sleep 1
+    else
+        printf "  ${red}✗ [EXIT]${end} %s\n" "$1"
+    fi
     exit 1
 }
 

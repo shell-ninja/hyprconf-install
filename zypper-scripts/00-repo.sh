@@ -48,18 +48,18 @@ echo
 for deps in "${dependencies[@]}"; do
     install_package_base "$deps"
     if sudo zypper se -i "$deps" &> /dev/null ; then
-      echo "[ DONE ] - '$deps' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+      echo "[ DONE ] - '$deps' was installed successfully" >> "$log"
     else
-      echo "[ ERROR ] - Sorry, could not install '$deps'" 2>&1 | tee -a "$log" &> /dev/null
+      echo "[ ERROR ] - Failed to install '$deps'" >> "$log"
     fi
 done
 
 # installing opi
 install_package opi
 if sudo zypper se -i opi &> /dev/null ; then
-  echo "[ DONE ] - 'opi' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+  echo "[ DONE ] - 'opi' was installed successfully" >> "$log"
 else
-  echo "[ ERROR ] - Sorry, could not install 'opi'" 2>&1 | tee -a "$log" &> /dev/null
+  echo "[ ERROR ] - Failed to install 'opi'" >> "$log"
 fi
 
 # Adding OBS repository for Quickshell
