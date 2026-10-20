@@ -1,255 +1,181 @@
 <a id="top"></a>
 
-<h1 align="center">Hyprland TUI Installation Script</h1>
-<h3 align="center">By</h3>
-<h2 align="center">Shell Ninja</h2>
-<br>
+<h1 align="center">Hyprland TUI Installation Suite</h1>
+<p align="center">
+  <b>A modern, cross-distribution terminal installer for Hyprland and Quickshell</b>
+</p>
 
-This Hyprland configuration is kind of minila looking, but also little bit gorgeous I guess. Why don't you check it out?
+<p align="center">
+  <a href="https://github.com/shell-ninja/hyprconf-install/stargazers"><img src="https://img.shields.io/github/stars/shell-ninja/hyprconf-install?style=for-the-badge&color=cba6f7&logo=star" alt="Stars"></a>
+  <a href="https://github.com/shell-ninja/hyprconf-install/network/members"><img src="https://img.shields.io/github/forks/shell-ninja/hyprconf-install?style=for-the-badge&color=89b4fa&logo=git" alt="Forks"></a>
+  <a href="https://github.com/shell-ninja/hyprconf-install/blob/main/LICENSE"><img src="https://img.shields.io/github/license/shell-ninja/hyprconf-install?style=for-the-badge&color=a6e3a1" alt="License"></a>
+</p>
 
 <div align="center">
 
+<a href="#overview"><kbd> Overview </kbd></a>&ensp;&ensp;
+<a href="#features"><kbd> Features </kbd></a>&ensp;&ensp;
+<a href="#supported-distributions"><kbd> Distributions </kbd></a>&ensp;&ensp;
+<a href="#installation"><kbd> Installation </kbd></a>&ensp;&ensp;
+<a href="#contributing"><kbd> Contributing </kbd></a>
+
+</div>
+
 <br>
 
-<a href="#screenshots"><kbd> <br> Screenshots <br> </kbd></a>&ensp;&ensp;
-<a href="#install"><kbd> <br> Install <br> </kbd></a>&ensp;&ensp;
-<a href="#keyboards"><kbd> <br> keyboard Shortcuts <br> </kbd></a>&ensp;&ensp;
-<a href="#contrib"><kbd> <br> Contrubution <br> </kbd></a>&ensp;&ensp;
+---
 
-</div><br><br>
+<a id="overview"></a>
 
-> [!WARNING]
-> This script is fully ready, but it may create some little issue in `openSUSE`. I'll fix that as soon as possible.
+## Overview
 
-> [!NOTE]
-> I have tested this script in several distros, like: <br>[Arch](https://archlinux.org) <br>[EndeavourOs](https://endeavouros.com/) <br>[Garuda](https://garudalinux.org/) <br>[Fedora](https://fedoraproject.org/) <br>[Nobara](https://nobaraproject.org/)
->
-> I will test in some more distros soon
+**hyprconf-install** is an interactive, automated installer engineered to deploy a fully configured **Hyprland** Wayland compositor environment and the **Quickshell** desktop suite.
+
+The installer handles package management, dependency resolution, hardware-specific drivers (including NVIDIA proprietary setups), display managers (SDDM with custom themes), shell environments, font packages, and toolkit theming across multiple Linux distributions through a modern Terminal User Interface (TUI).
 
 > [!TIP]
-> If you are planning to install this config in your current working machine, please make sure to take a snap shot of your system. If anything by chance goes wrong, you will be able to go back to your system.
+> If you are installing this on a production system, consider creating a system snapshot (e.g. Timeshift or Btrfs snapshot) beforehand.
 
 <br>
-
-<div align="right">
-  <br>
-  <a href="#top"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
-
-<a id="screenshots"></a>
-
-## <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=90EE90&vCenter=true&width=435&height=25&lines=SCREENSHOTS" width="450"/>
-
-<details close>
-<summary>Overall</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/2.png?raw=true" /> <br>
-
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/3.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/4.png?raw=true" />
-
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/5.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/theme/6.png?raw=true" />
-</p> <br>
-</details>
-
-<details close>
-<summary>Menu</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/menu/1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/menu/2.png?raw=true" /> <br>
-
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/menu/4.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/menu/3.png?raw=true" />
-    <br>
-
-   <img aligh="center" width="99%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/clipboard.png?raw=true" />
-</p> <br>
-</details>
-
-<details close>
-<summary>Power Menu</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/power/1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/power/2.png?raw=true" /> <br>
-
-   <img aligh="center" width="99%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/power/3.png?raw=true" />
-</p> <br>
-</details>
-
-<details close>
-<summary>Wallpaper</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/wallpaper/1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/wallpaper/2.png?raw=true" /> <br>
-</p> <br>
-</details>
-
-<details close>
-<summary>Lock Screen</summary>
-<p align="center">
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/lockscreen/lock-1.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/lockscreen/lock-2.png?raw=true" />
-        <br>
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/lockscreen/lock-3.png?raw=true" />
-   <img aligh="center" width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/lockscreen/selecttheme.png?raw=true" />
-</p>
-</details>
-
-<details close>
-<summary>Login Screen (sddm)</summary>
-<p align="center">
-   <img aligh="center" width="99%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm.png?raw=true" />
-</p>
-</details>
-
-<br>
-
-<div align="right">
-  <br>
-  <a href="#top"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
 
 <a id="features"></a>
 
-## <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=90EE90&vCenter=true&width=435&height=25&lines=FEATURES" width="450"/>
+## Features
 
-- Hardware-accelerated desktop shell powered by Quickshell
-- Dynamic Island status bar with hardware monitors, per-process network traffic, quick toggles, and audio visualizer
-- Dynamic theming engine (`hypr-colors.py` with Pillow) extracting vibrant obsidian palettes directly from wallpapers
-- Quickshell App Launcher with multiple styles (Style 1: Slanted Split Quad, Style 2: Panoramic Grid)
-- Native Polkit authentication agent built directly into Quickshell (`PolkitView.qml`)
-- Quickshell Lockscreen with native PAM authentication, breathing avatar animations, and failure shockwave
-- Unified Settings App with WYSIWYG draggable lockscreen canvas, appearance, display scaling, and curve tuners
-- Screenshot Studio launcher (`qs-screenshot.sh` / Satty) with 4 capture modes and island countdown timer
-- Hyprsunset 3-stage night light manager and Caffeine mode
-- SDDM login greeter integration (Prohori & SilentSDDM)
+- **Modern TUI Interface**: Built with an interactive terminal UI featuring live progress tracking, status capsule toggles, carousel selectors, and an embedded sub-terminal streaming package manager outputs.
+- **Cross-Distribution Architecture**: Tailored deployment routines for **Arch Linux**, **Fedora**, **openSUSE**, and **Debian/Ubuntu** systems.
+- **Hardware-Aware Driver Setup**:
+  - Automatic detection and configuration of proprietary **NVIDIA** drivers, kernel parameters, and environment flags.
+  - Automatic hardware chassis detection with tailored laptop gesture and power-saving profiles.
+  - PipeWire audio server and Bluetooth stack configuration.
+- **Unified Visual & Toolkit Theming**:
+  - Automatically installs and configures `adw-gtk3-dark` for dynamic, wallpaper-based color switching.
+  - Bundles and extracts the `kora` icon theme and `Bibata-Modern-Ice` cursor suite.
+  - Synchronizes theme tokens across GTK 2, GTK 3, GTK 4, GSettings, xsettingsd, Qt5 (`qt5ct`), Qt6 (`qt6ct`), and KDE globals.
+- **Stealth Background Prefetching**:
+  - Downloads and verifies the configuration payload silently in the background while system packages compile and install.
+  - Hands over control to the configuration wizard at completion with zero perceptible download delay.
+- **Safe State Management**:
+  - Automatically creates timestamped backups of existing `~/.config/hypr` and `~/.hyprconf` configurations before making changes.
+  - Generates comprehensive execution logs in `Logs/` for effortless troubleshooting.
 
 <br>
 
-<a id="install"></a>
+<a id="supported-distributions"></a>
 
-<div align="right">
-  <br>
-  <a href="#top"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
+## Supported Distributions
 
-## <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=90EE90&vCenter=true&width=435&height=25&lines=INSTALLATION" width="450"/>
+| Distribution | Package Manager | Status | Notes |
+|:---|:---:|:---:|:---|
+| **Arch Linux** / EndeavourOS / Garuda / CachyOS | `pacman` + `yay`/`paru` | Tier 1 | Full support including AUR packages |
+| **Fedora** / Nobara | `dnf` + Copr | Tier 1 | Full support with COPR repository setup |
+| **openSUSE** (Tumbleweed) | `zypper` + OPI | Supported | Package routines updated |
+| **Debian** (Testing/Sid) / **Ubuntu** | `apt` | Supported | PPA and pre-compiled binary fallbacks |
 
-> [!NOTE]
->
-> ### Direct Installation
->
-> You can now easily install the Quickshell Hyprconf setup directly without cloning the repository. Just copy and paste the command below in your terminal and run it. Before that, make sure to install `curl, git`.
->
-> ```bash
-> bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/main/direct_run.sh)
-> ```
+<br>
 
-> [!NOTE]
->
-> ### Manual Installation
+<a id="installation"></a>
 
-> - Clone this repository:
+## Installation
+
+### 1. One-Line Direct Installation (Recommended)
+
+Run the remote bootstrap runner directly in your terminal without manually cloning the repository:
 
 ```bash
-git clone --depth=1 https://github.com/shell-ninja/hyprconf-install.git
+bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/main/direct_run.sh)
 ```
 
-> - Now cd into hyprconf-install directory and run this command:
+> [!NOTE]
+> Make sure `curl` and `git` are installed on your system before executing the one-line command.
+
+### 2. Manual Installation
+
+Clone the repository locally, set execution permissions, and start the installer:
 
 ```bash
+# Clone the installer repository
+git clone --depth=1 https://github.com/shell-ninja/hyprconf-install.git
+
+# Navigate into the project directory
 cd hyprconf-install
+
+# Make the bootstrap script executable
 chmod +x install.sh
+
+# Launch the interactive installer
 ./install.sh
 ```
 
-<details close>
-<summary>Select options</summary>
- Press <kbd>Space</kbd> to toggle, <kbd>j</kbd> or <kbd>k</kbd> for navigation.
+### Installer Controls
 
-<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/2.png?raw=true" /> <br>
-
-</details>
-
-<details close>
-<summary>Installation Progress</summary>
-
-<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/3.png?raw=true" />
-<br>
-</details>
-
-<br>
-<a id="keyboards"></a>
-
-<div align="right">
-  <br>
-  <a href="#top"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
-
-## <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=90EE90&vCenter=true&width=435&height=25&lines=KEYBOARD-SHORTCUTS" width="450"/>
-
-> [!IMPORTANT]
->
-> After installation, just press the `SUPER + Shift + h`. It will show you all the keybinds.
+| Key | Action |
+|:---:|:---|
+| <kbd>↑</kbd> / <kbd>k</kbd> | Navigate to previous item |
+| <kbd>↓</kbd> / <kbd>j</kbd> | Navigate to next item |
+| <kbd>Space</kbd> / <kbd>Enter</kbd> | Toggle feature ON / OFF |
+| <kbd>←</kbd> / <kbd>→</kbd> | Cycle carousel choices (SDDM theme, audio, shells) |
+| <kbd>Tab</kbd> | Switch focus between settings and Install button |
+| <kbd>q</kbd> / <kbd>Ctrl+C</kbd> | Cancel installation safely |
 
 <br>
 
-<br>
+<a id="project-structure"></a>
 
-<a id="contrib"></a>
-
-<div align="right">
-  <br>
-  <a href="#top"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
-
-## <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=90EE90&vCenter=true&width=435&height=25&lines=CONTRIBUTING" width="450"/>
-
-<h4>
-If you want to add your ideas in this project, just do some steps.
-</h4>
-
-1. Fork this repository. Make sure to uncheck the `Copy the main branch only`. This will also copy other branches ( if available ).
-2. Now clone the forked repository in you machine. <br> Example command:
+## Repository Structure
 
 ```
-git clone --depth=1 https://github.com/your_user_name/hyprconf.git
+hyprconf-install/
+├── install.sh                  # Core CLI entrypoint & prerequisite verification
+├── direct_run.sh               # Remote one-line curl runner
+├── tui_installer.py            # Modern Python TUI installer orchestrator
+├── interaction_fn.sh           # Terminal interaction primitives & styling functions
+├── assets/                     # Bundled icon packs, cursors, and desktop entries
+│   ├── kora-2-0-5.tar.gz
+│   ├── Bibata-Modern-Ice.tar.gz
+│   └── hyprland.desktop
+├── pacman-scripts/             # Arch Linux installation pipeline
+├── dnf-scripts/                # Fedora installation pipeline
+├── zypper-scripts/             # openSUSE installation pipeline
+├── apt-scripts/                # Debian/Ubuntu installation pipeline
+├── common/                     # Cross-distribution modular scripts
+│   ├── themes.sh               # GTK/Qt/KDE theming and asset deployment
+│   ├── sddm_theme.sh           # SDDM greeter installation (Prohori / SilentSDDM)
+│   ├── desktop.sh              # Chassis detection & desktop optimization
+│   ├── bluetooth.sh            # Bluetooth daemon & manager setup
+│   └── hyprconf.sh             # Hyprconf payload handoff & dotfiles deployment
+└── shell/                      # Starship and shell configuration presets
 ```
-
-3. Create a branch by your user_name. <br> Example command:
-
-```
-git checkout -b your_user_name
-```
-
-4. Now add your ideas and commit to github. <br> Make sure to commit with a detailed test message. For example:
-
-```
-git commit -m "fix: Fixed a but in the "example.sh script"
-```
-
-```
-git commit -m "add: Added this feature. This will happen if the user do this."
-```
-
-```
-git commit -m "delete: Deleted this. It was creating this example problem"
-```
-
-4. While pushing the new commits, make sure to push it to your branch. <br> For example:
-
-```
-git push origin your_branch_name
-```
-
-5. Now you can create a pull request in the main repository.<br> But make sure to create the pull request in the `development` branch, no the `main` branch.
-
-### Thats all about contributing.
 
 <br>
 
-## <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=90EE90&vCenter=true&width=435&height=25&lines=THANKS" width="450"/>
+<a id="contributing"></a>
 
-I would like to thank [JaKooLit](https://github.com/JaKooLit). I was inspired from his Hyprland installation scripts and prepared my script. I took and modified some of his scripts and used here.
+## Contributing
+
+Contributions, bug reports, and improvements are always welcome!
+
+1. **Fork** the repository on GitHub.
+2. **Clone** your fork locally:
+   ```bash
+   git clone --depth=1 https://github.com/your-username/hyprconf-install.git
+   cd hyprconf-install
+   ```
+3. Create a feature branch:
+   ```bash
+   git checkout -b feature/my-enhancement
+   ```
+4. Commit your changes with descriptive messages:
+   ```bash
+   git commit -m "feat(pacman): improve repository mirror fallback"
+   ```
+5. Push to your branch and open a **Pull Request** against the `main` (or `development`) branch.
+
+<br>
+
+<a id="credits"></a>
+
+## Acknowledgements
+
+- Inspired by [JaKooLit](https://github.com/JaKooLit)'s Hyprland installation scripts.
+- Maintained by [Shell Ninja](https://github.com/shell-ninja).
