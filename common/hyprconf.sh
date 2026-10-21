@@ -32,16 +32,26 @@ if [[ -d "$HOME/.hyprconf" || -d "$HOME/.config/hypr" ]]; then
     [[ -d "$HOME/.config/hypr" ]] && cp -rf "$HOME/.config/hypr" "$backup_path/" 2>/dev/null || true
 fi
 
-# 2. Acquire Hyprconf dotfiles payload (v1.0.0 release)
+# 2. Acquire Hyprconf dotfiles payload (dynamically discovers latest release)
 target_dir="$parent_dir/.cache/hyprconf"
 zip_path="$target_dir.zip"
-url="https://github.com/shell-ninja/hyprconf/archive/refs/tags/v1.0.0.zip"
+
+# Dynamically resolve latest release tag via GitHub redirect (avoids API rate limits)
+latest_tag=$(curl -sIL -o /dev/null -w '%{url_effective}' "https://github.com/shell-ninja/hyprconf/releases/latest" 2>/dev/null | grep -o 'tag/.*' | cut -d/ -f2)
+
+if [[ -n "$latest_tag" && "$latest_tag" != "latest" ]]; then
+    url="https://github.com/shell-ninja/hyprconf/archive/refs/tags/${latest_tag}.zip"
+    release_label="$latest_tag"
+else
+    url="https://github.com/shell-ninja/hyprconf/archive/refs/heads/main.zip"
+    release_label="latest"
+fi
 
 if [[ -f "$target_dir/setup.sh" ]]; then
-    msg act "Initializing Hyprconf (v1.0.0) desktop suite..."
-    echo "[ PAYLOAD ] Using pre-cached dotfiles payload at $target_dir" >> "$log"
+    msg act "Initializing Hyprconf ($release_label) desktop suite..."
+    echo "[ PAYLOAD ] Using pre-cached dotfiles payload ($release_label) at $target_dir" >> "$log"
 else
-    msg act "Synchronizing Hyprconf (v1.0.0) desktop suite..."
+    msg act "Synchronizing Hyprconf ($release_label) desktop suite..."
     mkdir -p "$parent_dir/.cache"
     curl -sL "$url" -o "$zip_path"
 
@@ -59,8 +69,12 @@ else
 
     if [[ ! -f "$target_dir/setup.sh" ]]; then
         rm -rf "$target_dir"
-        git clone --depth=1 -b v1.0.0 https://github.com/shell-ninja/hyprconf.git "$target_dir" 2>&1 | tee -a "$log" >/dev/null || \
-        git clone --depth=1 -b main https://github.com/shell-ninja/hyprconf.git "$target_dir" 2>&1 | tee -a "$log" >/dev/null || true
+        if [[ -n "$latest_tag" && "$latest_tag" != "latest" ]]; then
+            git clone --depth=1 -b "$latest_tag" https://github.com/shell-ninja/hyprconf.git "$target_dir" 2>&1 | tee -a "$log" >/dev/null || \
+            git clone --depth=1 -b main https://github.com/shell-ninja/hyprconf.git "$target_dir" 2>&1 | tee -a "$log" >/dev/null || true
+        else
+            git clone --depth=1 -b main https://github.com/shell-ninja/hyprconf.git "$target_dir" 2>&1 | tee -a "$log" >/dev/null || true
+        fi
     fi
 fi
 

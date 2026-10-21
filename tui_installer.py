@@ -19,6 +19,7 @@ import subprocess
 import threading
 import re
 import atexit
+import urllib.request
 from datetime import datetime
 
 # ----------------- ANSI Color Palette (Shell Ninja Cyber-Purple & Neon Cyan)
@@ -822,10 +823,48 @@ def sudo_keepalive(stop_event):
         subprocess.run(["sudo", "-v"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(45)
 
-# ----------------- Background Payload Prefetcher
+# ----------------- Dynamic Release Resolver & Payload Prefetcher
+def resolve_latest_hyprconf_tag():
+    """
+    Dynamically discovers the latest release tag from GitHub without hitting API rate limits.
+    Falls back to 'main' if releases are unreachable.
+    """
+    # 1. Resolve via redirect on https://github.com/shell-ninja/hyprconf/releases/latest
+    try:
+        req = urllib.request.Request(
+            "https://github.com/shell-ninja/hyprconf/releases/latest",
+            headers={"User-Agent": "Mozilla/5.0"}
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            final_url = resp.geturl()
+            if "/tag/" in final_url:
+                tag = final_url.split("/tag/")[-1].strip("/")
+                if tag:
+                    return tag
+    except Exception:
+        pass
+
+    # 2. Fast curl redirect check fallback
+    try:
+        res = subprocess.run(
+            ["curl", "-sIL", "-o", "/dev/null", "-w", "%{url_effective}", "https://github.com/shell-ninja/hyprconf/releases/latest"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+            timeout=5
+        )
+        if res.returncode == 0 and "/tag/" in res.stdout:
+            tag = res.stdout.strip().split("/tag/")[-1].strip("/")
+            if tag:
+                return tag
+    except Exception:
+        pass
+
+    return "main"
+
 def prefetch_hyprconf_payload(workspace_dir, log_file=None):
     """
-    Downloads and extracts the Hyprconf (Quickshell) repository in the background
+    Downloads and extracts the latest Hyprconf release in the background
     while system packages are being installed, eliminating user wait time.
     """
     cache_dir = os.path.join(workspace_dir, ".cache")
@@ -836,7 +875,12 @@ def prefetch_hyprconf_payload(workspace_dir, log_file=None):
     if os.path.exists(os.path.join(target_dir, "setup.sh")):
         return True
 
-    url = "https://github.com/shell-ninja/hyprconf/archive/refs/tags/v1.0.0.zip"
+    tag = resolve_latest_hyprconf_tag()
+    if tag and tag != "main":
+        url = f"https://github.com/shell-ninja/hyprconf/archive/refs/tags/{tag}.zip"
+    else:
+        url = "https://github.com/shell-ninja/hyprconf/archive/refs/heads/main.zip"
+
     try:
         res = subprocess.run(
             ["curl", "-sL", url, "-o", zip_path],
@@ -852,7 +896,7 @@ def prefetch_hyprconf_payload(workspace_dir, log_file=None):
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
             )
-            # Flatten subfolder if packed as hyprconf-1.0.0, hyprconf-main, or hyprconf-qs
+            # Flatten subfolder if packed as hyprconf-<tag>, hyprconf-main, etc.
             subdirs = [d for d in os.listdir(target_dir) if os.path.isdir(os.path.join(target_dir, d))]
             if len(subdirs) == 1 and subdirs[0].startswith("hyprconf"):
                 sub_p = os.path.join(target_dir, subdirs[0])
@@ -871,13 +915,14 @@ def prefetch_hyprconf_payload(workspace_dir, log_file=None):
     if not os.path.exists(os.path.join(target_dir, "setup.sh")):
         try:
             shutil.rmtree(target_dir, ignore_errors=True)
+            clone_target = tag if tag else "main"
             clone_res = subprocess.run(
-                ["git", "clone", "--depth=1", "-b", "v1.0.0", "https://github.com/shell-ninja/hyprconf.git", target_dir],
+                ["git", "clone", "--depth=1", "-b", clone_target, "https://github.com/shell-ninja/hyprconf.git", target_dir],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 timeout=180
             )
-            if clone_res.returncode != 0:
+            if clone_res.returncode != 0 and clone_target != "main":
                 subprocess.run(
                     ["git", "clone", "--depth=1", "-b", "main", "https://github.com/shell-ninja/hyprconf.git", target_dir],
                     stdout=subprocess.DEVNULL,
@@ -892,7 +937,7 @@ def prefetch_hyprconf_payload(workspace_dir, log_file=None):
         if log_file:
             try:
                 with open(log_file, "a") as lf:
-                    lf.write("[PREFETCH] Hyprconf payload pre-cached successfully in background\n")
+                    lf.write(f"[PREFETCH] Hyprconf payload ({tag}) pre-cached successfully in background\n")
             except Exception:
                 pass
         return True
