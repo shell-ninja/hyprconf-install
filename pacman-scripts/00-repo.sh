@@ -43,7 +43,7 @@ if ! pacman -Qs git &> /dev/null || ! pacman -Qs base-devel &> /dev/null; then
     sudo pacman -S --needed --noconfirm base-devel git 2>&1 | tee -a "$log" &>/dev/null
 fi
 
-_aur=$(cat "$parent_dir/.cache/aur" 2>/dev/null || echo "yay-bin")
+_aur=$(cat "$parent_dir/.cache/aur" 2>/dev/null || echo "yay-git")
 helper_cmd="${_aur%-bin}"
 helper_cmd="${helper_cmd%-git}"
 

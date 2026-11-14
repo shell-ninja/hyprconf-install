@@ -601,7 +601,7 @@ class PlanConfig:
                     f.write(f"{os.path.basename(aur_helper)}\n")
             elif not os.path.exists(aur_cache):
                 with open(aur_cache, "w") as f:
-                    f.write("yay-bin\n")
+                    f.write("yay-git\n")
 
         shell_choice = opt_map.get("shell", {}).get("choices", ["Bash"])[opt_map.get("shell", {}).get("index", 0)]
         with open(shell_cache, "w") as f:
@@ -1122,7 +1122,7 @@ def run_interactive_installer():
             aur_cache = os.path.join(plan.workspace_dir, ".cache", "aur")
             if not os.path.exists(aur_cache):
                 with open(aur_cache, "w") as f:
-                    f.write("yay-bin\n")
+                    f.write("yay-git\n")
             steps.append({
                 "title": "Installing AUR helper (yay)",
                 "script": os.path.join(scripts_dir, "00-repo.sh"),
@@ -1523,7 +1523,7 @@ if __name__ == "__main__":
             
             mock_steps = [
                 {"title": "Configuring package repositories & build dependencies", "script": "", "cmd": "sudo pacman -Syu --needed base-devel git"},
-                {"title": "Installing AUR helper (yay)", "script": "", "cmd": "git clone https://aur.archlinux.org/yay-bin.git"},
+                {"title": "Installing AUR helper (yay)", "script": "", "cmd": "git clone https://aur.archlinux.org/yay-git.git"},
                 {"title": "Installing core Hyprland compositor & tools", "script": "", "cmd": "sudo pacman -S --noconfirm hyprland hyprlock hypridle"},
                 {"title": "Installing system utility packages & libraries", "script": "", "cmd": "sudo pacman -S --noconfirm quickshell awww btop cliphist"},
                 {"title": "Configuring desktop fonts", "script": "", "cmd": "sudo pacman -S --noconfirm ttf-jetbrains-mono-nerd"},

@@ -149,9 +149,9 @@ if [[ "$pkgman" == "pacman" ]]; then
             --cursor.foreground "#bd93f9" \
             --item.foreground "#c0caf5" \
             --selected.foreground "#a6e3a1" \
-            "yay-bin" "yay" "paru-bin" "paru" "Skip"
+            "yay-git" "yay" "paru-git" "paru" "Skip"
         )
-        echo "${choice:-yay-bin}" > "$aur_cache"
+        echo "${choice:-yay-git}" > "$aur_cache"
         sleep 0.5
         if ! run_script "$scripts_dir/00-repo.sh"; then
             msg err "Failed to install AUR helper."
