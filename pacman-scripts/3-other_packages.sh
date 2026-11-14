@@ -95,6 +95,7 @@ other_packages=(
     qt6-declarative
     qt6-imageformats
     qt6-multimedia
+    qt6-shadertools
     qt6-5compat
     qt5-graphicaleffects
     qt5-quickcontrols2

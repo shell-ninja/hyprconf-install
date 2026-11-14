@@ -128,7 +128,7 @@ if [[ -d "$target_dir" ]]; then
             export DEBIAN_FRONTEND=noninteractive
 
             msg act "Running Hyprconf dotfiles deployment (automated)..."
-            ./setup.sh 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' >> "$log") || true
+            ./setup.sh -y 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' >> "$log") || true
         fi
     fi
 
