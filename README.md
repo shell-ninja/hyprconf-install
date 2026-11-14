@@ -16,6 +16,7 @@
 <a href="#overview"><kbd> Overview </kbd></a>&ensp;&ensp;
 <a href="#features"><kbd> Features </kbd></a>&ensp;&ensp;
 <a href="#screenshots"><kbd> Preview </kbd></a>&ensp;&ensp;
+<a href="#how-it-works"><kbd> Installer Tour </kbd></a>&ensp;&ensp;
 <a href="#supported-distributions"><kbd> Distributions </kbd></a>&ensp;&ensp;
 <a href="#installation"><kbd> Installation </kbd></a>&ensp;&ensp;
 <a href="#contributing"><kbd> Contributing </kbd></a>
@@ -103,6 +104,52 @@ The installer deploys and configures a complete, hardware-accelerated **Quickshe
 
 <br>
 
+<a id="how-it-works"></a>
+
+## How the Installer Works
+
+The installation suite is powered by an interactive Terminal User Interface ([`tui_installer.py`](tui_installer.py)) designed to make deploying Hyprland and Quickshell transparent, modular, and safe.
+
+### 1. Hardware Detection & Configuration Profile
+Before running any scripts, the installer scans your system hardware (CPU model, total RAM, Linux kernel release, and desktop vs. laptop chassis) and presents a modular configuration profile:
+
+<div align="center">
+  <img src="ss/installer-plan.png" width="95%" alt="Configuration Profile & Hardware Detection" />
+</div>
+
+- **Automatic Hardware Probing**: Detects CPU architecture and form factor to optimize battery management, touchpad gestures, and compositor flags.
+- **Modular Component Toggles**: Easily toggle optional components such as the **Quickshell** desktop suite, SDDM greeter themes (**Prohori** / **SilentSDDM**), Bluetooth, audio stack, shell preferences, web browser, and proprietary **NVIDIA** drivers.
+- **Contextual Component Details**: Sub-row indicators (`└─`) dynamically describe each selected item's role in the desktop environment.
+
+<br>
+
+### 2. Live Execution & Monitored Deployment
+Once confirmed, the installer executes cross-distribution package management routines while providing real-time visibility into every phase:
+
+<div align="center">
+  <img src="ss/installer-progress.png" width="95%" alt="Live Installation Execution with Embedded Console" />
+</div>
+
+- **Progress Bar & Real-Time Timer**: High-contrast Unicode progress bar with active step elapsed timing.
+- **Dynamic Step Checklist**: Visual markers tracking completed tasks (`✓`), the active running step with braille spinners (`⠋`), and queued operations.
+- **Embedded Console Window**: Real-time streaming output directly from package managers (`pacman`, `yay`, `dnf`, `zypper`, `apt`) with syntax highlighting for status tags (`[SKIP]`, `[DONE]`, `::`, `→`).
+- **Parallel Background Prefetching**: Downloads and extracts the Hyprconf dotfiles payload silently in parallel while system packages compile and install, eliminating wait time.
+
+<br>
+
+### 3. Setup Complete & Shortcuts Cheatsheet
+Upon finishing installation, the TUI provides a complete environment summary alongside essential desktop shortcuts:
+
+<div align="center">
+  <img src="ss/installer-finish.png" width="95%" alt="Installation Complete & Keybindings Cheatsheet" />
+</div>
+
+- **Session Summary**: Verifies compositor, desktop shell, display manager, and user configuration paths.
+- **Quick-Start Cheatsheet**: Immediate reference for launching terminals (<kbd>Super</kbd> + <kbd>Return</kbd>), the Omnibar launcher (<kbd>Super</kbd> + <kbd>Space</kbd>), Wallpaper Studio (<kbd>Super</kbd> + <kbd>W</kbd>), and the Session Menu (<kbd>Super</kbd> + <kbd>X</kbd>).
+- **One-Touch System Reboot**: Safely reboot into your new Hyprland environment or exit cleanly back to your shell.
+
+<br>
+
 <a id="supported-distributions"></a>
 
 ## Supported Distributions
@@ -155,10 +202,10 @@ chmod +x install.sh
 |:---:|:---|
 | <kbd>↑</kbd> / <kbd>k</kbd> | Navigate to previous item |
 | <kbd>↓</kbd> / <kbd>j</kbd> | Navigate to next item |
-| <kbd>Space</kbd> / <kbd>Enter</kbd> | Toggle feature ON / OFF |
-| <kbd>←</kbd> / <kbd>→</kbd> | Cycle carousel choices (SDDM theme, audio, shells) |
-| <kbd>Tab</kbd> | Switch focus between settings and Install button |
-| <kbd>q</kbd> / <kbd>Ctrl+C</kbd> | Cancel installation safely |
+| <kbd>Space</kbd> / <kbd>Tab</kbd> | Toggle feature ON / OFF or cycle choices |
+| <kbd>←</kbd> / <kbd>→</kbd> | Cycle carousel choices (SDDM theme, audio, shells, browsers) |
+| <kbd>Enter</kbd> | Confirm configuration profile and begin installation |
+| <kbd>q</kbd> / <kbd>Esc</kbd> | Cancel / Exit installer safely |
 
 <br>
 

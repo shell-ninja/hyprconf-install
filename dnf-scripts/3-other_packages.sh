@@ -57,6 +57,7 @@ main_packages=(
     kvantum
     kvantum-qt5
     less
+    libnotify
     libX11-devel
     libXext-devel
     make
@@ -83,6 +84,8 @@ main_packages=(
     python3-pillow
     python3-pyquery
     python3-dbus
+    python3-psutil
+    python3-numpy
     qt5ct
     qt6ct-kde
     qt6-qtsvg

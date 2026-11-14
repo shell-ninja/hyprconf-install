@@ -69,6 +69,8 @@ hypr_package=(
   python3-requests
   python3-Pillow
   python3-dbus-python
+  python3-psutil
+  python3-numpy
   qt5ct
   qt6ct
   qt6-declarative

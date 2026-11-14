@@ -56,6 +56,7 @@ main_packages=(
     kitty
     qt5-style-kvantum
     less
+    libnotify-bin
     libx11-dev
     libxext-dev
     libvte-2.91-0
@@ -83,6 +84,8 @@ main_packages=(
     python3-pil
     python3-pyquery
     python3-dbus
+    python3-psutil
+    python3-numpy
     qt5ct
     qt6ct
     libqt6svg6

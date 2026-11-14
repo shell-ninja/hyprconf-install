@@ -45,6 +45,7 @@ fi
 
 _aur=$(cat "$parent_dir/.cache/aur" 2>/dev/null || echo "yay-bin")
 helper_cmd="${_aur%-bin}"
+helper_cmd="${helper_cmd%-git}"
 
 msg act "Building and installing $_aur..."
 

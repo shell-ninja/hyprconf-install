@@ -38,6 +38,7 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
 checkup=(
     quickshell
+    awww
     btop
     cava
     cliphist
@@ -56,6 +57,7 @@ checkup=(
     kitty
     kvantum
     kvantum-qt5
+    libnotify
     network-manager-applet
     networkmanager
     nodejs
@@ -75,6 +77,8 @@ checkup=(
     python-requests
     python-gobject
     python-dbus
+    python-psutil
+    python-numpy
     pyprland
     qt5ct
     qt5-svg
@@ -88,7 +92,6 @@ checkup=(
     qt5-quickcontrols2
     ripgrep
     satty
-    awww
     sddm
     ark
     crudini

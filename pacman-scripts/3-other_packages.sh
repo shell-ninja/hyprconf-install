@@ -64,6 +64,7 @@ other_packages=(
     kvantum
     kvantum-qt5
     less
+    libnotify
     mpv-mpris
     network-manager-applet
     networkmanager
@@ -85,6 +86,8 @@ other_packages=(
     python-requests
     python-gobject
     python-dbus
+    python-psutil
+    python-numpy
     qt5ct
     qt5-svg
     qt6ct-kde
